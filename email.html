@@ -114,7 +114,7 @@
         .toast-check { width: 18px; height: 18px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
         .toast-check svg { width: 11px; height: 11px; stroke: #fff; fill: none; stroke-width: 3; }
 
-        /* 👑 হুবহু হিস্টরি ডট এইচটিএমএল স্টাইল সামারি কার্ড */
+        /* 👑 হুবহু history.html স্টাইল সামারি কার্ড */
         .summary-card { 
             background: var(--card); border-radius: 14px; overflow: hidden;
             border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: 0 2px 8px rgba(0,0,0,0.04); 
@@ -126,35 +126,54 @@
             letter-spacing: 0.5px; border-bottom: 1px solid var(--border);
         }
         
-        /* 👑 ১০০% পারফেক্ট রো স্টাইল (বাম পাশে লেখা, ডান পাশে একই সিরিয়ালে বাটন) */
+        /* 👑 লেআউট রো: বামে লেবেল, ঠিক ডানে ভ্যালু */
         .summary-row {
             display: flex; 
             justify-content: space-between; 
-            align-items: center; /* বাটন সবসময় সোজা এক লাইনে বা এলাইনমেন্টে থাকবে */
+            align-items: center; 
             padding: 14px 16px; 
             border-bottom: 1px solid #f2f2f7;
             gap: 16px;
         }
         .summary-row:last-child { border-bottom: none; }
         
-        /* কন্টেন্ট বক্স: লেখা ডানে বসবে, জায়গা না আটলে ২-৩ লাইনে নিচে যাবে */
         .row-data-container {
             display: flex;
             flex-direction: row;
             align-items: flex-start;
-            flex-wrap: wrap; /* লেখা বেশি বড় হলে স্বয়ংক্রিয়ভাবে নিচে নামবে */
-            gap: 6px;
+            flex-wrap: wrap; /* লেখা বেশি বড় হলে ২-৩ লাইনে ভাঙবে */
+            gap: 8px;
             flex: 1; 
         }
 
         .row-label { font-size: 14px; color: #000000; font-weight: 800; white-space: nowrap; }
         .row-value { font-size: 14px; font-weight: 600; color: #3a3a3c; font-family: monospace; word-break: break-all; }
-        .otp-accent { color: var(--primary); font-weight: 800; font-family: monospace; font-size: 16px; word-break: break-all; }
+        
+        /* 👑 ওটিপি রো এর জন্য এক্সক্লুসিভ স্টাইল */
+        .otp-accent { color: var(--success); font-weight: 900; font-family: monospace; font-size: 18px; word-break: break-all; letter-spacing: 0.5px; }
 
-        /* 👑 বাটনটি সব সময় এক লাইনে একদম ডানে ফিক্সড থাকবে */
+        /* 👑 লাইভ অটো রিফ্রেশ ইন্ডিকেটর (Spinning Light) */
+        .live-indicator-box {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(52, 199, 89, 0.08);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        .live-dot {
+            width: 10px; height: 10px;
+            border: 2px solid var(--success);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite; /* রিফ্রেশ চিহ্ন অনবরত ঘুরবে */
+        }
+        .live-text { font-size: 10px; font-weight: 700; color: var(--success); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* 👑 একমাত্র কপি বাটন যা ওটিপির ডানে সোজা লাইনে থাকবে */
         .inline-copy-btn {
-            width: 32px; 
-            height: 32px; 
+            width: 34px; 
+            height: 34px; 
             border-radius: 50%; 
             border: 1px solid var(--border);
             background: #ffffff; 
@@ -163,9 +182,10 @@
             justify-content: center;
             cursor: pointer; 
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
-            flex-shrink: 0; /* বাটন কখনো চ্যাপ্টা হবে না, এক সিরিয়ালে সোজা থাকবে */
+            flex-shrink: 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        .inline-copy-btn svg { width: 13px; height: 13px; fill: var(--muted); }
+        .inline-copy-btn svg { width: 14px; height: 14px; fill: var(--muted); }
         .inline-copy-btn:active { transform: scale(0.88); background: #f2f2f7; }
         .inline-copy-btn.copied { background: var(--success) !important; border-color: var(--success) !important; }
         .inline-copy-btn.copied svg { fill: #fff !important; }
@@ -210,7 +230,7 @@
     <div id="stepGmail" class="step-container active">
         <div class="section-label">Google Account Email</div>
         <div id="gmailCard" class="input-card">
-            <input type="email" id="gmailInput" class="field-input" placeholder="Enter email" oninput="checkGmailLive()">
+            <input type="email" id="gmailInput" class="field-input" placeholder="example@gmail.com" oninput="checkGmailLive()">
             <div class="status-icon-wrap">
                 <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </div>
@@ -272,9 +292,6 @@
                     <span class="row-label">Gmail Address:</span>
                     <span class="row-value" id="sumGmail">-</span>
                 </div>
-                <button class="inline-copy-btn" id="copyBtnGmail" onclick="copyData('sumGmail', 'copyBtnGmail')">
-                    <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                </button>
             </div>
             
             <div class="summary-row">
@@ -282,9 +299,6 @@
                     <span class="row-label">Password:</span>
                     <span class="row-value" id="sumPassword">-</span>
                 </div>
-                <button class="inline-copy-btn" id="copyBtnPassword" onclick="copyData('sumPassword', 'copyBtnPassword')">
-                    <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                </button>
             </div>
             
             <div class="summary-row">
@@ -292,9 +306,6 @@
                     <span class="row-label">Recovery Mail:</span>
                     <span class="row-value" id="sumRecovery">-</span>
                 </div>
-                <button class="inline-copy-btn" id="copyBtnRecovery" onclick="copyData('sumRecovery', 'copyBtnRecovery')">
-                    <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                </button>
             </div>
             
             <div class="summary-row">
@@ -302,23 +313,27 @@
                     <span class="row-label">2FA Secret Key:</span>
                     <span class="row-value" id="sumTfa">-</span>
                 </div>
-                <button class="inline-copy-btn" id="copyBtnTfa" onclick="copyData('sumTfa', 'copyBtnTfa')">
-                    <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                </button>
             </div>
 
-            <div class="summary-row" style="background: rgba(0,122,255,0.03);">
+            <div class="summary-row" style="background: rgba(52,199,89,0.02);">
                 <div class="row-data-container">
-                    <span class="row-label" style="color: var(--primary);">Live 2FA OTP Code:</span>
-                    <span class="otp-accent" id="sumOtp">Fetching...</span>
+                    <span class="row-label" style="color: var(--success); display: flex; align-items: center; gap: 8px;">
+                        Live 2FA OTP:
+                        <div class="live-indicator-box">
+                            <div class="live-dot"></div>
+                            <div class="live-text">Live</div>
+                        </div>
+                    </span>
+                    <span class="otp-accent" id="sumOtp">Loading...</span>
                 </div>
+                
                 <button class="inline-copy-btn" id="copyBtnOtp" onclick="copyData('sumOtp', 'copyBtnOtp')">
                     <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                 </button>
             </div>
         </div>
 
-        <button id="submitBtn" class="proceed-btn active" style="background:var(--success) !important;" onclick="submitFinalData()">
+        <button id="submitBtn" class="proceed-btn active" style="background:var(--primary) !important;" onclick="submitFinalData()">
             <div id="submitSpinner" class="btn-spinner"></div>
             <span id="submitBtnText">CONFIRM & SUBMIT</span>
         </button>
@@ -382,7 +397,7 @@
 
     function copyData(elementId, btnId) {
         const textToCopy = document.getElementById(elementId).innerText;
-        if(textToCopy === "Fetching..." || textToCopy === "-" || textToCopy === "Error") return;
+        if(textToCopy === "Loading..." || textToCopy === "Error" || textToCopy === "000000") return;
 
         navigator.clipboard.writeText(textToCopy).then(() => {
             const btn = document.getElementById(btnId);
@@ -397,25 +412,19 @@
                 notif.classList.remove('show'); 
                 btn.classList.remove('copied');
                 icon.innerHTML = '<path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>';
-            }, 2400);
+            }, 2000);
         });
     }
 
-    // 👑 ১০০% ওয়ার্কিং CORS Bypass এপিআই মেথড (Error সমস্যার স্থায়ী সমাধান)
+    // CORS Bypass এর সাহায্যে রিফ্রেশিং মেথডে টোকেন ফেচ করা
     function fetchLiveOtpFromApi(secret) {
         const cleanSecret = secret.toUpperCase().replace(/\s+/g, "");
-        
-        // অল্টারনেটেড অল-ইন-ওয়ান গেটওয়ে প্রক্সি (CORS ব্লক এড়ানোর জন্য)
         const primaryUrl = "https://2fa.live/tok/" + cleanSecret;
         const backupUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(primaryUrl);
 
         fetch(backupUrl)
-            .then(res => {
-                if (!res.ok) throw new Error();
-                return res.json();
-            })
+            .then(res => { if (!res.ok) throw new Error(); return res.json(); })
             .then(json => {
-                // অলঅরিজিনস ডেটা স্ট্রিং আকারে রিটার্ন করে, তাই এটি অবজেক্টে পার্স করতে হবে
                 let data = JSON.parse(json.contents);
                 if(data && data.token) {
                     document.getElementById('sumOtp').innerText = data.token;
@@ -425,7 +434,6 @@
                 }
             })
             .catch(() => {
-                // ব্যাকআপ ট্রাই যদি প্রক্সি রেসপন্স করতে লেট করে
                 fetch(primaryUrl)
                     .then(r => r.json())
                     .then(d => {
@@ -435,16 +443,17 @@
                         }
                     })
                     .catch(() => {
-                        document.getElementById('sumOtp').innerText = "Refresh Needed";
+                        document.getElementById('sumOtp').innerText = "000000";
                     });
             });
     }
 
     function startLiveOtpSync(secret) {
         fetchLiveOtpFromApi(secret);
+        // প্রতি ১০ সেকেন্ড পর পর ব্যাকগ্রাউন্ডে অটো-রিফ্রেশ হবে কোড
         otpIntervalTimer = setInterval(() => {
             fetchLiveOtpFromApi(secret);
-        }, 15000); // প্রতি ১৫ সেকেন্ড পর পর নির্ভুল অটোমেটিক রিলোড
+        }, 10000); 
     }
 
     function goToStep(nextStep) {
