@@ -126,29 +126,41 @@
             letter-spacing: 0.5px; border-bottom: 1px solid var(--border);
         }
         
+        /* 👑 প্রীমিয়াম এবং ফ্লেক্সিবল গ্রিড/ফ্লেক্স রো লেআউট */
         .summary-row {
             display: flex; 
+            flex-direction: row;
             justify-content: space-between; 
-            align-items: center; 
+            align-items: flex-start; /* লেখা মাল্টিলাইন হলে টপ এলাইনমেন্ট ঠিক রাখবে */
             padding: 14px 16px; 
             border-bottom: 1px solid #f2f2f7;
-            gap: 16px;
+            gap: 12px;
         }
         .summary-row:last-child { border-bottom: none; }
         
+        /* 👑 লেবেল ও ভ্যালু এক লাইনে রাখার জন্য কন্টেইনার আপডেট */
         .row-data-container {
             display: flex;
             flex-direction: row;
-            align-items: flex-start;
-            flex-wrap: wrap; 
-            gap: 8px;
-            flex: 1; 
+            align-items: flex-start; 
+            justify-content: space-between;
+            width: 100%;
+            gap: 12px;
         }
 
-        .row-label { font-size: 14px; color: #000000; font-weight: 800; white-space: nowrap; }
-        .row-value { font-size: 14px; font-weight: 600; color: #3a3a3c; font-family: monospace; word-break: break-all; }
+        .row-label { font-size: 14px; color: #000000; font-weight: 800; white-space: nowrap; flex-shrink: 0; }
+        .row-value { font-size: 14px; font-weight: 600; color: #3a3a3c; text-align: right; word-break: break-all; overflow-wrap: break-word; max-width: 70%; }
         
-        .otp-accent { color: var(--primary); font-weight: 900; font-family: monospace; font-size: 19px; word-break: break-all; letter-spacing: 0.5px; }
+        /* 👑 ওটিপি নরমাল ও প্রিমিয়াম ডিসপ্লে করার জন্য */
+        .otp-accent { color: var(--primary); font-weight: 800; font-size: 17px; letter-spacing: 0.5px; }
+
+        /* ওটিপি রাইট সাইড কন্টেইনার (টাইমার + কপি বাটন) */
+        .otp-right-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
 
         .authenticator-timer-box {
             display: flex;
@@ -243,7 +255,7 @@
     <div id="stepGmail" class="step-container active">
         <div class="section-label">Google Account Email</div>
         <div id="gmailCard" class="input-card">
-            <input type="email" id="gmailInput" class="field-input" placeholder="example@gmail.com" oninput="checkGmailLive()">
+            <input type="email" id="gmailInput" class="field-input" placeholder="esrxample@gmail.com" oninput="checkGmailLive()">
             <div class="status-icon-wrap">
                 <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </div>
@@ -324,27 +336,29 @@
             <div class="summary-row">
                 <div class="row-data-container">
                     <span class="row-label">2FA Secret Key:</span>
-                    <span class="row-value" id="sumTfa">-</span>
+                    <span class="row-value" id="sumTfa" style="font-family: monospace; font-weight: 700;">-</span>
                 </div>
             </div>
 
-            <div class="summary-row" style="background: rgba(0,122,255,0.02);">
-                <div class="row-data-container">
+            <div class="summary-row" style="background: rgba(0,122,255,0.02); align-items: center;">
+                <div class="row-data-container" style="align-items: center;">
                     <span class="row-label">Live 2FA OTP:</span>
                     <span class="otp-accent" id="sumOtp">Calculating...</span>
                 </div>
                 
-                <div class="authenticator-timer-box">
-                    <svg>
-                        <circle class="bg-ring" cx="14" cy="14" r="12"></circle>
-                        <circle class="progress-ring" id="timerRing" cx="14" cy="14" r="12"></circle>
-                    </svg>
-                    <span class="timer-text-sec" id="timerSeconds">30</span>
-                </div>
+                <div class="otp-right-controls">
+                    <div class="authenticator-timer-box">
+                        <svg>
+                            <circle class="bg-ring" cx="14" cy="14" r="12"></circle>
+                            <circle class="progress-ring" id="timerRing" cx="14" cy="14" r="12"></circle>
+                        </svg>
+                        <span class="timer-text-sec" id="timerSeconds">30</span>
+                    </div>
 
-                <button class="inline-copy-btn" id="copyBtnOtp" onclick="copyData('sumOtp', 'copyBtnOtp')">
-                    <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                </button>
+                    <button class="inline-copy-btn" id="copyBtnOtp" onclick="copyData('sumOtp', 'copyBtnOtp')">
+                        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -373,7 +387,6 @@
     let currentStepName = "Gmail";
     let authenticatorEngineTimer = null;
 
-    // 👑 অফলাইন এবং ১০০% নির্ভুল TOTP/2FA জেনারেশন ইঞ্জিন (গুগল মেথড)
     function dec2hex(s) { return (s < 15.5 ? '0' : '') + Math.round(s).toString(16); }
     function hex2dec(s) { return parseInt(s, 16); }
     function base32tohex(base32) {
@@ -469,7 +482,6 @@
         });
     }
 
-    // 👑 গুগল অথেনটিকেটর লাইভ টাইমার এবং স্বনির্ভর ইঞ্জিন চালু করা
     function startAuthenticatorEngine(secret) {
         const ring = document.getElementById('timerRing');
         const textSec = document.getElementById('timerSeconds');
@@ -478,7 +490,6 @@
 
         if(authenticatorEngineTimer) clearInterval(authenticatorEngineTimer);
 
-        // প্রথমবার সাথে সাথেই অফলাইন ওটিপি জেনারেট হবে
         let initialOtp = getLocalTOTP(secret);
         document.getElementById('sumOtp').innerText = initialOtp;
         collectedFormData.dynamicOtp = initialOtp;
@@ -501,7 +512,6 @@
             const offsetValue = circumference - (remainingTime / 30) * circumference;
             ring.style.strokeDashoffset = offsetValue;
 
-            // প্রতিটি ৩০ সেকেন্ডের পরিবর্তন বা উইন্ডো শুরুতে ইনস্ট্যান্ট অফলাইন রিক্যালকুলেশন
             if (remainingTime === 30 || remainingTime === 29) {
                 let liveOtp = getLocalTOTP(secret);
                 document.getElementById('sumOtp').innerText = liveOtp;
