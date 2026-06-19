@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>GMAIL SAVER - Ultra Premium iOS Gateway</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/2.4.2/sha.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -114,7 +115,6 @@
         .toast-check { width: 18px; height: 18px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
         .toast-check svg { width: 11px; height: 11px; stroke: #fff; fill: none; stroke-width: 3; }
 
-        /* 👑 হুবহু history.html স্টাইল সামারি কার্ড */
         .summary-card { 
             background: var(--card); border-radius: 14px; overflow: hidden;
             border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: 0 2px 8px rgba(0,0,0,0.04); 
@@ -126,7 +126,6 @@
             letter-spacing: 0.5px; border-bottom: 1px solid var(--border);
         }
         
-        /* 👑 লেআউট রো: বামে লেবেল, ঠিক ডানে ভ্যালু */
         .summary-row {
             display: flex; 
             justify-content: space-between; 
@@ -141,7 +140,7 @@
             display: flex;
             flex-direction: row;
             align-items: flex-start;
-            flex-wrap: wrap; /* লেখা বড় হলে ২-৩ লাইনে ভাঙবে */
+            flex-wrap: wrap; 
             gap: 8px;
             flex: 1; 
         }
@@ -149,10 +148,8 @@
         .row-label { font-size: 14px; color: #000000; font-weight: 800; white-space: nowrap; }
         .row-value { font-size: 14px; font-weight: 600; color: #3a3a3c; font-family: monospace; word-break: break-all; }
         
-        /* 👑 ওটিপি রো এর জন্য এক্সক্লুসিভ স্টাইল */
-        .otp-accent { color: var(--primary); font-weight: 900; font-family: monospace; font-size: 18px; word-break: break-all; letter-spacing: 0.5px; }
+        .otp-accent { color: var(--primary); font-weight: 900; font-family: monospace; font-size: 19px; word-break: break-all; letter-spacing: 0.5px; }
 
-        /* 👑 গুগল অথেনটিকেটর স্টাইল বৃত্তাকার লাইভ টাইমার কন্টেইনার */
         .authenticator-timer-box {
             display: flex;
             align-items: center;
@@ -176,7 +173,7 @@
         }
         .authenticator-timer-box .progress-ring {
             stroke: var(--primary);
-            stroke-dasharray: 75.4; /* 2 * PI * r (r=12) */
+            stroke-dasharray: 75.4; 
             stroke-dashoffset: 0;
             transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
         }
@@ -188,7 +185,6 @@
             font-family: -apple-system, sans-serif;
         }
 
-        /* 👑 একমাত্র কপি বাটন যা ওটিপির ডানে সোজা লাইনে থাকবে */
         .inline-copy-btn {
             width: 34px; 
             height: 34px; 
@@ -208,7 +204,6 @@
         .inline-copy-btn.copied { background: var(--success) !important; border-color: var(--success) !important; }
         .inline-copy-btn.copied svg { fill: #fff !important; }
 
-        /* Success Overlay */
         #successOverlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
@@ -246,7 +241,7 @@
     </div>
 
     <div id="stepGmail" class="step-container active">
-        <div class="section-label">Account Email</div>
+        <div class="section-label">Google Account Email</div>
         <div id="gmailCard" class="input-card">
             <input type="email" id="gmailInput" class="field-input" placeholder="example@gmail.com" oninput="checkGmailLive()">
             <div class="status-icon-wrap">
@@ -336,7 +331,7 @@
             <div class="summary-row" style="background: rgba(0,122,255,0.02);">
                 <div class="row-data-container">
                     <span class="row-label">Live 2FA OTP:</span>
-                    <span class="otp-accent" id="sumOtp">Loading...</span>
+                    <span class="otp-accent" id="sumOtp">Calculating...</span>
                 </div>
                 
                 <div class="authenticator-timer-box">
@@ -376,7 +371,45 @@
 
     let collectedFormData = { gmail: "", password: "", recovery: "", secretKey: "", dynamicOtp: "" };
     let currentStepName = "Gmail";
-    let timerCountdownProcessor = null;
+    let authenticatorEngineTimer = null;
+
+    // 👑 অফলাইন এবং ১০০% নির্ভুল TOTP/2FA জেনারেশন ইঞ্জিন (গুগল মেথড)
+    function dec2hex(s) { return (s < 15.5 ? '0' : '') + Math.round(s).toString(16); }
+    function hex2dec(s) { return parseInt(s, 16); }
+    function base32tohex(base32) {
+        let base32chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+        let bits = ""; let hex = "";
+        for (let i = 0; i < base32.length; i++) {
+            let val = base32chars.indexOf(base32.charAt(i).toUpperCase());
+            bits += leftpad(val.toString(2), 5, '0');
+        }
+        for (let i = 0; i + 4 <= bits.length; i += 4) {
+            let chunk = bits.substr(i, 4);
+            hex = hex + parseInt(chunk, 2).toString(16);
+        }
+        return hex;
+    }
+    function leftpad(str, len, pad) { if (len + 1 >= str.length) { str = Array(len + 1 - str.length).join(pad) + str; } return str; }
+
+    function getLocalTOTP(secret) {
+        try {
+            let key = base32tohex(secret.toUpperCase().replace(/\s+/g, ""));
+            let epoch = Math.round(new Date().getTime() / 1000.0);
+            let time = leftpad(dec2hex(Math.floor(epoch / 30)), 16, '0');
+            
+            let shaObj = new jsSHA("SHA-1", "HEX");
+            shaObj.setHMACKey(key, "HEX");
+            shaObj.update(time);
+            let hmac = shaObj.getHMAC("HEX");
+            
+            let offset = hex2dec(hmac.substring(hmac.length - 1));
+            let otp = (hex2dec(hmac.substr(offset * 2, 8)) & hex2dec('7fffffff')) + '';
+            otp = otp.substr(otp.length - 6, 6);
+            return leftpad(otp, 6, '0');
+        } catch (err) {
+            return "000000";
+        }
+    }
 
     function checkGmailLive() {
         const val = document.getElementById('gmailInput').value.trim();
@@ -417,7 +450,7 @@
 
     function copyData(elementId, btnId) {
         const textToCopy = document.getElementById(elementId).innerText;
-        if(textToCopy === "Loading..." || textToCopy === "Error" || textToCopy === "000000") return;
+        if(textToCopy.includes("Calcul") || textToCopy === "000000") return;
 
         navigator.clipboard.writeText(textToCopy).then(() => {
             const btn = document.getElementById(btnId);
@@ -436,56 +469,27 @@
         });
     }
 
-    function fetchLiveOtpFromApi(secret) {
-        const cleanSecret = secret.toUpperCase().replace(/\s+/g, "");
-        const primaryUrl = "https://2fa.live/tok/" + cleanSecret;
-        const backupUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(primaryUrl);
-
-        fetch(backupUrl)
-            .then(res => { if (!res.ok) throw new Error(); return res.json(); })
-            .then(json => {
-                let data = JSON.parse(json.contents);
-                if(data && data.token) {
-                    document.getElementById('sumOtp').innerText = data.token;
-                    collectedFormData.dynamicOtp = data.token;
-                } else {
-                    document.getElementById('sumOtp').innerText = "000000"; 
-                }
-            })
-            .catch(() => {
-                fetch(primaryUrl)
-                    .then(r => r.json())
-                    .then(d => {
-                        if(d.token) {
-                            document.getElementById('sumOtp').innerText = d.token;
-                            collectedFormData.dynamicOtp = d.token;
-                        }
-                    })
-                    .catch(() => {
-                        document.getElementById('sumOtp').innerText = "000000";
-                    });
-            });
-    }
-
-    // 👑 গুগল অথেনটিকেটর টাইমার এবং লাইভ কাউন্টডাউন ইন্টিগ্রেশন
+    // 👑 গুগল অথেনটিকেটর লাইভ টাইমার এবং স্বনির্ভর ইঞ্জিন চালু করা
     function startAuthenticatorEngine(secret) {
-        fetchLiveOtpFromApi(secret);
-
         const ring = document.getElementById('timerRing');
         const textSec = document.getElementById('timerSeconds');
         const totalRadius = 12;
-        const circumference = 2 * Math.PI * totalRadius; // 75.4
+        const circumference = 2 * Math.PI * totalRadius; 
 
-        if(timerCountdownProcessor) clearInterval(timerCountdownProcessor);
+        if(authenticatorEngineTimer) clearInterval(authenticatorEngineTimer);
 
-        timerCountdownProcessor = setInterval(() => {
+        // প্রথমবার সাথে সাথেই অফলাইন ওটিপি জেনারেট হবে
+        let initialOtp = getLocalTOTP(secret);
+        document.getElementById('sumOtp').innerText = initialOtp;
+        collectedFormData.dynamicOtp = initialOtp;
+
+        authenticatorEngineTimer = setInterval(() => {
             const now = new Date();
             const currentSeconds = now.getSeconds();
-            const remainingTime = 30 - (currentSeconds % 30); // প্রতিটি ৩০ সেকেন্ডের উইন্ডো জেনারেট
+            const remainingTime = 30 - (currentSeconds % 30); 
 
             textSec.innerText = remainingTime;
 
-            // রিঙের চারপাশের কালার এনিমেশন কন্ট্রোল (শেষ ৫ সেকেন্ডে লাল হবে সতর্কবার্তা হিসেবে)
             if(remainingTime <= 5) {
                 ring.style.stroke = "var(--danger)";
                 textSec.style.color = "var(--danger)";
@@ -494,13 +498,14 @@
                 textSec.style.color = "var(--primary)";
             }
 
-            // প্রোগ্রেস রিং অফসেট ক্যালকুলেশন
             const offsetValue = circumference - (remainingTime / 30) * circumference;
             ring.style.strokeDashoffset = offsetValue;
 
-            // টাইমার শেষ হওয়া মাত্রই কোনো ফ্লিকার ছাড়া নতুন ওটিপি লাইভ পুশ হবে
-            if (remainingTime === 30 || remainingTime === 0) {
-                fetchLiveOtpFromApi(secret);
+            // প্রতিটি ৩০ সেকেন্ডের পরিবর্তন বা উইন্ডো শুরুতে ইনস্ট্যান্ট অফলাইন রিক্যালকুলেশন
+            if (remainingTime === 30 || remainingTime === 29) {
+                let liveOtp = getLocalTOTP(secret);
+                document.getElementById('sumOtp').innerText = liveOtp;
+                collectedFormData.dynamicOtp = liveOtp;
             }
         }, 1000);
     }
@@ -537,7 +542,7 @@
 
     function handleBack() {
         document.getElementById('brandHeader').style.display = 'flex';
-        if(timerCountdownProcessor) clearInterval(timerCountdownProcessor);
+        if(authenticatorEngineTimer) clearInterval(authenticatorEngineTimer);
         
         if (currentStepName === "Summary") {
             document.getElementById('stepSummary').style.display = 'none';
