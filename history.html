@@ -277,7 +277,7 @@
                 <div class="ios-input-group">
                     <label>Recovery Mail</label>
                     <div id="modalRecoveryCard" class="input-card">
-                        <input type="email" id="modalRecoveryInput" class="field-input" placeholder="recovery@gmail.com" oninput="checkModalRecoveryLive()">
+                        <input type="text" id="modalRecoveryInput" class="field-input" placeholder="recovery@mail.com" oninput="checkModalRecoveryLive()">
                         <div class="status-icon-wrap">
                             <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
                             <svg class="cross-icon" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
@@ -353,7 +353,6 @@
         let currentEditingEmail = null;
         let currentDeletingEmail = null;
 
-        // ২এফএ ক্যালকুলেশন ফাংশনসমূহ
         function dec2hex(s) { return (s < 15.5 ? '0' : '') + Math.round(s).toString(16); }
         function hex2dec(s) { return parseInt(s, 16); }
         function base32tohex(base32) {
@@ -427,13 +426,11 @@
             });
         }
 
-        /* --- সেভ বাটনের স্টেট কন্ট্রোল করার গ্লোবাল ফাংশন --- */
         function updateSaveButtonState() {
             const recoveryCard = document.getElementById('modalRecoveryCard');
             const tfaCard = document.getElementById('modalTfaCard');
             const saveBtn = document.getElementById('modalSaveBtn');
             
-            // যেকোনো একটি বক্স যদি ভুল (is-invalid) থাকে, তবে বাটন ডিজেবল হবে
             if (recoveryCard.classList.contains('is-invalid') || tfaCard.classList.contains('is-invalid')) {
                 saveBtn.disabled = true;
             } else {
@@ -441,15 +438,16 @@
             }
         }
 
-        /* --- মডাল রিকভারি লাইভ জিমেইল চেকার (ক্রস ছাড়া শুধু লাল বক্স) --- */
+        /* 🍏 সাধারণ ইমেইল ভ্যালিডেশন চেকার (ফিক্সড) */
         function checkModalRecoveryLive() {
             const input = document.getElementById('modalRecoveryInput');
             const card = document.getElementById('modalRecoveryCard');
             const val = input.value.trim().toLowerCase();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             
             if (val === "") {
                 card.classList.remove('is-valid', 'is-invalid');
-            } else if (val.endsWith('@gmail.com')) {
+            } else if (emailRegex.test(val)) {
                 card.classList.add('is-valid');
                 card.classList.remove('is-invalid');
             } else {
@@ -459,7 +457,6 @@
             updateSaveButtonState();
         }
 
-        /* --- মডাল ২এফএ লাইভ কোড চেকার (ক্রস ছাড়া শুধু লাল বক্স) --- */
         function checkModalTfaLive() {
             const input = document.getElementById('modal2faInput');
             const card = document.getElementById('modalTfaCard');
@@ -467,7 +464,7 @@
             
             if (val === "") {
                 card.classList.remove('is-valid', 'is-invalid');
-            } else if (val.length >= 16) {
+            } else if (val.length >= 10) { 
                 card.classList.add('is-valid');
                 card.classList.remove('is-invalid');
             } else {
@@ -477,7 +474,6 @@
             updateSaveButtonState();
         }
 
-        // Live 2FA Dynamic Animation Loop
         function startLive2FAEngine() {
             if(live2FAEngineTimer) clearInterval(live2FAEngineTimer);
             const totalRadius = 10;
@@ -544,12 +540,11 @@
             const account = allOrdersGlobal.find(item => (item.email || '').trim().toLowerCase() === targetEmail.trim().toLowerCase());
             if (!account) return;
 
-            currentEditingEmail = targetEmail;
-            document.getElementById('modalTargetEmail').innerText = targetEmail;
+            currentEditingEmail = targetEmail.trim();
+            document.getElementById('modalTargetEmail').innerText = currentEditingEmail;
             document.getElementById('modalRecoveryInput').value = account.recovery && account.recovery !== 'N/A' ? account.recovery : '';
             document.getElementById('modal2faInput').value = account['2fa'] && account['2fa'] !== 'N/A' ? account['2fa'] : '';
             
-            // মডাল ওপেন হওয়ার সাথে সাথেই ভ্যালিডেশন স্টেট রান হবে
             checkModalRecoveryLive();
             checkModalTfaLive();
             
@@ -568,7 +563,7 @@
             const new2fa = document.getElementById('modal2faInput').value.trim();
 
             allOrdersGlobal = allOrdersGlobal.map(item => {
-                if ((item.email || '').trim().toLowerCase() === currentEditingEmail.trim().toLowerCase()) {
+                if ((item.email || '').trim().toLowerCase() === currentEditingEmail.toLowerCase()) {
                     return { ...item, recovery: newRecovery || 'N/A', '2fa': new2fa || 'N/A' };
                 }
                 return item;
@@ -590,11 +585,10 @@
             }
         }
 
-        // 🗑️ কাস্টম ডিলিট ক্লিক লজিক
         function executeDeleteAccount(targetEmail) {
             if (!targetEmail) return;
-            currentDeletingEmail = targetEmail;
-            document.getElementById('deleteTargetEmail').innerText = targetEmail;
+            currentDeletingEmail = targetEmail.trim();
+            document.getElementById('deleteTargetEmail').innerText = currentDeletingEmail;
             document.getElementById('iosDeleteModalOverlay').style.display = 'flex';
         }
 
@@ -606,7 +600,7 @@
         function confirmDeleteAccount() {
             if (!currentDeletingEmail) return;
 
-            allOrdersGlobal = allOrdersGlobal.filter(item => (item.email || '').trim().toLowerCase() !== currentDeletingEmail.trim().toLowerCase());
+            allOrdersGlobal = allOrdersGlobal.filter(item => (item.email || '').trim().toLowerCase() !== currentDeletingEmail.toLowerCase());
             renderOrders(allOrdersGlobal);
             triggerNotification("Account Deleted Successfully!", 'danger');
 
@@ -621,7 +615,6 @@
             closeDeleteModal();
         }
 
-        // ডাটা রেন্ডারিং ইঞ্জিন
         function renderOrders(ordersList) {
             const historyBox = document.getElementById('historyBox');
             
@@ -640,7 +633,7 @@
                 let btnSec = 'b-sc-' + index;
                 let btnOtp = 'b-ot-' + index;
                 
-                let emailVal = item.email || 'N/A';
+                let emailVal = (item.email || 'N/A').trim();
                 let passVal = item.password || 'N/A';
                 let recoveryVal = item.recovery || 'N/A';
                 let tfaSecretVal = item['2fa'] || 'N/A'; 
@@ -719,7 +712,6 @@
             startLive2FAEngine();
         }
 
-        // ডাটাবেজ থেকে ডাটা রিসিভ করার মেইন লজিক
         document.addEventListener('DOMContentLoaded', function () {
             setTimeout(() => {
                 try {
