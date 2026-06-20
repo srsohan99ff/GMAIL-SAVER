@@ -63,7 +63,6 @@
         }
         .back-circle-btn svg { width: 14px; height: 14px; fill: #48484a; }
 
-        /* Modified Title Section - Exactly as requested */
         .brand-header {
             display: flex;
             justify-content: center;
@@ -118,7 +117,7 @@
         .toast-check { width: 16px; height: 16px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
         .toast-check svg { width: 10px; height: 10px; stroke: #fff; fill: none; stroke-width: 3; }
 
-        /* SUMMARY CONTAINER MATCHING SCREENSHOT EXACTLY */
+        /* SUMMARY CONTAINER CONFIGURATION */
         .summary-card { 
             background: var(--card); border-radius: 14px; overflow: hidden;
             border: 1px solid var(--border);
@@ -126,61 +125,63 @@
             width: 100%;
         }
         
-        /* Grid layout to guarantee label stays left and value wraps safely on the right */
+        /* Adjusted layout to push text to the left right after label */
         .summary-row {
-            display: grid;
-            grid-template-columns: 140px 1fr auto;
+            display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: flex-start;
             padding: 14px 16px; 
             border-bottom: 1px solid #f2f2f7;
             background: var(--card);
         }
         .summary-row:last-child { border-bottom: none; }
         
-        /* Labels: Left aligned, dark text, medium weight as in screenshot */
+        /* Fixed width labels to keep everything aligned perfectly */
         .row-label-normal { 
+            width: 110px;
             font-size: 14px; 
             color: #2c2c2e; 
             font-weight: 500; 
-            white-space: nowrap;
+            flex-shrink: 0;
         }
         
-        /* Blue Active Label matching screenshot */
         .row-label-blue { 
             font-size: 14px; 
             color: var(--primary); 
             font-weight: 600; 
-            white-space: nowrap; 
+            flex-grow: 1;
+            white-space: nowrap;
         }
 
-        /* Value Content: Right aligned, smaller text, muted/gray color like screenshot */
+        /* Value Content: Starts immediately with minor space, wraps into 2nd line if too long */
         .row-value { 
             font-size: 13.5px; 
             font-weight: 400; 
-            color: #4a4a4a; 
-            text-align: right; 
-            white-space: normal; 
+            color: #1c1c1e; 
+            text-align: left;
+            flex-grow: 1;
             word-break: break-all;
+            padding-left: 10px;
         }
         
-        /* Muted gray for 2FA key exactly like the screenshot */
+        /* Muted styling for Secret Key */
         .secret-value {
             font-size: 13px;
             color: #8e8e93;
             font-weight: 400;
-            text-align: right;
-            white-space: normal;
+            text-align: left;
+            flex-grow: 1;
             word-break: break-all;
+            padding-left: 10px;
         }
         
         /* Crisp Blue Color and Bold Style for OTP text */
         .otp-accent { 
             color: var(--primary); 
             font-weight: 600; 
-            font-size: 16px; 
-            text-align: right; 
-            word-break: break-all;
+            font-size: 17px; 
+            margin-right: 12px;
+            letter-spacing: 0.5px;
         }
 
         .right-controls {
@@ -188,6 +189,7 @@
             align-items: center;
             gap: 8px;
             justify-content: flex-end;
+            flex-shrink: 0;
         }
 
         /* Smaller Native iOS style Circular Progress */
@@ -225,7 +227,7 @@
             color: var(--primary);
         }
 
-        /* Subtle Circular Copy Button Layout */
+        /* Circular Copy Button Layout used only for OTP */
         .inline-copy-btn {
             width: 26px; 
             height: 26px; 
@@ -335,47 +337,28 @@
         </button>
     </div>
 
+    <!-- SUMMARY SECTION WITH IMMACULATE SPACE AND ONLY OTP COPY BUTTON -->
     <div id="stepSummary" class="step-container">
         <div class="section-label">Account Security Summary</div>
         <div class="summary-card">
             <div class="summary-row">
                 <span class="row-label-normal">Email</span>
                 <span class="row-value" id="sumGmail">-</span>
-                <div class="right-controls">
-                    <button class="inline-copy-btn" id="copyBtnGmail" onclick="copyData('sumGmail', 'copyBtnGmail')">
-                        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                    </button>
-                </div>
             </div>
             
             <div class="summary-row">
                 <span class="row-label-normal">Password</span>
                 <span class="row-value" id="sumPassword">-</span>
-                <div class="right-controls">
-                    <button class="inline-copy-btn" id="copyBtnPassword" onclick="copyData('sumPassword', 'copyBtnPassword')">
-                        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                    </button>
-                </div>
             </div>
             
             <div class="summary-row">
                 <span class="row-label-normal">Recovery Mail</span>
                 <span class="row-value" id="sumRecovery">-</span>
-                <div class="right-controls">
-                    <button class="inline-copy-btn" id="copyBtnRecovery" onclick="copyData('sumRecovery', 'copyBtnRecovery')">
-                        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                    </button>
-                </div>
             </div>
             
             <div class="summary-row">
                 <span class="row-label-normal">2FA Secret Key</span>
                 <span class="secret-value" id="sumTfa">-</span>
-                <div class="right-controls">
-                    <button class="inline-copy-btn" id="copyBtnTfa" onclick="copyData('sumTfa', 'copyBtnTfa')">
-                        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                    </button>
-                </div>
             </div>
 
             <div class="summary-row">
@@ -391,6 +374,7 @@
                         <span class="timer-text-sec" id="timerSeconds">30</span>
                     </div>
 
+                    <!-- Only this Copy Button remains active -->
                     <button class="inline-copy-btn" id="copyBtnOtp" onclick="copyData('sumOtp', 'copyBtnOtp')">
                         <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                     </button>
