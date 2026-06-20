@@ -31,14 +31,13 @@
 
         body { 
             background-color: var(--bg); 
-            padding: 16px; 
+            padding: 20px 16px; 
             color: var(--text);
             -webkit-font-smoothing: antialiased;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
-            overflow: hidden; /* এক পেজে ধরে রাখার জন্য এক্সট্রা স্ক্রোল বন্ধ */
         }
 
         .wrapper {
@@ -46,15 +45,14 @@
             max-width: 520px;
             display: flex;
             flex-direction: column;
-            height: 100%;
         }
 
         .top-nav-bar {
             width: 100%;
-            height: 40px;
+            height: 44px;
             display: flex;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
         .back-circle-btn {
             width: 36px; height: 36px;
@@ -71,9 +69,9 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 28px;
         }
-        h1.brand-title { font-size: 24px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; text-transform: uppercase; }
+        h1.brand-title { font-size: 26px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; text-transform: uppercase; }
         .brand-subtitle { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
 
         .step-container { display: none; width: 100%; }
@@ -117,113 +115,92 @@
         .toast-check { width: 18px; height: 18px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
         .toast-check svg { width: 11px; height: 11px; stroke: #fff; fill: none; stroke-width: 3; }
 
-        /* --- নতুন ড্যাশবোর্ড/স্ক্রিনশট স্টাইল সামারি পেজের জন্য --- */
-        .summary-title-main {
-            font-size: 26px;
-            font-weight: 700;
-            color: #000000;
-            text-align: center;
-            margin-bottom: 20px;
-            margin-top: -10px;
+        /* SUMMARY PAGE OPTIMIZATION FOR SINGLE LINE SCREENSHOT ACCURACY */
+        .summary-card { 
+            background: var(--card); border-radius: 12px; overflow: hidden;
+            border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            margin-bottom: 24px; padding: 0;
         }
-
-        .summary-container-box {
-            background: var(--card);
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            padding: 4px 0px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-            margin-bottom: 20px;
-        }
-        
-        .premium-row-card {
+        .summary-row {
             display: flex; 
+            flex-direction: row;
             justify-content: space-between; 
             align-items: center; 
-            padding: 16px 20px; 
-            border-bottom: 1px solid #f2f2f7;
-            background: #ffffff;
+            padding: 14px 16px; 
+            border-bottom: 1px solid var(--border);
+            background: var(--card);
         }
-        .premium-row-card:last-child {
-            border-bottom: none;
-        }
+        .summary-row:last-child { border-bottom: none; }
         
-        .row-left-content {
+        .row-data-container {
             display: flex;
-            flex-direction: column;
-            gap: 4px;
-            max-width: 75%;
+            flex-direction: row;
+            align-items: center; 
+            justify-content: space-between;
+            width: 100%;
+            gap: 12px;
+            overflow: hidden;
         }
 
-        .premium-label { 
-            font-size: 14px; 
-            color: #8e8e93; 
-            font-weight: 500;
-        }
-        .premium-value { 
-            font-size: 16px; 
-            font-weight: 600; 
-            color: #000000; 
-            word-break: break-all;
+        .row-label { font-size: 15px; color: var(--text); font-weight: 400; white-space: nowrap; flex-shrink: 0; }
+        .row-value { 
+            font-size: 15px; 
+            font-weight: 400; 
+            color: var(--muted); 
+            text-align: right; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            max-width: 70%;
         }
         
-        /* ২এফএ কোডের ইউনিক কালার ও সাইজ */
-        .otp-label-blue {
-            color: var(--primary) !important;
-            font-weight: 700 !important;
-        }
-        .otp-value-big { 
-            color: var(--primary) !important; 
-            font-weight: 700 !important; 
-            font-size: 24px !important;
-            letter-spacing: 0.5px;
-        }
+        .otp-accent { color: var(--primary); font-weight: 600; font-size: 15px; white-space: nowrap; }
 
-        .row-right-actions {
+        .otp-right-controls {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             flex-shrink: 0;
         }
 
-        /* প্রোগ্রেস রিং টাইমার */
         .authenticator-timer-box {
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            width: 30px;
-            height: 30px;
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
         }
         .authenticator-timer-box svg {
             transform: rotate(-90deg);
-            width: 30px;
-            height: 30px;
+            width: 24px;
+            height: 24px;
         }
         .authenticator-timer-box circle {
             fill: none;
-            stroke-width: 3.5;
+            stroke-width: 2.5;
         }
         .authenticator-timer-box .bg-ring {
-            stroke: #f2f2f7;
+            stroke: #e5e5ea;
         }
         .authenticator-timer-box .progress-ring {
             stroke: var(--primary);
-            stroke-dasharray: 75.4; 
+            stroke-dasharray: 62.8; 
             stroke-dashoffset: 0;
             transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
         }
         .timer-text-sec {
             position: absolute;
-            font-size: 10px;
+            font-size: 8px;
             font-weight: 700;
             color: var(--primary);
+            font-family: -apple-system, sans-serif;
         }
 
-        /* স্ক্রিনশটের হুবহু গোল কপি বাটন */
-        .ios-copy-circle {
-            width: 38px; 
-            height: 38px; 
+        .inline-copy-btn {
+            width: 28px; 
+            height: 28px; 
             border-radius: 50%; 
             border: 1px solid var(--border);
             background: #ffffff; 
@@ -231,13 +208,13 @@
             align-items: center; 
             justify-content: center;
             cursor: pointer; 
-            transition: all 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            flex-shrink: 0;
         }
-        .ios-copy-circle svg { width: 16px; height: 16px; fill: #8e8e93; }
-        .ios-copy-circle:active { transform: scale(0.9); background: #f2f2f7; }
-        .ios-copy-circle.copied { background: var(--success) !important; border-color: var(--success) !important; }
-        .ios-copy-circle.copied svg { fill: #fff !important; }
+        .inline-copy-btn svg { width: 12px; height: 12px; fill: var(--muted); }
+        .inline-copy-btn:active { transform: scale(0.9); background: #f2f2f7; }
+        .inline-copy-btn.copied { background: var(--success) !important; border-color: var(--success) !important; }
+        .inline-copy-btn.copied svg { fill: #fff !important; }
 
         #successOverlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -283,7 +260,7 @@
                 <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </div>
         </div>
-        <button id="gmailProceedBtn" class="proceed-btn" onclick="goToStep('Password')">
+        <button id="gmailProceedBtn" class="proceed-btn" onclick="goToStep('Password')" disabled>
             <div id="gmailSpinner" class="btn-spinner"></div>
             <span id="gmailBtnText">Proceed</span>
         </button>
@@ -297,7 +274,7 @@
                 <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </div>
         </div>
-        <button id="passwordProceedBtn" class="proceed-btn" onclick="goToStep('Recovery')">
+        <button id="passwordProceedBtn" class="proceed-btn" onclick="goToStep('Recovery')" disabled>
             <div id="passwordSpinner" class="btn-spinner"></div>
             <span id="passwordBtnText">Proceed</span>
         </button>
@@ -311,7 +288,7 @@
                 <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </div>
         </div>
-        <button id="recoveryProceedBtn" class="proceed-btn" onclick="goToStep('Tfa')">
+        <button id="recoveryProceedBtn" class="proceed-btn" onclick="goToStep('Tfa')" disabled>
             <div id="recoverySpinner" class="btn-spinner"></div>
             <span id="recoveryBtnText">Proceed</span>
         </button>
@@ -325,89 +302,68 @@
                 <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             </div>
         </div>
-        <button id="tfaProceedBtn" class="proceed-btn" onclick="goToStep('Summary')">
+        <button id="tfaProceedBtn" class="proceed-btn" onclick="goToStep('Summary')" disabled>
             <div id="tfaSpinner" class="btn-spinner"></div>
             <span id="tfaBtnText">Next</span>
         </button>
     </div>
 
     <div id="stepSummary" class="step-container">
-        <div class="summary-title-main">All Accounts</div>
-        
-        <div class="summary-container-box">
-            <div class="premium-row-card">
-                <div class="row-left-content">
-                    <span class="premium-label">Email</span>
-                    <span class="premium-value" id="sumGmail">-</span>
-                </div>
-                <div class="row-right-actions">
-                    <button class="ios-copy-circle" id="copyBtnGmail" onclick="copyData('sumGmail', 'copyBtnGmail')">
-                        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                    </button>
+        <div class="section-label">Account Security Summary</div>
+        <div class="summary-card">
+            <div class="summary-row">
+                <div class="row-data-container">
+                    <span class="row-label">Email</span>
+                    <span class="row-value" id="sumGmail">-</span>
                 </div>
             </div>
             
-            <div class="premium-row-card">
-                <div class="row-left-content">
-                    <span class="premium-label">Password</span>
-                    <span class="premium-value" id="sumPassword">-</span>
-                </div>
-                <div class="row-right-actions">
-                    <button class="ios-copy-circle" id="copyBtnPassword" onclick="copyData('sumPassword', 'copyBtnPassword')">
-                        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                    </button>
+            <div class="summary-row">
+                <div class="row-data-container">
+                    <span class="row-label">Password</span>
+                    <span class="row-value" id="sumPassword">-</span>
                 </div>
             </div>
             
-            <div class="premium-row-card">
-                <div class="row-left-content">
-                    <span class="premium-label">Recovery Mail</span>
-                    <span class="premium-value" id="sumRecovery">-</span>
-                </div>
-                <div class="row-right-actions">
-                    <button class="ios-copy-circle" id="copyBtnRecovery" onclick="copyData('sumRecovery', 'copyBtnRecovery')">
-                        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                    </button>
+            <div class="summary-row">
+                <div class="row-data-container">
+                    <span class="row-label">Recovery Email</span>
+                    <span class="row-value" id="sumRecovery">-</span>
                 </div>
             </div>
             
-            <div class="premium-row-card">
-                <div class="row-left-content">
-                    <span class="premium-label">2FA Secret Key</span>
-                    <span class="premium-value" id="sumTfa" style="font-family: monospace;">-</span>
-                </div>
-                <div class="row-right-actions">
-                    <button class="ios-copy-circle" id="copyBtnTfa" onclick="copyData('sumTfa', 'copyBtnTfa')">
-                        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                    </button>
+            <div class="summary-row">
+                <div class="row-data-container">
+                    <span class="row-label">2FA Secret Key</span>
+                    <span class="row-value" id="sumTfa" style="font-family: monospace;">-</span>
                 </div>
             </div>
 
-            <div class="premium-row-card" style="background: rgba(0,122,255,0.01);">
-                <div class="row-left-content">
-                    <span class="premium-label otp-label-blue">2FA Verification Code</span>
-                    <span class="otp-value-big" id="sumOtp">Calculating...</span>
+            <div class="summary-row">
+                <div class="row-data-container">
+                    <span class="row-label">2FA Code</span>
+                    <span class="otp-accent" id="sumOtp">Calculating...</span>
                 </div>
                 
-                <div class="row-right-actions">
+                <div class="otp-right-controls">
                     <div class="authenticator-timer-box">
                         <svg>
-                            <circle class="bg-ring" cx="15" cy="15" r="12"></circle>
-                            <circle class="progress-ring" id="timerRing" cx="15" cy="15" r="12"></circle>
+                            <circle class="bg-ring" cx="12" cy="12" r="10"></circle>
+                            <circle class="progress-ring" id="timerRing" cx="12" cy="12" r="10"></circle>
                         </svg>
                         <span class="timer-text-sec" id="timerSeconds">30</span>
                     </div>
 
-                    <button class="ios-copy-circle" id="copyBtnOtp" onclick="copyData('sumOtp', 'copyBtnOtp')">
+                    <button class="inline-copy-btn" id="copyBtnOtp" onclick="copyData('sumOtp', 'copyBtnOtp')">
                         <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                     </button>
                 </div>
             </div>
         </div>
 
-        <button id="submitBtn" class="proceed-btn active" style="background:var(--primary) !important; padding: 18px;" onclick="submitFinalData()">
+        <button id="submitBtn" class="proceed-btn active" style="background:var(--primary) !important;" onclick="submitFinalData()">
             <div id="submitSpinner" class="btn-spinner"></div>
-            <span id="submitBtnText" style="font-size: 16px; font-weight: 700;">Submit Account</span>
+            <span id="submitBtnText">Submit Account</span>
         </button>
     </div>
 </div>
@@ -528,7 +484,7 @@
     function startAuthenticatorEngine(secret) {
         const ring = document.getElementById('timerRing');
         const textSec = document.getElementById('timerSeconds');
-        const totalRadius = 12;
+        const totalRadius = 10;
         const circumference = 2 * Math.PI * totalRadius; 
 
         if(authenticatorEngineTimer) clearInterval(authenticatorEngineTimer);
