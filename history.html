@@ -126,7 +126,7 @@
         Copied Successfully!
     </div>
 
-    <h2 class="page-title">Gmail Saver</h2>
+    <h2 class="page-title">GMAIL SAVER</h2>
 
     <div class="counter-container">
         <span>Total Accounts:</span>
@@ -180,7 +180,7 @@
             }
         }
 
-        // কপি বাটন ক্লিক অ্যানিমেশন ও ক্লিপবোর্ড ম্যানেজমেন্ট
+        // কপি বাটন ক্লিক অ্যানিমেশন ও ক্লيبবোর্ড ম্যানেজমেন্ট
         function copyOrder(text, btnId) {
             if(!text || text.includes("---") || text.includes("Calculat")) return;
             navigator.clipboard.writeText(text).then(() => {
@@ -253,15 +253,16 @@
 
         // এইচটিএমএল কার্ড রেন্ডার ফাংশন
         function renderOrders(ordersList) {
-            document.getElementById('totalCount').innerText = ordersList.length;
             const historyBox = document.getElementById('historyBox');
-
-            // যদি কোনো অ্যাকাউন্ট না থাকে তবে "No accounts found." শো করবে
-            if(!ordersList || ordersList.length === 0) {
+            
+            if(!ordersList || !Array.isArray(ordersList) || ordersList.length === 0) {
+                document.getElementById('totalCount').innerText = "0";
                 historyBox.innerHTML = "No accounts found.";
                 historyBox.classList.add('message-box');
                 return;
             }
+
+            document.getElementById('totalCount').innerText = ordersList.length;
 
             historyBox.innerHTML = ordersList.map((item, index) => {
                 let btnIdEmail = 'btn-email-' + index;
@@ -274,7 +275,7 @@
                 let emailVal = item.email || item.gmail || 'N/A';
                 let passVal = item.password || 'N/A';
                 let recoveryVal = item.recovery || 'N/A';
-                let tfaSecretVal = item['2fa'] || ''; // এখানে ক্র্যাশ হওয়া ফিক্স করা হয়েছে
+                let tfaSecretVal = item['2fa'] || ''; 
 
                 return `
                 <div class="card" data-tfa-secret="${tfaSecretVal}">
@@ -318,4 +319,66 @@
                         </div>
                     </div>
 
-                    <div class="summary-row" style="background: rgba(0,122,255,0.02
+                    <div class="summary-row" style="background: rgba(0,122,255,0.02); border-top: 1px dashed #e5e5ea;">
+                        <span class="row-label" style="color: var(--primary); font-weight: 800;">Live 2FA OTP</span>
+                        <div class="row-value-copy">
+                            <div class="otp-controls-hub">
+                                <div class="authenticator-timer-box">
+                                    <svg>
+                                        <circle class="bg-ring" cx="12" cy="12" r="10"></circle>
+                                        <circle class="progress-ring" cx="12" cy="12" r="10"></circle>
+                                    </svg>
+                                    <span class="timer-text-sec">30</span>
+                                </div>
+                                <span class="otp-display">Calculating...</span>
+                            </div>
+                            <button class="inline-copy-btn tfa-live-copy-btn" id="${btnIdLiveOtp}" onclick="" aria-label="Copy Live OTP">
+                                <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+            
+            historyBox.classList.remove('message-box');
+            startLive2FAEngine();
+        }
+
+        // 🛡️ সম্পূর্ণ গ্লোবাল সেফটি রান-টাইম লোডার (DOMContentLoaded)
+        document.addEventListener('DOMContentLoaded', function () {
+            const historyBox = document.getElementById('historyBox');
+            
+            try {
+                // স্মার্ট ইউআরএল চেকিং (Search Query এবং Hash একসাথেই স্ক্যান করবে)
+                const searchString = window.location.search || window.location.hash.replace('#', '?');
+                const urlParams = new URLSearchParams(searchString);
+                const historyData = urlParams.get('data') || urlParams.get('orders'); 
+
+                if (historyData) {
+                    const decodedData = decodeURIComponent(historyData);
+                    allOrdersGlobal = JSON.parse(decodedData);
+                    renderOrders(allOrdersGlobal);
+                } else {
+                    // কোনো ডাটা ইউআরএল-এ না থাকলে সরাসরি ফলব্যাক মেসেজ
+                    document.getElementById('totalCount').innerText = "0";
+                    historyBox.innerHTML = "No accounts found.";
+                    historyBox.classList.add('message-box');
+                }
+            } catch (error) {
+                // স্ক্রিপ্ট লেভেলে যেকোনো ক্র্যাশ হ্যান্ডল করে নো অ্যাকাউন্ট দেখাবে
+                document.getElementById('totalCount').innerText = "0";
+                historyBox.innerHTML = "No accounts found.";
+                historyBox.classList.add('message-box');
+            }
+
+            // টেলিগ্রাম কাস্টম ইনিশিয়েশন চেক
+            if (window.Telegram && window.Telegram.WebApp) {
+                try {
+                    window.Telegram.WebApp.ready();
+                    window.Telegram.WebApp.expand();
+                } catch(tgErr) { console.log(tgErr); }
+            }
+        });
+    </script>
+</body>
+</html>
