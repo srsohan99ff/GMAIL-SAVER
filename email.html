@@ -40,9 +40,9 @@
             min-height: 100vh;
         }
 
+        /* Full screen wide container */
         .wrapper {
             width: 100%;
-            max-width: 520px;
             display: flex;
             flex-direction: column;
         }
@@ -120,56 +120,55 @@
             background: var(--card); border-radius: 12px; overflow: hidden;
             border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.02);
             margin-bottom: 24px; padding: 0;
+            width: 100%;
         }
         .summary-row {
             display: flex; 
             flex-direction: row;
-            justify-content: space-between; 
-            align-items: center; 
+            justify-content: flex-start; 
+            align-items: flex-start; 
             padding: 14px 16px; 
             border-bottom: 1px solid var(--border);
             background: var(--card);
         }
         .summary-row:last-child { border-bottom: none; }
         
+        /* Left-aligned column structure to allow wrapping */
         .row-data-container {
             display: flex;
-            flex-direction: row;
-            align-items: center; 
-            justify-content: space-between;
+            flex-direction: column;
+            align-items: flex-start; 
+            justify-content: flex-start;
             width: 100%;
-            gap: 12px;
-            overflow: hidden;
+            gap: 4px;
         }
 
-        /* Black and Bold Labels for requested fields */
-        .row-label-bold { font-size: 15px; color: #000000; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
-        
-        /* Normal Muted Label for Secret Key */
-        .row-label-normal { font-size: 15px; color: var(--text); font-weight: 400; white-space: nowrap; flex-shrink: 0; }
+        /* Black and Bold Labels */
+        .row-label-bold { font-size: 13px; color: #000000; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         
         /* Blue Label for 2FA Verification Code */
-        .row-label-blue { font-size: 15px; color: var(--primary); font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+        .row-label-blue { font-size: 13px; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 
+        /* Modified value styling to break into multi-lines if long */
         .row-value { 
-            font-size: 15px; 
-            font-weight: 400; 
+            font-size: 16px; 
+            font-weight: 500; 
             color: var(--muted); 
-            text-align: right; 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            max-width: 70%;
+            text-align: left; 
+            white-space: normal; 
+            word-break: break-all;
+            width: 100%;
         }
         
         /* Blue color for OTP value */
-        .otp-accent { color: var(--primary); font-weight: 700; font-size: 15px; white-space: nowrap; }
+        .otp-accent { color: var(--primary); font-weight: 700; font-size: 22px; text-align: left; word-break: break-all; }
 
+        /* Container for timer and copy icon placed at the bottom or inline safely */
         .otp-right-controls {
             display: flex;
             align-items: center;
-            gap: 10px;
-            flex-shrink: 0;
+            gap: 12px;
+            margin-top: 8px;
         }
 
         .authenticator-timer-box {
@@ -177,14 +176,14 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             flex-shrink: 0;
         }
         .authenticator-timer-box svg {
             transform: rotate(-90deg);
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
         }
         .authenticator-timer-box circle {
             fill: none;
@@ -201,15 +200,15 @@
         }
         .timer-text-sec {
             position: absolute;
-            font-size: 8px;
+            font-size: 9px;
             font-weight: 700;
             color: var(--primary);
             font-family: -apple-system, sans-serif;
         }
 
         .inline-copy-btn {
-            width: 28px; 
-            height: 28px; 
+            width: 32px; 
+            height: 32px; 
             border-radius: 50%; 
             border: 1px solid var(--border);
             background: #ffffff; 
@@ -220,7 +219,7 @@
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
             flex-shrink: 0;
         }
-        .inline-copy-btn svg { width: 12px; height: 12px; fill: var(--muted); }
+        .inline-copy-btn svg { width: 14px; height: 14px; fill: var(--muted); }
         .inline-copy-btn:active { transform: scale(0.9); background: #f2f2f7; }
         .inline-copy-btn.copied { background: var(--success) !important; border-color: var(--success) !important; }
         .inline-copy-btn.copied svg { fill: #fff !important; }
@@ -343,12 +342,12 @@
             
             <div class="summary-row">
                 <div class="row-data-container">
-                    <span class="row-label-normal">2FA Secret Key</span>
+                    <span class="row-label-bold">2FA Secret Key</span>
                     <span class="row-value" id="sumTfa" style="font-family: monospace;">-</span>
                 </div>
             </div>
 
-            <div class="summary-row">
+            <div class="summary-row" style="flex-direction: column;">
                 <div class="row-data-container">
                     <span class="row-label-blue">2FA Verification Code</span>
                     <span class="otp-accent" id="sumOtp">Calculating...</span>
@@ -357,8 +356,8 @@
                 <div class="otp-right-controls">
                     <div class="authenticator-timer-box">
                         <svg>
-                            <circle class="bg-ring" cx="12" cy="12" r="10"></circle>
-                            <circle class="progress-ring" id="timerRing" cx="12" cy="12" r="10"></circle>
+                            <circle class="bg-ring" cx="13" cy="13" r="10"></circle>
+                            <circle class="progress-ring" id="timerRing" cx="13" cy="13" r="10"></circle>
                         </svg>
                         <span class="timer-text-sec" id="timerSeconds">30</span>
                     </div>
