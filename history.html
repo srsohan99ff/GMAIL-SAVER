@@ -46,8 +46,44 @@
             letter-spacing: -0.5px;
             text-transform: uppercase;
         }
+
+        /* 🔍 প্রিমিয়াম জিমেইল সার্চ বক্স স্টাইল */
+        .search-wrapper {
+            display: flex;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+            background: transparent;
+            user-select: text;
+        }
+        .search-input::placeholder { color: var(--muted); }
+        .search-btn {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            outline: none;
+            padding: 0 20px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .search-btn:active { opacity: 0.8; }
         
-        /* 👑 উপর থেকে নেমে আসা প্রিমিয়াম iOS সাকসেস নোটিফিকেশন */
+        /* 👑 উপর থেকে নেমে আসা প্রিমিয়াম iOS সাকসেস/ডিলিট নোটিফিকেশন */
         #topNotification {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: #1c1c1e; border: 1px solid #2c2c2e; color: #ffffff; 
@@ -60,12 +96,28 @@
         .toast-check { width: 18px; height: 18px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
         .toast-check svg { width: 11px; height: 11px; stroke: #fff; fill: none; stroke-width: 3; }
 
-        /* 👑 প্রিমিয়াম হোয়াইট কার্ড স্টাইল */
+        /* 👑 প্রিমিয়াম হোয়াইট কার্ড ও হেডার স্টাইল */
         .card { 
             background: var(--card); border-radius: 14px; overflow: hidden;
             border: 1px solid rgba(0, 0, 0, 0.03); box-shadow: 0 2px 6px rgba(0,0,0,0.02); 
-            margin-bottom: 16px; padding: 2px 0;
+            margin-bottom: 16px; padding-bottom: 2px;
         }
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 14px; background: rgba(0, 0, 0, 0.01);
+            border-bottom: 1px solid #f2f2f7;
+        }
+        .card-title { font-size: 11px; font-weight: 800; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; }
+        
+        /* 🗑️ প্রিমিয়াম ডিলিট বাটন */
+        .card-delete-btn {
+            background: none; border: none; color: var(--danger); font-size: 12px;
+            font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;
+            padding: 4px 8px; border-radius: 6px; transition: background 0.2s;
+        }
+        .card-delete-btn:active { background: rgba(255, 59, 48, 0.1); }
+        .card-delete-btn svg { width: 13px; height: 13px; fill: var(--danger); }
+
         .summary-row {
             display: flex; justify-content: space-between; align-items: center;
             padding: 12px 14px; border-bottom: 1px solid #f2f2f7; gap: 10px;
@@ -76,7 +128,7 @@
         .row-value-copy { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text); justify-content: flex-end; max-width: 75%; }
         .value-text { font-family: monospace; color: var(--text); word-break: break-all; text-align: right; user-select: text; }
 
-        /* 👑 গোলাকৃতির কাস্টম কপি বাটন */
+        /* 👑 কাস্টম কপি বাটন */
         .inline-copy-btn {
             width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border);
             background: #ffffff; display: flex; align-items: center; justify-content: center;
@@ -103,7 +155,7 @@
         .otp-display { font-family: monospace; color: var(--primary); font-weight: 800; font-size: 17px; letter-spacing: 0.5px; }
         .otp-controls-hub { display: flex; align-items: center; gap: 8px; }
         
-        /* ⏱️ ৩০ সেকেন্ডের রানিং সার্কেল টাইমার */
+        /* ⏱️ সার্কেল টাইমার */
         .authenticator-timer-box {
             display: flex; align-items: center; justify-content: center; position: relative; width: 24px; height: 24px; flex-shrink: 0;
         }
@@ -123,13 +175,18 @@
         <div class="toast-check">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
-        Copied Successfully!
+        <span id="notificationText">Copied Successfully!</span>
     </div>
 
     <h2 class="page-title">GMAIL SAVER</h2>
 
+    <div class="search-wrapper">
+        <input type="text" id="searchInput" class="search-input" placeholder="Enter exact Gmail to search..." onkeydown="if(event.key === 'Enter') handleGmailSearch()">
+        <button class="search-btn" onclick="handleGmailSearch()">Search</button>
+    </div>
+
     <div class="counter-container">
-        <span>Total Accounts:</span>
+        <span>Accounts Found:</span>
         <span id="totalCount" class="counter-value">0</span>
     </div>
 
@@ -139,7 +196,7 @@
         let allOrdersGlobal = [];
         let live2FAEngineTimer = null;
 
-        // ২এফএ বেস-৩২ ডিকোড হেল্পার লজিক
+        // ২এফএ বেস-৩২ ডিকোড হেল্পার
         function dec2hex(s) { return (s < 15.5 ? '0' : '') + Math.round(s).toString(16); }
         function hex2dec(s) { return parseInt(s, 16); }
         function base32tohex(base32) {
@@ -158,7 +215,7 @@
         }
         function leftpad(str, len, pad) { if (len + 1 >= str.length) { str = Array(len + 1 - str.length).join(pad) + str; } return str; }
 
-        // লাইভ TOTP বা ২এফএ ওটিপি জেনারেট করার কোর ফাংশন
+        // লাইভ TOTP ওটিপি জেনারেটর
         function getLocalTOTP(secret) {
             try {
                 if(!secret || secret.trim() === "") return "------";
@@ -180,37 +237,51 @@
             }
         }
 
-        // কপি বাটন ক্লিক অ্যানিমেশন ও ক্লيبবোর্ড ম্যানেজমেন্ট
+        // কাস্টম নোটিফিকেশন টোস্ট (সাকসেস ও অ্যালার্ট রানিং)
+        function triggerNotification(message, statusType = 'success') {
+            const notif = document.getElementById('topNotification');
+            const checkContainer = notif.querySelector('.toast-check');
+            document.getElementById('notificationText').innerText = message;
+
+            if(statusType === 'danger') {
+                checkContainer.style.background = "var(--danger)";
+                checkContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+            } else {
+                checkContainer.style.background = "var(--success)";
+                checkContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+            }
+
+            notif.classList.add('show');
+            setTimeout(() => { notif.classList.remove('show'); }, 2200);
+        }
+
+        // কপি লজিক
         function copyOrder(text, btnId) {
             if(!text || text.includes("---") || text.includes("Calculat")) return;
             navigator.clipboard.writeText(text).then(() => {
                 const btn = document.getElementById(btnId);
                 const icon = btn.querySelector('svg');
-                const notif = document.getElementById('topNotification');
                 
                 btn.classList.add('copied');
                 icon.innerHTML = '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#ffffff"/>';
-                notif.classList.add('show');
+                triggerNotification("Copied Successfully!", 'success');
                 
                 setTimeout(function() {
-                    notif.classList.remove('show'); 
                     btn.classList.remove('copied');
                     icon.innerHTML = '<path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" fill="#8e8e93"/>';
                 }, 2200);
             });
         }
 
-        // ⏱️ লাইভ ৩০ সেকেন্ড কাউন্টডাউন এবং সার্কেল প্রগ্রেস রিং ইঞ্জিন
+        // ⏱️ লাইভ ৩০ সেকেন্ড টাইমার ইঞ্জিন
         function startLive2FAEngine() {
             if(live2FAEngineTimer) clearInterval(live2FAEngineTimer);
-
             const totalRadius = 10;
             const circumference = 2 * Math.PI * totalRadius; 
 
             function updateLoop() {
                 const now = new Date();
-                const currentSeconds = now.getSeconds();
-                const remainingTime = 30 - (currentSeconds % 30);
+                const remainingTime = 30 - (now.getSeconds() % 30);
 
                 document.querySelectorAll('.card').forEach((card) => {
                     const secret = card.getAttribute('data-tfa-secret');
@@ -221,16 +292,9 @@
 
                     if (!secret || secret.trim() === "" || secret.toLowerCase() === "n/a") return;
 
-                    // প্রতি সেকেন্ডে রিয়েল-টাইম ওটিপি জেনারেট
                     const currentLiveCode = getLocalTOTP(secret);
                     if(otpSpan) otpSpan.innerText = currentLiveCode;
-
-                    // ২এফএ বাটনের কপি রানটাইম ভ্যালু সিঙ্ক
-                    if(copyBtn) {
-                        copyBtn.setAttribute('onclick', `copyOrder('${currentLiveCode}', '${copyBtn.id}')`);
-                    }
-
-                    // ৩০ সেকেন্ডের কালার রিং অ্যানিমেশন চেইঞ্জ
+                    if(copyBtn) copyBtn.setAttribute('onclick', `copyOrder('${currentLiveCode}', '${copyBtn.id}')`);
                     if(textSec) textSec.innerText = remainingTime;
                     
                     if(ring && textSec) {
@@ -241,14 +305,57 @@
                             ring.style.stroke = "var(--primary)";
                             textSec.style.color = "var(--primary)";
                         }
-                        const offsetValue = circumference - (remainingTime / 30) * circumference;
-                        ring.style.strokeDashoffset = offsetValue;
+                        ring.style.strokeDashoffset = circumference - (remainingTime / 30) * circumference;
                     }
                 });
             }
-
             updateLoop();
             live2FAEngineTimer = setInterval(updateLoop, 1000);
+        }
+
+        // 🎯 হুবহু জিমেইল সার্চ হ্যান্ডলার (Exact Match Search)
+        function handleGmailSearch() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (query === "") {
+                renderOrders(allOrdersGlobal);
+            } else {
+                const filtered = allOrdersGlobal.filter(item => {
+                    let emailVal = (item.email || item.gmail || '').trim().toLowerCase();
+                    return emailVal === query; 
+                });
+                renderOrders(filtered);
+            }
+        }
+
+        // 🗑️ অ্যাকাউন্ট ডিলিট করার মেইন কোর ফাংশন (Exact Email Match)
+        function executeDeleteAccount(targetEmail) {
+            if (!targetEmail || targetEmail === 'N/A') return;
+
+            // iOS নেটিভ স্টাইল কনফার্মেশন প্রম্পট
+            if (confirm(`Are you sure you want to delete this account?\n\n${targetEmail}`)) {
+                
+                // ১. লোকাল ভেরিয়েবল (অ্যারে) থেকে নিখুঁতভাবে রিমুভ করা
+                allOrdersGlobal = allOrdersGlobal.filter(item => {
+                    let currentMail = (item.email || item.gmail || '').trim().toLowerCase();
+                    return currentMail !== targetEmail.trim().toLowerCase();
+                });
+
+                // ২. স্ক্রিন আপডেট (সার্চ ইনপুট চেক করে রি-ফিল্টার করবে)
+                handleGmailSearch();
+
+                // ৩. লাল রঙের সাকসেসফুল ডিলিট নোটিফিকেশন প্রদর্শন
+                triggerNotification("Account Deleted Successfully!", 'danger');
+
+                // 🤖 ৪. ব্যাকগ্রাউন্ড ডাটা সিঙ্ক্রোনাইজেশন (টেলিগ্রাম বোটের জন্য)
+                if (window.Telegram && window.Telegram.WebApp) {
+                    try {
+                        window.Telegram.WebApp.sendData(JSON.stringify({
+                            action: "delete_account",
+                            email: targetEmail
+                        }));
+                    } catch(tgErr) { console.log("Telegram Bot Sync Failed:", tgErr); }
+                }
+            }
         }
 
         // এইচটিএমএল কার্ড রেন্ডার ফাংশন
@@ -271,7 +378,6 @@
                 let btnIdSecret = 'btn-secret-' + index;
                 let btnIdLiveOtp = 'btn-live-' + index;
                 
-                // 🎯 স্ক্রিনশটের কি (Keys) অনুযায়ী সেফ ব্র্যাকেট নোটেশন ম্যাপিং
                 let emailVal = item.email || item.gmail || 'N/A';
                 let passVal = item.password || 'N/A';
                 let recoveryVal = item.recovery || 'N/A';
@@ -279,11 +385,19 @@
 
                 return `
                 <div class="card" data-tfa-secret="${tfaSecretVal}">
+                    <div class="card-header">
+                        <span class="card-title">Account Info</span>
+                        <button class="card-delete-btn" onclick="executeDeleteAccount('${emailVal}')" aria-label="Delete Account">
+                            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                            Delete
+                        </button>
+                    </div>
+
                     <div class="summary-row">
                         <span class="row-label">Email</span>
                         <div class="row-value-copy">
                             <span class="value-text">${emailVal}</span>
-                            <button class="inline-copy-btn" id="${btnIdEmail}" onclick="copyOrder('${emailVal}', '${btnIdEmail}')" aria-label="Copy Email">
+                            <button class="inline-copy-btn" id="${btnIdEmail}" onclick="copyOrder('${emailVal}', '${btnIdEmail}')">
                                 <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                             </button>
                         </div>
@@ -293,7 +407,7 @@
                         <span class="row-label">Password</span>
                         <div class="row-value-copy">
                             <span class="value-text">${passVal}</span>
-                            <button class="inline-copy-btn" id="${btnIdPass}" onclick="copyOrder('${passVal}', '${btnIdPass}')" aria-label="Copy Password">
+                            <button class="inline-copy-btn" id="${btnIdPass}" onclick="copyOrder('${passVal}', '${btnIdPass}')">
                                 <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                             </button>
                         </div>
@@ -303,7 +417,7 @@
                         <span class="row-label">Recovery Mail</span>
                         <div class="row-value-copy">
                             <span class="value-text">${recoveryVal}</span>
-                            <button class="inline-copy-btn" id="${btnIdRec}" onclick="copyOrder('${recoveryVal}', '${btnIdRec}')" aria-label="Copy Recovery Mail">
+                            <button class="inline-copy-btn" id="${btnIdRec}" onclick="copyOrder('${recoveryVal}', '${btnIdRec}')">
                                 <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                             </button>
                         </div>
@@ -313,7 +427,7 @@
                         <span class="row-label">2FA Secret Key</span>
                         <div class="row-value-copy">
                             <span class="value-text" style="font-weight:700; font-size:12px; color: var(--muted);">${tfaSecretVal || 'N/A'}</span>
-                            <button class="inline-copy-btn" id="${btnIdSecret}" onclick="copyOrder('${tfaSecretVal}', '${btnIdSecret}')" aria-label="Copy Secret Key">
+                            <button class="inline-copy-btn" id="${btnIdSecret}" onclick="copyOrder('${tfaSecretVal}', '${btnIdSecret}')">
                                 <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                             </button>
                         </div>
@@ -332,7 +446,7 @@
                                 </div>
                                 <span class="otp-display">Calculating...</span>
                             </div>
-                            <button class="inline-copy-btn tfa-live-copy-btn" id="${btnIdLiveOtp}" onclick="" aria-label="Copy Live OTP">
+                            <button class="inline-copy-btn tfa-live-copy-btn" id="${btnIdLiveOtp}" onclick="">
                                 <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                             </button>
                         </div>
@@ -344,12 +458,10 @@
             startLive2FAEngine();
         }
 
-        // 🛡️ সম্পূর্ণ গ্লোবাল সেফটি রান-টাইম লোডার (DOMContentLoaded)
+        // গ্লোবাল সেফটি রান-টাইম লোডার
         document.addEventListener('DOMContentLoaded', function () {
             const historyBox = document.getElementById('historyBox');
-            
             try {
-                // স্মার্ট ইউআরএল চেকিং (Search Query এবং Hash একসাথেই স্ক্যান করবে)
                 const searchString = window.location.search || window.location.hash.replace('#', '?');
                 const urlParams = new URLSearchParams(searchString);
                 const historyData = urlParams.get('data') || urlParams.get('orders'); 
@@ -359,19 +471,16 @@
                     allOrdersGlobal = JSON.parse(decodedData);
                     renderOrders(allOrdersGlobal);
                 } else {
-                    // কোনো ডাটা ইউআরএল-এ না থাকলে সরাসরি ফলব্যাক মেসেজ
                     document.getElementById('totalCount').innerText = "0";
                     historyBox.innerHTML = "No accounts found.";
                     historyBox.classList.add('message-box');
                 }
             } catch (error) {
-                // স্ক্রিপ্ট লেভেলে যেকোনো ক্র্যাশ হ্যান্ডল করে নো অ্যাকাউন্ট দেখাবে
                 document.getElementById('totalCount').innerText = "0";
                 historyBox.innerHTML = "No accounts found.";
                 historyBox.classList.add('message-box');
             }
 
-            // টেলিগ্রাম কাস্টম ইনিশিয়েশন চেক
             if (window.Telegram && window.Telegram.WebApp) {
                 try {
                     window.Telegram.WebApp.ready();
