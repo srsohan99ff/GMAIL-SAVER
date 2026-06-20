@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>GMAIL SAVER</title>
+    <title>GMAIL SAVER - Dashboard</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/2.4.2/sha.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
@@ -47,7 +47,7 @@
             text-transform: uppercase;
         }
 
-        /* 🔍 জিমেইল সার্চ বক্স স্টাইল */
+        /* 🔍 জিমেইল সার্চ বক্স ஸ்டাইল */
         .search-wrapper {
             display: flex;
             background: var(--card);
@@ -83,16 +83,13 @@
             font-weight: 700;
             cursor: pointer;
             transition: opacity 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             min-width: 68px;
         }
         .search-btn:active { opacity: 0.8; }
         
         .spinner {
-            width: 16px;
-            height: 16px;
+            width: 16px; height: 16px;
             border: 2px solid rgba(255,255,255,0.3);
             border-top-color: #ffffff;
             border-radius: 50%;
@@ -113,18 +110,14 @@
         .skeleton-line.short { width: 35%; height: 12px; }
         .skeleton-line.medium { width: 65%; }
         .skeleton-line.long { width: 100%; }
-        .skeleton-line:last-child { margin-bottom: 0; }
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
         /* 👑 উপর থেকে নেমে আসা iOS নোটিফিকেশন */
         #topNotification {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: #1c1c1e; border: 1px solid #2c2c2e; color: #ffffff; 
             padding: 10px 22px; border-radius: 50px; font-size: 13px; font-weight: 600;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.2); z-index: 10000; 
+            box-shadow: 0 12px 24px rgba(0,0,0,0.2); z-index: 30000; 
             transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15);
             display: flex; align-items: center; gap: 10px; white-space: nowrap; pointer-events: none;
         }
@@ -205,36 +198,50 @@
         }
         .timer-text-sec { position: absolute; font-size: 8px; font-weight: 700; color: var(--primary); font-family: sans-serif; }
 
-        /* 📱 iOS Alert UI (মডাল বক্স) */
+        /* 📱 iOS Overlay System (মডাল মেইন ওভারলে) */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px); z-index: 20000;
             display: none; align-items: center; justify-content: center;
-            padding: 20px;
+            padding: 16px;
         }
         .ios-alert-box {
-            background: rgba(255, 255, 255, 0.9); width: 100%; max-width: 285px;
+            background: rgba(255, 255, 255, 0.96); width: 100%; max-width: 310px;
             border-radius: 14px; display: flex; flex-direction: column;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15); overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.18); overflow: hidden;
             animation: iosPop 0.25s cubic-bezier(0.1, 0.8, 0.25, 1);
         }
         @keyframes iosPop {
-            from { transform: scale(1.15); opacity: 0; }
+            from { transform: scale(1.12); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
-        .ios-alert-body { padding: 18px 16px; text-align: center; }
-        .ios-alert-title { font-size: 17px; font-weight: 600; color: #000000; margin-bottom: 4px; }
-        .ios-alert-subtitle { font-size: 12px; color: var(--muted); word-break: break-all; margin-bottom: 14px; font-weight: 500; }
+        .ios-alert-body { padding: 20px 16px 14px 16px; text-align: center; }
+        .ios-alert-title { font-size: 17px; font-weight: 700; color: #000000; margin-bottom: 2px; }
+        .ios-alert-subtitle { font-size: 13px; color: var(--primary); word-break: break-all; margin-bottom: 16px; font-weight: 600; font-family: monospace; }
         
-        .ios-input-group { text-align: left; margin-bottom: 10px; }
-        .ios-input-group label { font-size: 11px; font-weight: 600; color: #48484a; margin-left: 2px; display: block; margin-bottom: 3px; }
-        .ios-input-group input {
-            width: 100%; border: 1px solid #c6c6c8; background: #ffffff;
-            padding: 6px 8px; font-size: 13px; border-radius: 6px; outline: none;
-            color: #000000; user-select: text !important; -webkit-user-select: text !important;
+        /* 🍏 নতুন ইনপুট ফিল্ড বক্স স্টাইল (Premium iOS Layout) */
+        .ios-input-group { text-align: left; margin-bottom: 14px; }
+        .ios-input-group label { font-size: 11px; font-weight: 700; color: #48484a; margin-left: 2px; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px; }
+        
+        .input-card {
+            width: 100%; background: #ffffff; border: 1px solid var(--border); border-radius: 10px;
+            position: relative; display: flex; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.01);
+            transition: all 0.2s ease;
         }
+        .input-card.is-valid { border-color: var(--success) !important; box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.1) !important; }
+        .input-card.is-invalid { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.1) !important; }
+
+        .field-input { width: 100%; padding: 10px 12px; border: none; outline: none; font-size: 14px; font-weight: 500; color: var(--text); background: transparent; user-select: text !important; -webkit-user-select: text !important; }
+        .field-input::placeholder { color: #c7c7cc; }
+
+        .status-icon-wrap { display: flex; align-items: center; justify-content: center; padding-right: 10px; height: 100%; flex-shrink: 0; }
+        .status-icon-wrap svg { width: 16px; height: 16px; display: none; }
         
+        .input-card.is-valid .status-icon-wrap .tick-icon { display: block; fill: var(--success); }
+        .input-card.is-invalid .status-icon-wrap .cross-icon { display: block; fill: var(--danger); }
+
+        /* 📱 iOS বাটন স্টাইল */
         .ios-alert-buttons { display: flex; border-top: 0.5px solid #c8c8c8; }
         .ios-alert-btn {
             flex: 1; background: none; border: none; outline: none; padding: 12px;
@@ -242,6 +249,7 @@
         }
         .ios-alert-btn.cancel { border-right: 0.5px solid #c8c8c8; font-weight: 400; }
         .ios-alert-btn.save { font-weight: 600; }
+        .ios-alert-btn.danger-action { color: var(--danger) !important; font-weight: 700; }
         .ios-alert-btn:active { background: rgba(0,0,0,0.05); }
     </style>
 </head>
@@ -262,17 +270,46 @@
                 
                 <div class="ios-input-group">
                     <label>Recovery Mail</label>
-                    <input type="text" id="modalRecoveryInput" placeholder="Enter recovery email">
+                    <div id="modalRecoveryCard" class="input-card">
+                        <input type="email" id="modalRecoveryInput" class="field-input" placeholder="recovery@example.com" oninput="checkModalRecoveryLive()">
+                        <div class="status-icon-wrap">
+                            <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                            <svg class="cross-icon" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="ios-input-group">
                     <label>2FA Secret Key</label>
-                    <input type="text" id="modal2faInput" placeholder="Enter 2FA secret">
+                    <div id="modalTfaCard" class="input-card">
+                        <input type="text" id="modal2faInput" class="field-input" placeholder="Enter 16+ Character Secret" oninput="checkModalTfaLive()">
+                        <div class="status-icon-wrap">
+                            <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                            <svg class="cross-icon" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="ios-alert-buttons">
                 <button class="ios-alert-btn cancel" onclick="closeEditModal()">Cancel</button>
                 <button class="ios-alert-btn save" onclick="saveAccountEdits()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="iosDeleteModalOverlay" class="modal-overlay">
+        <div class="ios-alert-box">
+            <div class="ios-alert-body" style="padding: 24px 16px 20px 16px;">
+                <div style="margin-bottom: 12px; display: flex; justify-content: center;">
+                    <svg viewBox="0 0 24 24" style="width: 42px; height: 42px; fill: var(--danger);"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                </div>
+                <div class="ios-alert-title" style="font-size:18px; font-weight:800; color:var(--text)">Delete Account?</div>
+                <div class="ios-alert-subtitle" id="deleteTargetEmail" style="color:var(--muted); font-size:13px; font-weight:600; margin-top:4px; margin-bottom:8px;">email@gmail.com</div>
+                <p style="font-size: 12px; color: #8e8e93; line-height: 1.4; font-weight: 500;">Are you sure you want to delete this account? This action cannot be reverted.</p>
+            </div>
+            <div class="ios-alert-buttons">
+                <button class="ios-alert-btn cancel" onclick="closeDeleteModal()" style="font-weight: 600;">Cancel</button>
+                <button class="ios-alert-btn danger-action" onclick="confirmDeleteAccount()">Delete</button>
             </div>
         </div>
     </div>
@@ -308,6 +345,7 @@
         let allOrdersGlobal = [];
         let live2FAEngineTimer = null;
         let currentEditingEmail = null;
+        let currentDeletingEmail = null;
 
         // ২এফএ ক্যালকুলেশন ফাংশনসমূহ
         function dec2hex(s) { return (s < 15.5 ? '0' : '') + Math.round(s).toString(16); }
@@ -383,6 +421,42 @@
             });
         }
 
+        // এডিট মডাল লাইভ চেক রুলস (Recovery Email Check)
+        function checkModalRecoveryLive() {
+            const input = document.getElementById('modalRecoveryInput');
+            const card = document.getElementById('modalRecoveryCard');
+            const val = input.value.trim();
+            
+            if (val !== "" && val.includes('@') && val.includes('.')) {
+                card.classList.add('is-valid');
+                card.classList.remove('is-invalid');
+            } else if (val === "") {
+                card.classList.remove('is-valid');
+                card.classList.remove('is-invalid');
+            } else {
+                card.classList.remove('is-valid');
+                card.classList.add('is-invalid');
+            }
+        }
+
+        // এডিট মডাল লাইভ চেক রুলস (2FA Secret Key Check)
+        function checkModalTfaLive() {
+            const input = document.getElementById('modal2faInput');
+            const card = document.getElementById('modalTfaCard');
+            const val = input.value.trim().replace(/\s+/g, "");
+            
+            if (val.length >= 16) {
+                card.classList.add('is-valid');
+                card.classList.remove('is-invalid');
+            } else if (val === "") {
+                card.classList.remove('is-valid');
+                card.classList.remove('is-invalid');
+            } else {
+                card.classList.remove('is-valid');
+                card.classList.add('is-invalid');
+            }
+        }
+
         // Live 2FA Dynamic Animation Loop
         function startLive2FAEngine() {
             if(live2FAEngineTimer) clearInterval(live2FAEngineTimer);
@@ -452,8 +526,12 @@
 
             currentEditingEmail = targetEmail;
             document.getElementById('modalTargetEmail').innerText = targetEmail;
-            document.getElementById('modalRecoveryInput').value = account.recovery || '';
-            document.getElementById('modal2faInput').value = account['2fa'] || '';
+            document.getElementById('modalRecoveryInput').value = account.recovery && account.recovery !== 'N/A' ? account.recovery : '';
+            document.getElementById('modal2faInput').value = account['2fa'] && account['2fa'] !== 'N/A' ? account['2fa'] : '';
+            
+            // মডাল ওপেন হওয়ার সাথে সাথেই লাইভ ভ্যালিডেশন চেক রান হবে
+            checkModalRecoveryLive();
+            checkModalTfaLive();
             
             document.getElementById('iosModalOverlay').style.display = 'flex';
         }
@@ -480,7 +558,6 @@
             closeEditModal();
             triggerNotification("Account Updated Successfully!", 'success');
 
-            // বোটের ব্যাকএন্ডে রিয়েল-টাইম ডাটা সিঙ্ক করার ট্রিগার
             if (window.Telegram && window.Telegram.WebApp) {
                 try {
                     window.Telegram.WebApp.sendData(JSON.stringify({
@@ -493,23 +570,35 @@
             }
         }
 
+        // 🗑️ কাস্টম ডিলিট ক্লিক লজিক
         function executeDeleteAccount(targetEmail) {
             if (!targetEmail) return;
+            currentDeletingEmail = targetEmail;
+            document.getElementById('deleteTargetEmail').innerText = targetEmail;
+            document.getElementById('iosDeleteModalOverlay').style.display = 'flex';
+        }
 
-            if (confirm(`Are you sure you want to delete this account?\n\n${targetEmail}`)) {
-                allOrdersGlobal = allOrdersGlobal.filter(item => (item.email || '').trim().toLowerCase() !== targetEmail.trim().toLowerCase());
-                renderOrders(allOrdersGlobal);
-                triggerNotification("Account Deleted Successfully!", 'danger');
+        function closeDeleteModal() {
+            document.getElementById('iosDeleteModalOverlay').style.display = 'none';
+            currentDeletingEmail = null;
+        }
 
-                if (window.Telegram && window.Telegram.WebApp) {
-                    try {
-                        window.Telegram.WebApp.sendData(JSON.stringify({
-                            action: "delete_account",
-                            email: targetEmail
-                        }));
-                    } catch(tgErr) { console.log(tgErr); }
-                }
+        function confirmDeleteAccount() {
+            if (!currentDeletingEmail) return;
+
+            allOrdersGlobal = allOrdersGlobal.filter(item => (item.email || '').trim().toLowerCase() !== currentDeletingEmail.trim().toLowerCase());
+            renderOrders(allOrdersGlobal);
+            triggerNotification("Account Deleted Successfully!", 'danger');
+
+            if (window.Telegram && window.Telegram.WebApp) {
+                try {
+                    window.Telegram.WebApp.sendData(JSON.stringify({
+                        action: "delete_account",
+                        email: currentDeletingEmail
+                    }));
+                } catch(tgErr) { console.log(tgErr); }
             }
+            closeDeleteModal();
         }
 
         // ডাটা রেন্ডারিং ইঞ্জিন
@@ -623,14 +712,13 @@
                         allOrdersGlobal = JSON.parse(decodedData);
                         renderOrders(allOrdersGlobal);
                     } else {
-                        // যদি লিংক খালি থাকে তবে শিমার বন্ধ হয়ে মেসেজ শো করবে
                         renderOrders([]);
                     }
                 } catch (error) {
                     console.error("JSON Parsing Error:", error);
                     document.getElementById('historyBox').innerHTML = '<div class="message-box" style="color:var(--danger)">❌ Invalid Data Format!<br><span style="font-size:12px; color:var(--text)">Make sure database contains valid JSON array.</span></div>';
                 }
-            }, 1000); // ১ সেকেন্ড সুন্দর শিমার অ্যানিমেশন দেখাবে
+            }, 1000);
 
             if (window.Telegram && window.Telegram.WebApp) {
                 try {
