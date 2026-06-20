@@ -330,7 +330,7 @@
         </div>
     </div>
 
-    <h2 class="page-title">GMAIL SAVER</h2>
+    <h2 class="page-title">Account History</h2>
 
     <div class="search-wrapper">
         <input type="text" id="searchInput" class="search-input" placeholder="Enter exact Gmail to search..." onkeydown="if(event.key === 'Enter') handleGmailSearch()">
@@ -666,7 +666,7 @@
             // ⚠️ আপডেট করা খালি স্টেট মেসেজ (বাড়তি লেখা রিমুভ করা হয়েছে)
             if(!ordersList || !Array.isArray(ordersList) || ordersList.length === 0) {
                 document.getElementById('totalCount').innerText = "0";
-                historyBox.innerHTML = '<div class="message-box">⚠️ No active accounts found.</div>';
+                historyBox.innerHTML = '<div class="message-box">No accounts found.</div>';
                 return;
             }
 
