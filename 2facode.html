@@ -117,100 +117,86 @@
         .toast-check { width: 16px; height: 16px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
         .toast-check svg { width: 10px; height: 10px; stroke: #fff; fill: none; stroke-width: 3; }
 
-        /* COMPACT IMMACULATE OUTPUT BOX */
-        .summary-card { 
-            background: var(--card); border-radius: 14px; overflow: hidden;
+        /* CENTER ALIGNED RESULT CARD */
+        .result-card {
+            background: var(--card); 
+            border-radius: 16px; 
             border: 1px solid var(--border);
-            margin-bottom: 20px; padding: 0;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             width: 100%;
-        }
-        
-        .summary-row {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 16px 16px; 
-            background: var(--card);
-        }
-        
-        .row-label-blue { 
-            font-size: 14.5px; 
-            color: var(--primary); 
-            font-weight: 600; 
-            flex-grow: 1;
-            white-space: nowrap;
+            margin-bottom: 20px;
         }
 
-        /* Large Prominent OTP Display */
-        .otp-accent { 
-            color: var(--primary); 
-            font-weight: 700; 
-            font-size: 22px; 
-            margin-right: 14px;
-            letter-spacing: 0.5px;
+        /* Large Centered OTP Text */
+        .otp-display-large {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+            text-align: center;
         }
 
-        .right-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            justify-content: flex-end;
-            flex-shrink: 0;
-        }
-
-        /* Native Circular iOS Dynamic Timer Ring */
+        /* Centered Timer Box Style */
         .authenticator-timer-box {
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            width: 24px;
-            height: 24px;
-            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            margin-bottom: 24px;
         }
         .authenticator-timer-box svg {
             transform: rotate(-90deg);
-            width: 24px;
-            height: 24px;
+            width: 36px;
+            height: 36px;
         }
         .authenticator-timer-box circle {
             fill: none;
-            stroke-width: 2.5;
+            stroke-width: 3;
         }
         .authenticator-timer-box .bg-ring {
             stroke: #e5e5ea;
         }
         .authenticator-timer-box .progress-ring {
             stroke: var(--primary);
-            stroke-dasharray: 62.8; 
+            stroke-dasharray: 87.96; /* 2 * PI * r (r=14) */
             stroke-dashoffset: 0;
             transition: stroke-dashoffset 1s linear, stroke 0.2s ease;
         }
         .timer-text-sec {
             position: absolute;
-            font-size: 8px;
+            font-size: 11px;
             font-weight: 600;
             color: var(--primary);
         }
 
-        /* Premium Circular Copy Button */
-        .inline-copy-btn {
-            width: 28px; 
-            height: 28px; 
-            border-radius: 50%; 
-            border: 1px solid var(--border);
-            background: #ffffff; 
-            display: flex; 
-            align-items: center; 
+        /* Premium Large Copy Button Layout */
+        .large-copy-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
             justify-content: center;
-            cursor: pointer; 
-            transition: all 0.15s ease; 
-            flex-shrink: 0;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.25s ease, transform 0.15s ease;
         }
-        .inline-copy-btn svg { width: 12px; height: 12px; fill: #b5b5b9; }
-        .inline-copy-btn:active { transform: scale(0.92); background: #f2f2f7; }
-        .inline-copy-btn.copied { background: var(--success) !important; border-color: var(--success) !important; }
-        .inline-copy-btn.copied svg { fill: #fff !important; }
+        .large-copy-btn:active { transform: scale(0.98); }
+        .large-copy-btn.copied {
+            background-color: var(--success) !important;
+        }
 
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
@@ -249,24 +235,23 @@
 
     <div id="stepTfaResult" class="step-container">
         <div class="section-label">Your 2FA Verification Code</div>
-        <div class="summary-card">
-            <div class="summary-row">
-                <span class="otp-accent" id="sumOtp">000000</span>
-                
-                <div class="right-controls">
-                    <div class="authenticator-timer-box">
-                        <svg>
-                            <circle class="bg-ring" cx="12" cy="12" r="10"></circle>
-                            <circle class="progress-ring" id="timerRing" cx="12" cy="12" r="10"></circle>
-                        </svg>
-                        <span class="timer-text-sec" id="timerSeconds">30</span>
-                    </div>
-
-                    <button class="inline-copy-btn" id="copyBtnOtp" onclick="copyData('sumOtp', 'copyBtnOtp')">
-                        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                    </button>
-                </div>
+        <div class="result-card">
+            
+            <div class="otp-display-large" id="sumOtp">000000</div>
+            
+            <div class="authenticator-timer-box">
+                <svg>
+                    <circle class="bg-ring" cx="18" cy="18" r="14"></circle>
+                    <circle class="progress-ring" id="timerRing" cx="18" cy="18" r="14"></circle>
+                </svg>
+                <span class="timer-text-sec" id="timerSeconds">30</span>
             </div>
+
+            <button class="large-copy-btn" id="copyBtnOtp" onclick="copyData('sumOtp', 'copyBtnOtp')">
+                <svg id="copyIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span id="copyBtnText">Copy Code</span>
+            </button>
+
         </div>
     </div>
 </div>
@@ -331,17 +316,20 @@
 
         navigator.clipboard.writeText(textToCopy).then(() => {
             const btn = document.getElementById(btnId);
-            const icon = btn.querySelector('svg');
+            const icon = document.getElementById('copyIcon');
+            const btnText = document.getElementById('copyBtnText');
             const notif = document.getElementById('topNotification');
             
             btn.classList.add('copied');
-            icon.innerHTML = '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#ffffff"/>';
+            btnText.innerText = "Copied";
+            icon.outerHTML = '<svg id="copyIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
             notif.classList.add('show');
             
             setTimeout(function() {
                 notif.classList.remove('show'); 
                 btn.classList.remove('copied');
-                icon.innerHTML = '<svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>';
+                document.getElementById('copyBtnText').innerText = "Copy Code";
+                document.getElementById('copyIcon').outerHTML = '<svg id="copyIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
             }, 2000);
         });
     }
@@ -349,7 +337,7 @@
     function startAuthenticatorEngine(secret) {
         const ring = document.getElementById('timerRing');
         const textSec = document.getElementById('timerSeconds');
-        const totalRadius = 10;
+        const totalRadius = 14;
         const circumference = 2 * Math.PI * totalRadius; 
 
         if(authenticatorEngineTimer) clearInterval(authenticatorEngineTimer);
