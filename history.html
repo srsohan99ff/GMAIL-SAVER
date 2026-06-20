@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Saved Accounts - iOS Gateway</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/2.4.2/sha.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f2f2f7;          
+            --card: #ffffff;        
+            --border: #e5e5ea;      
+            --text: #000000;        
+            --muted: #8e8e93;       
+            --success: #34c759;     
+            --danger: #ff3b30;
+            --primary: #007aff;     
+            --font: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font);
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body { 
+            background-color: var(--bg); 
+            padding: 20px 16px; 
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 24px;
+        }
+        h1.brand-title { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; text-transform: uppercase; }
+        .brand-subtitle { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+
+        .summary-card { 
+            background: var(--card); border-radius: 14px; overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: 0 2px 8px rgba(0,0,0,0.04); 
+            margin-bottom: 20px; padding: 2px 0;
+            animation: fadeUp 0.4s ease-out forwards;
+            opacity: 0; transform: translateY(10px);
+        }
+        
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        .summary-header { 
+            background: rgba(118, 118, 128, 0.07); padding: 14px 16px; font-size: 14px; 
+            font-weight: 800; color: #1c1c1e; word-break: break-all;
+            border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px;
+        }
+        .summary-header svg { width: 18px; height: 18px; fill: var(--primary); flex-shrink: 0; }
+        
+        .summary-row {
+            display: flex; flex-direction: row; justify-content: space-between; 
+            align-items: center; padding: 12px 16px; border-bottom: 1px solid #f2f2f7; gap: 12px;
+        }
+        .summary-row:last-child { border-bottom: none; }
+        
+        .row-data-container { display: flex; flex-direction: row; align-items: center; justify-content: space-between; width: 100%; gap: 12px; }
+
+        .row-label { font-size: 13px; color: var(--muted); font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+        .row-value { font-size: 14px; font-weight: 600; color: #3a3a3c; text-align: right; word-break: break-all; }
+        
+        .otp-accent { color: var(--primary); font-weight: 800; font-size: 18px; letter-spacing: 1px; }
+
+        .otp-right-controls { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+
+        .authenticator-timer-box {
+            display: flex; align-items: center; justify-content: center; position: relative; width: 28px; height: 28px; flex-shrink: 0;
+        }
+        .authenticator-timer-box svg { transform: rotate(-90deg); width: 28px; height: 28px; }
+        .authenticator-timer-box circle { fill: none; stroke-width: 3; }
+        .authenticator-timer-box .bg-ring { stroke: #e5e5ea; }
+        .authenticator-timer-box .progress-ring {
+            stroke: var(--primary); stroke-dasharray: 75.4; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
+        }
+        .timer-text-sec { position: absolute; font-size: 9px; font-weight: 700; color: var(--primary); }
+
+        .inline-copy-btn {
+            width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border);
+            background: #ffffff; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .inline-copy-btn svg { width: 14px; height: 14px; fill: var(--muted); }
+        .inline-copy-btn:active { transform: scale(0.88); background: #f2f2f7; }
+        .inline-copy-btn.copied { background: var(--success) !important; border-color: var(--success) !important; }
+        .inline-copy-btn.copied svg { fill: #fff !important; }
+
+        #topNotification {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: #1c1c1e; border: 1px solid #2c2c2e; color: #ffffff; 
+            padding: 12px 24px; border-radius: 50px; font-size: 14px; font-weight: 600;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.2); z-index: 10000; 
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+            display: flex; align-items: center; gap: 10px; white-space: nowrap; pointer-events: none;
+        }
+        #topNotification.show { top: 20px; }
+        .toast-check { width: 18px; height: 18px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
+        .toast-check svg { width: 11px; height: 11px; stroke: #fff; fill: none; stroke-width: 3; }
+        
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 15px; font-weight: 600; display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="topNotification">
+        <div class="toast-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        Copied Successfully!
+    </div>
+
+<div class="wrapper">
+    <div class="brand-header">
+        <h1 class="brand-title">Account History</h1>
+        <div class="brand-subtitle">Synchronized Vault</div>
+    </div>
+
+    <div id="accountsContainer"></div>
+    <div id="emptyState" class="empty-state">No accounts found in history.</div>
+</div>
+
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.ready(); tg.expand();
+
+    // ==========================================
+    // 📂 BotBusiness থেকে ডেটা ইম্পোর্ট করার ডেমো
+    // আপনার বটের BJS থেকে "All Account" প্রপার্টি ফেচ করে এই অ্যারেতে পাস করবেন
+    // ==========================================
+    const savedAccountsList = [
+        { email: "user1@gmail.com", password: "Password@123", recovery: "rec1@yahoo.com", "2fa": "JBSWY3DPEHPK3PXP" },
+        { email: "admin.pro@gmail.com", password: "AdminSecure99!", recovery: "backup@pro.com", "2fa": "ONSWG4TFOQ======" }
+    ];
+
+    // ==========================================
+    // ⚙️ TOTP লজিক (আপনার দেওয়া কোড)
+    // ==========================================
+    function dec2hex(s) { return (s < 15.5 ? '0' : '') + Math.round(s).toString(16); }
+    function hex2dec(s) { return parseInt(s, 16); }
+    function base32tohex(base32) {
+        let base32chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+        let bits = ""; let hex = "";
+        for (let i = 0; i < base32.length; i++) {
+            let val = base32chars.indexOf(base32.charAt(i).toUpperCase());
+            bits += leftpad(val.toString(2), 5, '0');
+        }
+        for (let i = 0; i + 4 <= bits.length; i += 4) {
+            let chunk = bits.substr(i, 4);
+            hex = hex + parseInt(chunk, 2).toString(16);
+        }
+        return hex;
+    }
+    function leftpad(str, len, pad) { if (len + 1 >= str.length) { str = Array(len + 1 - str.length).join(pad) + str; } return str; }
+
+    function getLocalTOTP(secret) {
+        try {
+            let key = base32tohex(secret.toUpperCase().replace(/\s+/g, ""));
+            let epoch = Math.round(new Date().getTime() / 1000.0);
+            let time = leftpad(dec2hex(Math.floor(epoch / 30)), 16, '0');
+            
+            let shaObj = new jsSHA("SHA-1", "HEX");
+            shaObj.setHMACKey(key, "HEX");
+            shaObj.update(time);
+            let hmac = shaObj.getHMAC("HEX");
+            
+            let offset = hex2dec(hmac.substring(hmac.length - 1));
+            let otp = (hex2dec(hmac.substr(offset * 2, 8)) & hex2dec('7fffffff')) + '';
+            otp = otp.substr(otp.length - 6, 6);
+            return leftpad(otp, 6, '0');
+        } catch (err) {
+            return "Invalid";
+        }
+    }
+
+    // ==========================================
+    // 🎨 UI রেন্ডারিং ফাংশন
+    // ==========================================
+    function renderAccounts() {
+        const container = document.getElementById('accountsContainer');
+        const emptyState = document.getElementById('emptyState');
+
+        if (savedAccountsList.length === 0) {
+            emptyState.style.display = 'block';
+            return;
+        }
+
+        savedAccountsList.forEach((acc, index) => {
+            const safeSecret = acc["2fa"] ? acc["2fa"].toUpperCase().replace(/\s+/g, "") : "";
+            
+            const cardHTML = `
+            <div class="summary-card" style="animation-delay: ${index * 0.1}s" data-secret="${safeSecret}">
+                <div class="summary-header">
+                    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    ${acc.email || "Unknown Email"}
+                </div>
+                
+                <div class="summary-row">
+                    <span class="row-label">Password</span>
+                    <span class="row-value">${acc.password || "N/A"}</span>
+                </div>
+                
+                <div class="summary-row">
+                    <span class="row-label">Recovery</span>
+                    <span class="row-value">${acc.recovery || "N/A"}</span>
+                </div>
+                
+                <div class="summary-row">
+                    <span class="row-label">Secret Key</span>
+                    <span class="row-value" style="font-family: monospace; font-size: 13px;">${acc["2fa"] || "N/A"}</span>
+                </div>
+
+                <div class="summary-row" style="background: rgba(0,122,255,0.03);">
+                    <div class="row-data-container">
+                        <span class="row-label" style="color:var(--text);">Live 2FA</span>
+                        <span class="otp-accent sumOtp" id="otp-${index}">------</span>
+                    </div>
+                    
+                    <div class="otp-right-controls">
+                        <div class="authenticator-timer-box">
+                            <svg>
+                                <circle class="bg-ring" cx="14" cy="14" r="12"></circle>
+                                <circle class="progress-ring" cx="14" cy="14" r="12"></circle>
+                            </svg>
+                            <span class="timer-text-sec">30</span>
+                        </div>
+
+                        <button class="inline-copy-btn" onclick="copyData('otp-${index}', this)">
+                            <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            `;
+            container.insertAdjacentHTML('beforeend', cardHTML);
+        });
+
+        // কার্ড রেন্ডার হওয়ার পর টাইমার চালু করা হচ্ছে
+        startGlobalAuthenticatorEngine();
+    }
+
+    // ==========================================
+    // ⏱️ গ্লোবাল টাইমার সিঙ্ক্রোনাইজেশন
+    // ==========================================
+    function startGlobalAuthenticatorEngine() {
+        const totalRadius = 12;
+        const circumference = 2 * Math.PI * totalRadius; 
+
+        function updateAllCards() {
+            const now = new Date();
+            const currentSeconds = now.getSeconds();
+            const remainingTime = 30 - (currentSeconds % 30);
+            const offsetValue = circumference - (remainingTime / 30) * circumference;
+
+            document.querySelectorAll('.summary-card').forEach(card => {
+                const secret = card.getAttribute('data-secret');
+                if (!secret || secret === "N/A") return;
+
+                const ring = card.querySelector('.progress-ring');
+                const textSec = card.querySelector('.timer-text-sec');
+                const otpDisplay = card.querySelector('.sumOtp');
+
+                textSec.innerText = remainingTime;
+                ring.style.strokeDashoffset = offsetValue;
+
+                // কালার চেঞ্জ (শেষ ৫ সেকেন্ডে লাল হবে)
+                if(remainingTime <= 5) {
+                    ring.style.stroke = "var(--danger)";
+                    textSec.style.color = "var(--danger)";
+                } else {
+                    ring.style.stroke = "var(--primary)";
+                    textSec.style.color = "var(--primary)";
+                }
+
+                // যখন সময় ৩০ বা ২৯ হবে, অথবা কার্ডে কোনো ওটিপি না থাকবে, তখন নতুন জেনারেট হবে
+                if (remainingTime === 30 || remainingTime === 29 || otpDisplay.innerText === "------") {
+                    let liveOtp = getLocalTOTP(secret);
+                    otpDisplay.innerText = liveOtp;
+                }
+            });
+        }
+
+        // প্রথমে একবার রান করা হবে
+        updateAllCards();
+        // এরপর প্রতি ১ সেকেন্ড পর পর লুপ চলবে
+        setInterval(updateAllCards, 1000);
+    }
+
+    // ==========================================
+    // 📋 কপি ফাংশন
+    // ==========================================
+    function copyData(elementId, btnElement) {
+        const textToCopy = document.getElementById(elementId).innerText;
+        if(textToCopy.includes("-") || textToCopy === "Invalid") return;
+
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const icon = btnElement.querySelector('svg');
+            const notif = document.getElementById('topNotification');
+            
+            btnElement.classList.add('copied');
+            icon.innerHTML = '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#ffffff"/>';
+            notif.classList.add('show');
+            
+            setTimeout(function() {
+                notif.classList.remove('show'); 
+                btnElement.classList.remove('copied');
+                icon.innerHTML = '<path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>';
+            }, 2000);
+        });
+    }
+
+    // স্ক্রিপ্ট রান
+    renderAccounts();
+</script>
+</body>
+</html>
