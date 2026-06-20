@@ -115,7 +115,7 @@
         .toast-check { width: 18px; height: 18px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
         .toast-check svg { width: 11px; height: 11px; stroke: #fff; fill: none; stroke-width: 3; }
 
-        /* SUMMARY PAGE OPTIMIZATION FOR SINGLE LINE SCREENSHOT ACCURACY */
+        /* SUMMARY PAGE STYLES */
         .summary-card { 
             background: var(--card); border-radius: 12px; overflow: hidden;
             border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.02);
@@ -142,7 +142,15 @@
             overflow: hidden;
         }
 
-        .row-label { font-size: 15px; color: var(--text); font-weight: 400; white-space: nowrap; flex-shrink: 0; }
+        /* Black and Bold Labels for requested fields */
+        .row-label-bold { font-size: 15px; color: #000000; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+        
+        /* Normal Muted Label for Secret Key */
+        .row-label-normal { font-size: 15px; color: var(--text); font-weight: 400; white-space: nowrap; flex-shrink: 0; }
+        
+        /* Blue Label for 2FA Verification Code */
+        .row-label-blue { font-size: 15px; color: var(--primary); font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+
         .row-value { 
             font-size: 15px; 
             font-weight: 400; 
@@ -154,7 +162,8 @@
             max-width: 70%;
         }
         
-        .otp-accent { color: var(--primary); font-weight: 600; font-size: 15px; white-space: nowrap; }
+        /* Blue color for OTP value */
+        .otp-accent { color: var(--primary); font-weight: 700; font-size: 15px; white-space: nowrap; }
 
         .otp-right-controls {
             display: flex;
@@ -313,35 +322,35 @@
         <div class="summary-card">
             <div class="summary-row">
                 <div class="row-data-container">
-                    <span class="row-label">Email</span>
+                    <span class="row-label-bold">Email</span>
                     <span class="row-value" id="sumGmail">-</span>
                 </div>
             </div>
             
             <div class="summary-row">
                 <div class="row-data-container">
-                    <span class="row-label">Password</span>
+                    <span class="row-label-bold">Password</span>
                     <span class="row-value" id="sumPassword">-</span>
                 </div>
             </div>
             
             <div class="summary-row">
                 <div class="row-data-container">
-                    <span class="row-label">Recovery Email</span>
+                    <span class="row-label-bold">Recovery Email</span>
                     <span class="row-value" id="sumRecovery">-</span>
                 </div>
             </div>
             
             <div class="summary-row">
                 <div class="row-data-container">
-                    <span class="row-label">2FA Secret Key</span>
+                    <span class="row-label-normal">2FA Secret Key</span>
                     <span class="row-value" id="sumTfa" style="font-family: monospace;">-</span>
                 </div>
             </div>
 
             <div class="summary-row">
                 <div class="row-data-container">
-                    <span class="row-label">2FA Code</span>
+                    <span class="row-label-blue">2FA Verification Code</span>
                     <span class="otp-accent" id="sumOtp">Calculating...</span>
                 </div>
                 
