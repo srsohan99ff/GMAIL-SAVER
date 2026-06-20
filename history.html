@@ -83,9 +83,9 @@
         .row-data-container { display: flex; flex-direction: row; align-items: center; justify-content: space-between; width: 100%; gap: 12px; }
 
         .row-label { font-size: 13px; color: var(--muted); font-weight: 600; white-space: nowrap; flex-shrink: 0; }
-        .row-value { font-size: 14px; font-weight: 600; color: #3a3a3c; text-align: right; word-break: break-all; }
+        .row-value { font-size: 14px; font-weight: 600; color: #3a3a3c; text-align: left; word-break: break-all; flex-grow: 1; padding-left: 8px;}
         
-        .otp-accent { color: var(--primary); font-weight: 800; font-size: 18px; letter-spacing: 1px; }
+        .otp-accent { color: var(--primary); font-weight: 800; font-size: 18px; letter-spacing: 1px; text-align: right; flex-grow: 1; padding-right: 12px;}
 
         .otp-right-controls { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 
@@ -109,6 +109,10 @@
         .inline-copy-btn:active { transform: scale(0.88); background: #f2f2f7; }
         .inline-copy-btn.copied { background: var(--success) !important; border-color: var(--success) !important; }
         .inline-copy-btn.copied svg { fill: #fff !important; }
+
+        /* ছোট কপি বাটন প্রতি সারির জন্য */
+        .row-copy-btn { width: 28px; height: 28px; }
+        .row-copy-btn svg { width: 12px; height: 12px; }
 
         #topNotification {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
@@ -147,16 +151,23 @@
     tg.ready(); tg.expand();
 
     // ==========================================
-    // 📂 BotBusiness থেকে ডেটা ইম্পোর্ট করার ডেমো
-    // আপনার বটের BJS থেকে "All Account" প্রপার্টি ফেচ করে এই অ্যারেতে পাস করবেন
+    // 📂 ডাইনামিক JSON প্যারামিটার ইনজেকশন
+    // বটের All Account ডাটা এখানে প্লেস করবেন।
     // ==========================================
+    // উদাহরণস্বরূপ বটের প্যারামিটার এভাবে বসাবেন:
+    // const savedAccountsList = <BJS> return Bot.getProperty("All Account"); </BJS>;
+    
     const savedAccountsList = [
-        { email: "user1@gmail.com", password: "Password@123", recovery: "rec1@yahoo.com", "2fa": "JBSWY3DPEHPK3PXP" },
-        { email: "admin.pro@gmail.com", password: "AdminSecure99!", recovery: "backup@pro.com", "2fa": "ONSWG4TFOQ======" }
-    ];
+        {
+            "email": "demo.user99ff@gmail.com",
+            "password": "DEMO~PASSWORD~99",
+            "recovery": "backup017710@gmail.com",
+            "2fa": "UJFG M6WA E5WA EBCY NUXB A4WC WK4Z ZIMQ"
+        }
+    ]; // এটি টেস্টিংয়ের জন্য দেওয়া হলো।
 
     // ==========================================
-    // ⚙️ TOTP লজিক (আপনার দেওয়া কোড)
+    // ⚙️ TOTP লজিক
     // ==========================================
     function dec2hex(s) { return (s < 15.5 ? '0' : '') + Math.round(s).toString(16); }
     function hex2dec(s) { return parseInt(s, 16); }
@@ -196,44 +207,70 @@
     }
 
     // ==========================================
-    // 🎨 UI রেন্ডারিং ফাংশন
+    // 🎨 UI রেন্ডারিং (আইটেম ডাটা ম্যাপিং)
     // ==========================================
     function renderAccounts() {
         const container = document.getElementById('accountsContainer');
         const emptyState = document.getElementById('emptyState');
 
-        if (savedAccountsList.length === 0) {
+        // যদি ডেটা না থাকে বা ভুল টাইপ আসে
+        if (!savedAccountsList || savedAccountsList.length === 0) {
             emptyState.style.display = 'block';
             return;
         }
 
-        savedAccountsList.forEach((acc, index) => {
-            const safeSecret = acc["2fa"] ? acc["2fa"].toUpperCase().replace(/\s+/g, "") : "";
+        savedAccountsList.forEach((item, index) => {
+            const safeSecret = item["2fa"] ? item["2fa"].toUpperCase().replace(/\s+/g, "") : "";
             
             const cardHTML = `
             <div class="summary-card" style="animation-delay: ${index * 0.1}s" data-secret="${safeSecret}">
                 <div class="summary-header">
                     <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                    ${acc.email || "Unknown Email"}
+                    <span>${item.email || "Unknown Email"}</span>
                 </div>
                 
                 <div class="summary-row">
-                    <span class="row-label">Password</span>
-                    <span class="row-value">${acc.password || "N/A"}</span>
+                    <div class="row-data-container">
+                        <span class="row-label">Email</span>
+                        <span class="row-value" id="email-${index}">${item.email || "N/A"}</span>
+                    </div>
+                    <button class="inline-copy-btn row-copy-btn" onclick="copyData('email-${index}', this)">
+                        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    </button>
                 </div>
                 
                 <div class="summary-row">
-                    <span class="row-label">Recovery</span>
-                    <span class="row-value">${acc.recovery || "N/A"}</span>
+                    <div class="row-data-container">
+                        <span class="row-label">Password</span>
+                        <span class="row-value" id="pass-${index}">${item.password || "N/A"}</span>
+                    </div>
+                    <button class="inline-copy-btn row-copy-btn" onclick="copyData('pass-${index}', this)">
+                        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    </button>
                 </div>
                 
                 <div class="summary-row">
-                    <span class="row-label">Secret Key</span>
-                    <span class="row-value" style="font-family: monospace; font-size: 13px;">${acc["2fa"] || "N/A"}</span>
+                    <div class="row-data-container">
+                        <span class="row-label">Recovery</span>
+                        <span class="row-value" id="rec-${index}">${item.recovery || "N/A"}</span>
+                    </div>
+                    <button class="inline-copy-btn row-copy-btn" onclick="copyData('rec-${index}', this)">
+                        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    </button>
+                </div>
+                
+                <div class="summary-row">
+                    <div class="row-data-container">
+                        <span class="row-label">Secret Key</span>
+                        <span class="row-value" style="font-family: monospace; font-size: 13px;" id="sec-${index}">${item["2fa"] || "N/A"}</span>
+                    </div>
+                    <button class="inline-copy-btn row-copy-btn" onclick="copyData('sec-${index}', this)">
+                        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    </button>
                 </div>
 
                 <div class="summary-row" style="background: rgba(0,122,255,0.03);">
-                    <div class="row-data-container">
+                    <div class="row-data-container" style="justify-content: flex-start;">
                         <span class="row-label" style="color:var(--text);">Live 2FA</span>
                         <span class="otp-accent sumOtp" id="otp-${index}">------</span>
                     </div>
@@ -257,7 +294,6 @@
             container.insertAdjacentHTML('beforeend', cardHTML);
         });
 
-        // কার্ড রেন্ডার হওয়ার পর টাইমার চালু করা হচ্ছে
         startGlobalAuthenticatorEngine();
     }
 
@@ -285,7 +321,6 @@
                 textSec.innerText = remainingTime;
                 ring.style.strokeDashoffset = offsetValue;
 
-                // কালার চেঞ্জ (শেষ ৫ সেকেন্ডে লাল হবে)
                 if(remainingTime <= 5) {
                     ring.style.stroke = "var(--danger)";
                     textSec.style.color = "var(--danger)";
@@ -294,7 +329,6 @@
                     textSec.style.color = "var(--primary)";
                 }
 
-                // যখন সময় ৩০ বা ২৯ হবে, অথবা কার্ডে কোনো ওটিপি না থাকবে, তখন নতুন জেনারেট হবে
                 if (remainingTime === 30 || remainingTime === 29 || otpDisplay.innerText === "------") {
                     let liveOtp = getLocalTOTP(secret);
                     otpDisplay.innerText = liveOtp;
@@ -302,18 +336,16 @@
             });
         }
 
-        // প্রথমে একবার রান করা হবে
         updateAllCards();
-        // এরপর প্রতি ১ সেকেন্ড পর পর লুপ চলবে
         setInterval(updateAllCards, 1000);
     }
 
     // ==========================================
-    // 📋 কপি ফাংশন
+    // 📋 ইউনিভার্সাল কপি ফাংশন
     // ==========================================
     function copyData(elementId, btnElement) {
         const textToCopy = document.getElementById(elementId).innerText;
-        if(textToCopy.includes("-") || textToCopy === "Invalid") return;
+        if(textToCopy.includes("------") || textToCopy === "Invalid" || textToCopy === "N/A") return;
 
         navigator.clipboard.writeText(textToCopy).then(() => {
             const icon = btnElement.querySelector('svg');
