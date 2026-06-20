@@ -556,6 +556,9 @@
             currentEditingEmail = null;
         }
 
+        // ========================================================
+        // ✏️ ফিক্সড এডিট অ্যাকাউন্ট ফাংশন (সিরিয়াল এবং ক্লোজিং বাগ ফিক্সড)
+        // ========================================================
         function saveAccountEdits() {
             if (!currentEditingEmail) return;
 
@@ -570,9 +573,9 @@
             });
 
             renderOrders(allOrdersGlobal);
-            closeEditModal();
             triggerNotification("Account Updated Successfully!", 'success');
 
+            // প্রথমে বটের কাছে সঠিক ইমেইল সহ ডাটা পাঠানো হচ্ছে
             if (window.Telegram && window.Telegram.WebApp) {
                 try {
                     window.Telegram.WebApp.sendData(JSON.stringify({
@@ -583,6 +586,9 @@
                     }));
                 } catch(tgErr) { console.log(tgErr); }
             }
+            
+            // ডাটা পাঠানো শেষ হলে এবার নিরাপদে মডাল ক্লোজ করা হচ্ছে (যাতে ভ্যালু নাল না হয়)
+            closeEditModal();
         }
 
         function executeDeleteAccount(targetEmail) {
