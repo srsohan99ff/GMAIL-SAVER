@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>All Saved Accounts</title>
+    <title>GMAIL SAVER</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/2.4.2/sha.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
@@ -32,88 +32,22 @@
 
         body { 
             background-color: var(--bg); 
-            padding: 16px 12px; 
+            padding: 20px 14px; 
             color: var(--text);
             -webkit-font-smoothing: antialiased;
         }
 
         .page-title {
             text-align: center;
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 22px;
+            font-weight: 800;
             color: var(--text);
-            margin-bottom: 14px;
-            letter-spacing: -0.4px;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
         }
-
-        /* 👑 iOS প্রিমিয়াম সার্চ কন্টেইনার */
-        .search-container {
-            display: flex;
-            align-items: center;
-            background: rgba(118, 118, 128, 0.12); 
-            padding: 4px 6px 4px 10px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            border: 1px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .search-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 6px;
-        }
-        .search-icon svg {
-            width: 15px;
-            height: 15px;
-            fill: var(--muted);
-        }
-
-        .search-input {
-            flex: 1;
-            border: none;
-            outline: none;
-            padding: 6px 0;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text);
-            background: transparent;
-        }
-
-        .search-input::placeholder {
-            color: #8e8e93;
-        }
-
-        .search-btn {
-            background: var(--primary);
-            color: #ffffff;
-            border: none;
-            outline: none;
-            padding: 0 14px;
-            border-radius: 9px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            height: 30px;
-        }
-
-        .search-btn:active { opacity: 0.7; }
-
-        .spinner {
-            width: 14px; height: 14px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: #ffffff; border-radius: 50%;
-            animation: spin 0.5s linear infinite; display: none;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
         
-        /* 👑 উপর থেকে নেমে আসা প্রিমিয়াম iOS ব্ল্যাক নোটিফিকেশন */
+        /* 👑 উপর থেকে নেমে আসা প্রিমিয়াম iOS সাকসেস নোটিফিকেশন */
         #topNotification {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: #1c1c1e; border: 1px solid #2c2c2e; color: #ffffff; 
@@ -126,50 +60,50 @@
         .toast-check { width: 18px; height: 18px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
         .toast-check svg { width: 11px; height: 11px; stroke: #fff; fill: none; stroke-width: 3; }
 
-        /* 👑 প্রিমিয়াম iOS হোয়াইট কার্ড স্টাইল */
+        /* 👑 প্রিমিয়াম হোয়াইট কার্ড স্টাইল */
         .card { 
-            background: var(--card); border-radius: 12px; overflow: hidden;
-            border: 1px solid rgba(0, 0, 0, 0.04); box-shadow: 0 1px 3px rgba(0,0,0,0.04); 
-            margin-bottom: 14px; padding: 2px 0;
+            background: var(--card); border-radius: 14px; overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.03); box-shadow: 0 2px 6px rgba(0,0,0,0.02); 
+            margin-bottom: 16px; padding: 2px 0;
         }
         .summary-row {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 14px; border-bottom: 1px solid #f2f2f7; gap: 10px;
+            padding: 12px 14px; border-bottom: 1px solid #f2f2f7; gap: 10px;
         }
         .summary-row:last-child { border-bottom: none; }
         
         .row-label { font-size: 13px; color: #48484a; font-weight: 700; white-space: nowrap; }
         .row-value-copy { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text); justify-content: flex-end; max-width: 75%; }
-        .value-text { font-family: monospace; color: var(--text); word-break: break-all; text-align: right; }
+        .value-text { font-family: monospace; color: var(--text); word-break: break-all; text-align: right; user-select: text; }
 
         /* 👑 গোলাকৃতির কাস্টম কপি বাটন */
         .inline-copy-btn {
-            width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border);
+            width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border);
             background: #ffffff; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); flex-shrink: 0;
+            cursor: pointer; transition: all 0.2s ease; flex-shrink: 0;
         }
-        .inline-copy-btn svg { width: 11px; height: 11px; fill: var(--muted); }
+        .inline-copy-btn svg { width: 12px; height: 12px; fill: var(--muted); }
         .inline-copy-btn:active { transform: scale(0.88); background: #f2f2f7; }
         .inline-copy-btn.copied { background: var(--success) !important; border-color: var(--success) !important; }
         .inline-copy-btn.copied svg { fill: #fff !important; }
         
-        .message-box { text-align: center; color: var(--muted); font-weight: 500; padding: 40px 10px; font-size: 14px; }
+        .message-box { text-align: center; color: var(--muted); font-weight: 600; padding: 60px 20px; font-size: 15px; }
 
         /* 👑 অ্যাকাউন্ট কাউন্টার স্টাইল */
         .counter-container {
             display: flex; justify-content: space-between; align-items: center;
-            font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 14px; padding: 0 4px;
+            font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 16px; padding: 0 4px;
         }
         .counter-value {
             color: var(--primary); font-weight: 700; background: rgba(0, 122, 255, 0.1);
-            padding: 2px 8px; border-radius: 20px;
+            padding: 3px 10px; border-radius: 20px; font-size: 13px;
         }
 
-        /* 🔑 ২এফএ ডাইনামিক রিং ও টেক্সট কন্টেন্ট */
-        .otp-display { font-family: monospace; color: var(--primary); font-weight: 800; font-size: 16px; letter-spacing: 0.5px; }
-        
+        /* 🔑 ২এফএ ডাইনামিক লাইভ টেক্সট কন্টেন্ট */
+        .otp-display { font-family: monospace; color: var(--primary); font-weight: 800; font-size: 17px; letter-spacing: 0.5px; }
         .otp-controls-hub { display: flex; align-items: center; gap: 8px; }
         
+        /* ⏱️ ৩০ সেকেন্ডের রানিং সার্কেল টাইমার */
         .authenticator-timer-box {
             display: flex; align-items: center; justify-content: center; position: relative; width: 24px; height: 24px; flex-shrink: 0;
         }
@@ -192,18 +126,7 @@
         Copied Successfully!
     </div>
 
-    <h2 class="page-title">Saved Accounts</h2>
-
-    <div class="search-container">
-        <div class="search-icon">
-            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-        </div>
-        <input type="text" id="searchInput" class="search-input" placeholder="Search by Gmail...">
-        <button class="search-btn" onclick="handleSearch()">
-            <div class="spinner" id="searchSpinner"></div>
-            <span id="btnText">Search</span>
-        </button>
-    </div>
+    <h2 class="page-title">Gmail Saver</h2>
 
     <div class="counter-container">
         <span>Total Accounts:</span>
@@ -214,10 +137,9 @@
 
     <script>
         let allOrdersGlobal = [];
-        let filteredOrdersGlobal = [];
         let live2FAEngineTimer = null;
 
-        // ২এফএ জেনারেশন হেল্পার লজিক
+        // ২এফএ বেস-৩২ ডিকোড হেল্পার লজিক
         function dec2hex(s) { return (s < 15.5 ? '0' : '') + Math.round(s).toString(16); }
         function hex2dec(s) { return parseInt(s, 16); }
         function base32tohex(base32) {
@@ -236,7 +158,7 @@
         }
         function leftpad(str, len, pad) { if (len + 1 >= str.length) { str = Array(len + 1 - str.length).join(pad) + str; } return str; }
 
-        // TOTP টোকেন ক্যালকুলেটর ফাংশন
+        // লাইভ TOTP বা ২এফএ ওটিপি জেনারেট করার কোর ফাংশন
         function getLocalTOTP(secret) {
             try {
                 if(!secret || secret.trim() === "") return "------";
@@ -258,7 +180,7 @@
             }
         }
 
-        // গ্লোবাল ইন্টেলিজেন্ট কপি ফাংশন
+        // কপি বাটন ক্লিক অ্যানিমেশন ও ক্লিপবোর্ড ম্যানেজমেন্ট
         function copyOrder(text, btnId) {
             if(!text || text.includes("---") || text.includes("Calculat")) return;
             navigator.clipboard.writeText(text).then(() => {
@@ -278,7 +200,7 @@
             });
         }
 
-        // 🔄 লাইভ ২এফএ প্রগ্রেস লুপ ইঞ্জিন (সার্কেল টাইমার রিং সহ)
+        // ⏱️ লাইভ ৩০ সেকেন্ড কাউন্টডাউন এবং সার্কেল প্রগ্রেস রিং ইঞ্জিন
         function startLive2FAEngine() {
             if(live2FAEngineTimer) clearInterval(live2FAEngineTimer);
 
@@ -299,16 +221,16 @@
 
                     if (!secret || secret.trim() === "" || secret.toLowerCase() === "n/a") return;
 
-                    // প্রতি সেকেন্ডে ওটিপি ক্যালকুলেট করা ও রেন্ডার
+                    // প্রতি সেকেন্ডে রিয়েল-টাইম ওটিপি জেনারেট
                     const currentLiveCode = getLocalTOTP(secret);
                     if(otpSpan) otpSpan.innerText = currentLiveCode;
 
-                    // ২এফএ কপি বাটনের রানটাইম ভ্যালু আপডেট
+                    // ২এফএ বাটনের কপি রানটাইম ভ্যালু সিঙ্ক
                     if(copyBtn) {
                         copyBtn.setAttribute('onclick', `copyOrder('${currentLiveCode}', '${copyBtn.id}')`);
                     }
 
-                    // অ্যানিমেটেড সার্কেল টাইমার প্রগ্রেস বার ও কালার হ্যান্ডলিং
+                    // ৩০ সেকেন্ডের কালার রিং অ্যানিমেশন চেইঞ্জ
                     if(textSec) textSec.innerText = remainingTime;
                     
                     if(ring && textSec) {
@@ -329,12 +251,13 @@
             live2FAEngineTimer = setInterval(updateLoop, 1000);
         }
 
-        // রেন্ডার ফাংশন
+        // এইচটিএমএল কার্ড রেন্ডার ফাংশন
         function renderOrders(ordersList) {
             document.getElementById('totalCount').innerText = ordersList.length;
             const historyBox = document.getElementById('historyBox');
 
-            if(ordersList.length === 0) {
+            // যদি কোনো অ্যাকাউন্ট না থাকে তবে "No accounts found." শো করবে
+            if(!ordersList || ordersList.length === 0) {
                 historyBox.innerHTML = "No accounts found.";
                 historyBox.classList.add('message-box');
                 return;
@@ -347,11 +270,11 @@
                 let btnIdSecret = 'btn-secret-' + index;
                 let btnIdLiveOtp = 'btn-live-' + index;
                 
-                // 🎯 স্ক্রিনশটের কি (Keys) অনুযায়ী হুবহু ম্যাপিং (item.email, item.password, item.recovery, item['2fa'])
+                // 🎯 স্ক্রিনশটের কি (Keys) অনুযায়ী সেফ ব্র্যাকেট নোটেশন ম্যাপিং
                 let emailVal = item.email || item.gmail || 'N/A';
                 let passVal = item.password || 'N/A';
-                let recoveryVal = item.recovery || item.recovery_email || 'N/A';
-                let tfaSecretVal = item['2fa'] || item.2fa || item.secretKey || '';
+                let recoveryVal = item.recovery || 'N/A';
+                let tfaSecretVal = item['2fa'] || ''; // এখানে ক্র্যাশ হওয়া ফিক্স করা হয়েছে
 
                 return `
                 <div class="card" data-tfa-secret="${tfaSecretVal}">
@@ -388,87 +311,11 @@
                     <div class="summary-row">
                         <span class="row-label">2FA Secret Key</span>
                         <div class="row-value-copy">
-                            <span class="value-text" style="font-weight:700; font-size:12px; letter-spacing:0.2px;">${tfaSecretVal || 'N/A'}</span>
+                            <span class="value-text" style="font-weight:700; font-size:12px; color: var(--muted);">${tfaSecretVal || 'N/A'}</span>
                             <button class="inline-copy-btn" id="${btnIdSecret}" onclick="copyOrder('${tfaSecretVal}', '${btnIdSecret}')" aria-label="Copy Secret Key">
                                 <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                             </button>
                         </div>
                     </div>
 
-                    <div class="summary-row" style="background: rgba(0,122,255,0.02); border-top: 1px dashed #e5e5ea;">
-                        <span class="row-label" style="color: var(--primary); font-weight: 800;">Live 2FA OTP</span>
-                        <div class="row-value-copy">
-                            <div class="otp-controls-hub">
-                                <div class="authenticator-timer-box">
-                                    <svg>
-                                        <circle class="bg-ring" cx="12" cy="12" r="10"></circle>
-                                        <circle class="progress-ring" cx="12" cy="12" r="10"></circle>
-                                    </svg>
-                                    <span class="timer-text-sec">30</span>
-                                </div>
-                                <span class="otp-display">Calculating...</span>
-                            </div>
-                            <button class="inline-copy-btn tfa-live-copy-btn" id="${btnIdLiveOtp}" onclick="" aria-label="Copy Live OTP">
-                                <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>`;
-            }).join('');
-            
-            historyBox.classList.remove('message-box');
-            // ডাটা রেন্ডার শেষ হলেই ২এফএ টাইমার লুপ ইঞ্জিন ব্যাকগ্রাউন্ডে চালু হবে
-            startLive2FAEngine();
-        }
-
-        // সার্চ কুয়েরি ফিল্টার লজিক
-        function applyFilters() {
-            const query = document.getElementById('searchInput').value.trim().toLowerCase();
-            if (query) {
-                filteredOrdersGlobal = allOrdersGlobal.filter(item => {
-                    let emailStr = (item.email || item.gmail || '').toLowerCase();
-                    return emailStr.includes(query);
-                });
-            } else {
-                filteredOrdersGlobal = allOrdersGlobal;
-            }
-            renderOrders(filteredOrdersGlobal);
-        }
-
-        // সার্চ হ্যান্ডলার বাটন ক্লিক এনিমেশন
-        function handleSearch() {
-            const spinner = document.getElementById('searchSpinner');
-            const btnText = document.getElementById('btnText');
-            spinner.style.display = 'block';
-            btnText.style.display = 'none';
-
-            setTimeout(() => {
-                applyFilters();
-                spinner.style.display = 'none';
-                btnText.style.display = 'block';
-            }, 450); 
-        }
-
-        // 🔄 ইউআরএল প্যারামিটার থেকে ডাটা প্রসেস
-        const urlParams = new URLSearchParams(window.location.search);
-        const historyData = urlParams.get('data') || urlParams.get('orders'); 
-        const historyBox = document.getElementById('historyBox');
-
-        if (historyData) {
-            try {
-                allOrdersGlobal = JSON.parse(decodeURIComponent(historyData));
-                renderOrders(allOrdersGlobal);
-            } catch (e) {
-                historyBox.innerHTML = "Failed to load synchronized data.";
-                historyBox.classList.add('message-box');
-            }
-        } else {
-            historyBox.innerHTML = "No records found.";
-            historyBox.classList.add('message-box');
-        }
-
-        Telegram.WebApp.ready();
-        Telegram.WebApp.expand();
-    </script>
-</body>
-</html>
+                    <div class="summary-row" style="background: rgba(0,122,255,0.02
