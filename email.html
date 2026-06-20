@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>GMAIL SAVER - Ultra Premium iOS Gateway</title>
+    <title>Gmail Account</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/2.4.2/sha.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #f2f2f7;          
             --card: #ffffff;        
             --border: #e5e5ea;      
-            --text: #2c2c2e;        
-            --muted: #8e8e93;       
+            --text-dark: #1c1c1e;   
+            --text-muted: #8e8e93;  
             --success: #34c759;     
             --danger: #ff3b30;
             --primary: #007aff;     
@@ -31,8 +31,8 @@
 
         body { 
             background-color: var(--bg); 
-            padding: 20px 16px; 
-            color: var(--text);
+            padding: 16px; 
+            color: var(--text-dark);
             -webkit-font-smoothing: antialiased;
             display: flex;
             justify-content: center;
@@ -40,7 +40,6 @@
             min-height: 100vh;
         }
 
-        /* Full screen wide container as requested */
         .wrapper {
             width: 100%;
             display: flex;
@@ -49,139 +48,141 @@
 
         .top-nav-bar {
             width: 100%;
-            height: 44px;
+            height: 36px;
             display: flex;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
         .back-circle-btn {
-            width: 36px; height: 36px;
+            width: 32px; height: 32px;
             border-radius: 50%;
             border: 1px solid var(--border);
             background: #fff;
             display: none; align-items: center; justify-content: center;
             cursor: pointer; transition: all 0.2s ease;
         }
-        .back-circle-btn svg { width: 16px; height: 16px; fill: #48484a; }
+        .back-circle-btn svg { width: 14px; height: 14px; fill: #48484a; }
 
+        /* Modified Title Section - Exactly as requested */
         .brand-header {
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            justify-content: center;
             width: 100%;
-            margin-bottom: 28px;
+            margin-bottom: 20px;
+            margin-top: 4px;
         }
-        h1.brand-title { font-size: 26px; font-weight: 800; color: #000; letter-spacing: -0.5px; text-transform: uppercase; }
-        .brand-subtitle { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+        h1.brand-title { 
+            font-size: 24px; 
+            font-weight: 700; 
+            color: #000000; 
+            letter-spacing: -0.3px;
+        }
 
         .step-container { display: none; width: 100%; }
-        .step-container.active { display: block; animation: stepFade 0.25s ease-out; }
-        @keyframes stepFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        .step-container.active { display: block; animation: stepFade 0.23s ease-out; }
+        @keyframes stepFade { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
 
-        .section-label { font-size: 14px; font-weight: 600; color: var(--muted); text-align: left; margin-bottom: 10px; padding-left: 4px; }
+        .section-label { font-size: 13px; font-weight: 500; color: var(--text-muted); text-align: left; margin-bottom: 8px; padding-left: 2px; }
         
         .input-card {
-            width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-            position: relative; display: flex; align-items: center; margin-bottom: 24px; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+            position: relative; display: flex; align-items: center; margin-bottom: 20px; 
         }
-        .input-card.is-valid { border-color: var(--success) !important; box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.1) !important; }
-        .input-card.is-invalid { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.1) !important; }
+        .input-card.is-valid { border-color: var(--success) !important; }
+        .input-card.is-invalid { border-color: var(--danger) !important; }
 
-        .field-input { width: 100%; padding: 16px 16px; border: none; outline: none; font-size: 15px; font-weight: 500; color: #000; background: transparent; }
-        .field-input::placeholder { color: #8e8e93; }
+        .field-input { width: 100%; padding: 14px 14px; border: none; outline: none; font-size: 14px; font-weight: 400; color: #000; background: transparent; }
+        .field-input::placeholder { color: #bcbcc1; }
 
-        .status-icon-wrap { display: flex; align-items: center; justify-content: center; padding-right: 16px; height: 100%; flex-shrink: 0; }
-        .status-icon-wrap svg { width: 20px; height: 20px; display: none; }
+        .status-icon-wrap { display: flex; align-items: center; justify-content: center; padding-right: 14px; height: 100%; flex-shrink: 0; }
+        .status-icon-wrap svg { width: 18px; height: 18px; display: none; }
         .input-card.is-valid .status-icon-wrap .tick-icon { display: block; fill: var(--success); }
 
         .proceed-btn {
-            width: 100%; padding: 16px; background: #d1d1d6; color: #8e8e93; border: none; border-radius: 12px; font-size: 15px; font-weight: 600;
-            cursor: not-allowed; transition: all 0.25s ease; display: flex; justify-content: center; align-items: center; gap: 8px;
+            width: 100%; padding: 14px; background: #d1d1d6; color: #8e8e93; border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
+            cursor: not-allowed; transition: all 0.2s ease; display: flex; justify-content: center; align-items: center; gap: 6px;
         }
         .proceed-btn.active { background: var(--primary) !important; color: #fff !important; cursor: pointer !important; }
         
-        .btn-spinner { display: none; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.5s linear infinite; }
+        .btn-spinner { display: none; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.5s linear infinite; }
 
         #topNotification {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: #1c1c1e; border: 1px solid #2c2c2e; color: #ffffff; 
-            padding: 12px 24px; border-radius: 50px; font-size: 14px; font-weight: 600;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.2); z-index: 10000; 
-            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15);
-            display: flex; align-items: center; gap: 10px; white-space: nowrap; pointer-events: none;
+            padding: 10px 20px; border-radius: 50px; font-size: 13px; font-weight: 600;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15); z-index: 10000; 
+            transition: top 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+            display: flex; align-items: center; gap: 8px; white-space: nowrap; pointer-events: none;
         }
-        #topNotification.show { top: 20px; }
-        .toast-check { width: 18px; height: 18px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
-        .toast-check svg { width: 11px; height: 11px; stroke: #fff; fill: none; stroke-width: 3; }
+        #topNotification.show { top: 16px; }
+        .toast-check { width: 16px; height: 16px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
+        .toast-check svg { width: 10px; height: 10px; stroke: #fff; fill: none; stroke-width: 3; }
 
-        /* SUMMARY PAGE STYLES - AS PER SCREENSHOT */
+        /* SUMMARY CONTAINER MATCHING SCREENSHOT EXACTLY */
         .summary-card { 
-            background: var(--card); border-radius: 16px; overflow: hidden;
-            border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            margin-bottom: 24px; padding: 0;
+            background: var(--card); border-radius: 14px; overflow: hidden;
+            border: 1px solid var(--border);
+            margin-bottom: 20px; padding: 0;
             width: 100%;
         }
         
-        /* Grid layout to lock labels on the left and values on the right without dropping below */
+        /* Grid layout to guarantee label stays left and value wraps safely on the right */
         .summary-row {
             display: grid;
-            grid-template-columns: 120px 1fr auto;
+            grid-template-columns: 140px 1fr auto;
             align-items: center;
-            gap: 12px;
-            padding: 16px; 
-            border-bottom: 1px solid var(--border);
+            gap: 10px;
+            padding: 14px 16px; 
+            border-bottom: 1px solid #f2f2f7;
             background: var(--card);
         }
         .summary-row:last-child { border-bottom: none; }
         
-        /* Matching the normal grey/black styling of labels in screenshot */
+        /* Labels: Left aligned, dark text, medium weight as in screenshot */
         .row-label-normal { 
-            font-size: 15px; 
+            font-size: 14px; 
             color: #2c2c2e; 
-            font-weight: 600; 
+            font-weight: 500; 
             white-space: nowrap;
         }
         
-        /* Blue Label for 2FA Verification Code exactly like screenshot */
+        /* Blue Active Label matching screenshot */
         .row-label-blue { 
-            font-size: 15px; 
+            font-size: 14px; 
             color: var(--primary); 
-            font-weight: 700; 
+            font-weight: 600; 
             white-space: nowrap; 
         }
 
-        /* Value aligned to the right, multi-line safe, no ellipsis */
+        /* Value Content: Right aligned, smaller text, muted/gray color like screenshot */
         .row-value { 
-            font-size: 15px; 
+            font-size: 13.5px; 
             font-weight: 400; 
-            color: #1c1c1e; 
+            color: #4a4a4a; 
             text-align: right; 
             white-space: normal; 
             word-break: break-all;
         }
         
-        /* 2FA Secret value styling */
+        /* Muted gray for 2FA key exactly like the screenshot */
         .secret-value {
-            font-size: 14px;
+            font-size: 13px;
             color: #8e8e93;
-            font-weight: 500;
+            font-weight: 400;
             text-align: right;
             white-space: normal;
             word-break: break-all;
         }
         
-        /* Blue color and bold font for OTP value matching screenshot */
+        /* Crisp Blue Color and Bold Style for OTP text */
         .otp-accent { 
             color: var(--primary); 
-            font-weight: 700; 
-            font-size: 18px; 
+            font-weight: 600; 
+            font-size: 16px; 
             text-align: right; 
             word-break: break-all;
-            padding-right: 4px;
         }
 
-        /* Controls aligned to the far right */
         .right-controls {
             display: flex;
             align-items: center;
@@ -189,23 +190,24 @@
             justify-content: flex-end;
         }
 
+        /* Smaller Native iOS style Circular Progress */
         .authenticator-timer-box {
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             flex-shrink: 0;
         }
         .authenticator-timer-box svg {
             transform: rotate(-90deg);
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
         }
         .authenticator-timer-box circle {
             fill: none;
-            stroke-width: 2.5;
+            stroke-width: 2.2;
         }
         .authenticator-timer-box .bg-ring {
             stroke: #e5e5ea;
@@ -214,19 +216,19 @@
             stroke: var(--primary);
             stroke-dasharray: 62.8; 
             stroke-dashoffset: 0;
-            transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
+            transition: stroke-dashoffset 1s linear, stroke 0.2s ease;
         }
         .timer-text-sec {
             position: absolute;
             font-size: 8px;
-            font-weight: 700;
+            font-weight: 600;
             color: var(--primary);
-            font-family: -apple-system, sans-serif;
         }
 
+        /* Subtle Circular Copy Button Layout */
         .inline-copy-btn {
-            width: 28px; 
-            height: 28px; 
+            width: 26px; 
+            height: 26px; 
             border-radius: 50%; 
             border: 1px solid var(--border);
             background: #ffffff; 
@@ -234,27 +236,27 @@
             align-items: center; 
             justify-content: center;
             cursor: pointer; 
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: all 0.15s ease; 
             flex-shrink: 0;
         }
-        .inline-copy-btn svg { width: 12px; height: 12px; fill: var(--muted); }
-        .inline-copy-btn:active { transform: scale(0.9); background: #f2f2f7; }
+        .inline-copy-btn svg { width: 11px; height: 11px; fill: #b5b5b9; }
+        .inline-copy-btn:active { transform: scale(0.92); background: #f2f2f7; }
         .inline-copy-btn.copied { background: var(--success) !important; border-color: var(--success) !important; }
         .inline-copy-btn.copied svg { fill: #fff !important; }
 
         #successOverlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            background: rgba(0,0,0,0.25); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
             z-index: 9999; justify-content: center; align-items: center;
         }
         .success-card {
-            background: #ffffff; border-radius: 24px; padding: 34px; width: 85%; max-width: 320px;
-            display: flex; flex-direction: column; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            background: #ffffff; border-radius: 20px; padding: 30px; width: 80%; max-width: 300px;
+            display: flex; flex-direction: column; align-items: center; box-shadow: 0 15px 30px rgba(0,0,0,0.08);
         }
-        .success-circle { width: 74px; height: 74px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(52, 199, 89, 0.3); margin-bottom: 20px;}
-        .tick-svg { width: 36px; height: 36px; stroke: #fff; fill: none; stroke-width: 4; }
-        .success-heading { font-size: 19px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-        .success-sub { font-size: 14px; font-weight: 500; color: var(--muted); text-align: center; line-height: 1.5; }
+        .success-circle { width: 64px; height: 64px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;}
+        .tick-svg { width: 32px; height: 32px; stroke: #fff; fill: none; stroke-width: 3.5; }
+        .success-heading { font-size: 18px; font-weight: 700; color: var(--text-dark); margin-bottom: 6px; }
+        .success-sub { font-size: 13px; font-weight: 500; color: var(--text-muted); text-align: center; line-height: 1.4; }
 
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
@@ -274,8 +276,7 @@
     </div>
 
     <div class="brand-header" id="brandHeader">
-        <h1 class="brand-title">GMAIL SAVER</h1>
-        <div class="brand-subtitle">identity secure hub</div>
+        <h1 class="brand-title">Gmail Account</h1>
     </div>
 
     <div id="stepGmail" class="step-container active">
@@ -384,8 +385,8 @@
                 <div class="right-controls">
                     <div class="authenticator-timer-box">
                         <svg>
-                            <circle class="bg-ring" cx="12" cy="12" r="10"></circle>
-                            <circle class="progress-ring" id="timerRing" cx="12" cy="12" r="10"></circle>
+                            <circle class="bg-ring" cx="11" cy="11" r="10"></circle>
+                            <circle class="progress-ring" id="timerRing" cx="11" cy="11" r="10"></circle>
                         </svg>
                         <span class="timer-text-sec" id="timerSeconds">30</span>
                     </div>
