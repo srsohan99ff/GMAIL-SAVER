@@ -1,386 +1,752 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iOS Premium Telegram WebApp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>GMAIL SAVER - Dashboard</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/2.4.2/sha.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* --- iOS Base & Premium Theme Styling --- */
-        body {
+        :root {
+            --bg: #f2f2f7;          
+            --card: #ffffff;        
+            --border: #e5e5ea;      
+            --text: #000000;        
+            --muted: #8e8e93;       
+            --success: #34c759;     
+            --danger: #ff3b30;    
+            --primary: #007aff;     
+            --font: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: #000000; /* iOS ডার্ক ব্যাকগ্রাউন্ড */
-            color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: var(--font);
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body { 
+            background-color: var(--bg); 
+            padding: 20px 14px; 
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
+
+        /* 🔍 জিমেইল সার্চ বক্স স্টাইল */
+        .search-wrapper {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .ios-container {
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        /* iOS Premium Card */
-        .ios-card {
-            background: #1c1c1e;
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .card-title {
-            font-size: 17px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #aeaeae;
-        }
-
-        /* iOS Input Fields */
-        .ios-input-group {
-            position: relative;
-            margin-bottom: 15px;
-        }
-
-        .ios-label {
-            font-size: 13px;
-            color: #8e8e93;
-            margin-bottom: 6px;
-            display: block;
-            padding-left: 4px;
-        }
-
-        .ios-input {
-            width: 100%;
-            background: #2c2c2e;
-            border: 1px solid transparent;
-            border-radius: 10px;
-            padding: 12px;
-            font-size: 16px;
-            color: #ffffff;
-            box-sizing: border-box;
-            outline: none;
-            transition: all 0.2s ease;
-        }
-
-        .ios-input:focus {
-            border-color: #007aff; /* আইফোন ব্লু ফোকাস */
-        }
-
-        /* ইমেইল ভুল হলে শুধু বক্সটি লাল হবে (কোনো ক্রস চিহ্ন থাকবে না) */
-        .ios-input.input-error {
-            border-color: #ff3b30 !important; /* iOS লাল বর্ডার */
-            background-color: rgba(255, 59, 48, 0.05); /* হালকা লাল আবহ */
-            box-shadow: 0 0 8px rgba(255, 59, 48, 0.3);
-        }
-
-        /* iOS Buttons */
-        .ios-btn {
-            width: 100%;
-            padding: 14px;
+            background: var(--card);
+            border: 1px solid var(--border);
             border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
+            padding: 4px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            align-items: center;
+        }
+        .search-input {
+            flex: 1;
             border: none;
+            outline: none;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+            background: transparent;
+            user-select: text;
+        }
+        .search-input::placeholder { color: var(--muted); }
+        
+        .search-btn {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            outline: none;
+            height: 32px;
+            padding: 0 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
             cursor: pointer;
             transition: opacity 0.2s;
-            text-align: center;
+            display: flex; align-items: center; justify-content: center;
+            min-width: 68px;
         }
-
-        .ios-btn:active {
-            opacity: 0.7;
-        }
-
-        .ios-btn-primary {
-            background: #007aff;
-            color: white;
-            margin-bottom: 12px;
-        }
-
-        .ios-btn-danger {
-            background: #ff3b30;
-            color: white;
-        }
-
-        /* --- iOS PIN Modal Styling (আইফোন লক স্ক্রিন) --- */
-        .ios-pin-modal {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(30px); /* আইফোনের মতো ফ্রস্টেড গ্লাস ব্লার */
-            -webkit-backdrop-filter: blur(30px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            color: #ffffff;
-        }
-
-        .ios-pin-container {
-            text-align: center;
-            width: 100%;
-            max-width: 320px;
-            padding: 20px;
-        }
-
-        .pin-header {
-            font-size: 20px;
-            font-weight: 500;
-            margin-bottom: 35px;
-            letter-spacing: 0.5px;
-        }
-
-        /* ৬টি ডট */
-        .pin-dots {
-            display: flex;
-            justify-content: center;
-            gap: 18px;
-            margin-bottom: 55px;
-        }
-
-        .dot {
-            width: 13px;
-            height: 13px;
-            border: 1.5px solid #ffffff;
+        .search-btn:active { opacity: 0.8; }
+        
+        .spinner {
+            width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #ffffff;
             border-radius: 50%;
-            transition: background 0.15s ease-in-out;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* 🍏 iOS Premium Shimmer Loader */
+        .skeleton-card {
+            background: var(--card); border-radius: 14px; padding: 16px;
+            margin-bottom: 16px; border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+        .skeleton-line {
+            height: 14px; margin-bottom: 12px; border-radius: 6px;
+            background: linear-gradient(90deg, #e5e5ea 25%, #f2f2f7 50%, #e5e5ea 75%);
+            background-size: 200% 100%; animation: shimmer 1.4s infinite linear;
+        }
+        .skeleton-line.short { width: 35%; height: 12px; }
+        .skeleton-line.medium { width: 65%; }
+        .skeleton-line.long { width: 100%; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* 👑 উপর থেকে নেমে আসা iOS নোটিফিকেশন */
+        #topNotification {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: #1c1c1e; border: 1px solid #2c2c2e; color: #ffffff; 
+            padding: 10px 22px; border-radius: 50px; font-size: 13px; font-weight: 600;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.2); z-index: 30000; 
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+            display: flex; align-items: center; gap: 10px; white-space: nowrap; pointer-events: none;
+        }
+        #topNotification.show { top: 20px; }
+        .toast-check { width: 18px; height: 18px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
+        .toast-check svg { width: 11px; height: 11px; stroke: #fff; fill: none; stroke-width: 3; }
+
+        /* 👑 কার্ড স্টাইল */
+        .card { 
+            background: var(--card); border-radius: 14px; overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.03); box-shadow: 0 2px 6px rgba(0,0,0,0.02); 
+            margin-bottom: 16px; padding-top: 4px;
+            animation: iosPop 0.3s cubic-bezier(0.1, 0.8, 0.25, 1);
+        }
+        
+        .summary-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 14px; border-bottom: 1px solid #f2f2f7; gap: 10px;
+        }
+        
+        .row-label { font-size: 13px; color: #48484a; font-weight: 700; white-space: nowrap; }
+        .row-value-copy { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text); justify-content: flex-end; max-width: 75%; }
+        .value-text { font-family: monospace; color: var(--text); word-break: break-all; text-align: right; user-select: text; }
+
+        .inline-copy-btn {
+            width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border);
+            background: #ffffff; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s ease; flex-shrink: 0;
+        }
+        .inline-copy-btn svg { width: 12px; height: 12px; fill: var(--muted); }
+        .inline-copy-btn:active { transform: scale(0.88); background: #f2f2f7; }
+        .inline-copy-btn.copied { background: var(--success) !important; border-color: var(--success) !important; }
+        .inline-copy-btn.copied svg { fill: #fff !important; }
+
+        /* 🛠️ অ্যাকশন বাটন প্যানেল */
+        .card-actions {
+            display: flex; justify-content: flex-end; gap: 6px;
+            padding: 10px 14px; background: rgba(0,0,0,0.005);
+            border-top: 1px solid #f2f2f7;
+        }
+        .action-btn {
+            border: none; background: none; font-size: 13px; font-weight: 700;
+            cursor: pointer; display: flex; align-items: center; gap: 4px;
+            padding: 6px 10px; border-radius: 8px; transition: background 0.2s;
+        }
+        .action-btn.edit { color: var(--primary); }
+        .action-btn.edit:active { background: rgba(0, 122, 255, 0.08); }
+        .action-btn.edit svg { width: 13px; height: 13px; fill: var(--primary); }
+        
+        .action-btn.delete { color: var(--danger); }
+        .action-btn.delete:active { background: rgba(255, 59, 48, 0.08); }
+        .action-btn.delete svg { width: 13px; height: 13px; fill: var(--danger); }
+        
+        .message-box { text-align: center; color: var(--muted); font-weight: 600; padding: 40px 20px; font-size: 14px; line-height: 1.5; }
+
+        .counter-container {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 16px; padding: 0 4px;
+        }
+        .counter-value {
+            color: var(--primary); font-weight: 700; background: rgba(0, 122, 255, 0.1);
+            padding: 3px 10px; border-radius: 20px; font-size: 13px;
         }
 
-        .dot.filled {
-            background: #ffffff;
+        .otp-display { font-family: monospace; color: var(--primary); font-weight: 800; font-size: 17px; letter-spacing: 0.5px; }
+        .otp-controls-hub { display: flex; align-items: center; gap: 8px; }
+        
+        /* ⏱️ সার্কেল টাইমার */
+        .authenticator-timer-box {
+            display: flex; align-items: center; justify-content: center; position: relative; width: 24px; height: 24px; flex-shrink: 0;
         }
+        .authenticator-timer-box svg { transform: rotate(-90deg); width: 24px; height: 24px; }
+        .authenticator-timer-box circle { fill: none; stroke-width: 2.5; }
+        .authenticator-timer-box .bg-ring { stroke: #e5e5ea; }
+        .authenticator-timer-box .progress-ring {
+            stroke: var(--primary); stroke-dasharray: 62.8; stroke-dashoffset: 0;
+            transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
+        }
+        .timer-text-sec { position: absolute; font-size: 8px; font-weight: 700; color: var(--primary); font-family: sans-serif; }
 
-        /* কিপ্যাড গ্রিড */
-        .pin-keypad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px 28px;
-            justify-items: center;
-            margin-bottom: 40px;
+        /* 📱 iOS Overlay System (মডাল মেইন ওভারলে) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); z-index: 20000;
+            display: none; align-items: center; justify-content: center;
+            padding: 16px;
         }
+        .ios-alert-box {
+            background: rgba(255, 255, 255, 0.96); width: 100%; max-width: 310px;
+            border-radius: 14px; display: flex; flex-direction: column;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.18); overflow: hidden;
+            animation: iosPop 0.25s cubic-bezier(0.1, 0.8, 0.25, 1);
+        }
+        @keyframes iosPop {
+            from { transform: scale(1.12); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .ios-alert-body { padding: 20px 16px 14px 16px; text-align: center; }
+        .ios-alert-title { font-size: 17px; font-weight: 700; color: #000000; margin-bottom: 2px; }
+        .ios-alert-subtitle { font-size: 13px; color: var(--primary); word-break: break-all; margin-bottom: 16px; font-weight: 600; font-family: monospace; }
+        
+        /* 🍏 নতুন ইনপুট ফিল্ড বক্স স্টাইল (Premium iOS Layout) */
+        .ios-input-group { text-align: left; margin-bottom: 14px; }
+        .ios-input-group label { font-size: 11px; font-weight: 700; color: #48484a; margin-left: 2px; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px; }
+        
+        .input-card {
+            width: 100%; background: #ffffff; border: 1px solid var(--border); border-radius: 10px;
+            position: relative; display: flex; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.01);
+            transition: all 0.2s ease;
+        }
+        .input-card.is-valid { border-color: var(--success) !important; box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.1) !important; }
+        .input-card.is-invalid { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.1) !important; }
 
-        /* গোল বাটন */
-        .key {
-            width: 75px;
-            height: 75px;
-            border-radius: 50%;
-            border: none;
-            background: rgba(255, 255, 255, 0.12);
-            color: #ffffff;
-            font-size: 32px;
-            font-weight: 400;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background 0.1s;
-        }
+        .field-input { width: 100%; padding: 10px 12px; border: none; outline: none; font-size: 14px; font-weight: 500; color: var(--text); background: transparent; user-select: text !important; -webkit-user-select: text !important; }
+        .field-input::placeholder { color: #c7c7cc; }
 
-        .key:active {
-            background: rgba(255, 255, 255, 0.35);
-        }
+        .status-icon-wrap { display: flex; align-items: center; justify-content: center; padding-right: 10px; height: 100%; flex-shrink: 0; }
+        .status-icon-wrap svg { width: 16px; height: 16px; display: none; }
+        
+        .input-card.is-valid .status-icon-wrap .tick-icon { display: block; fill: var(--success); }
+        
+        /* ✕ ক্রস চিহ্নটি হাইড করা হলো, শুধু বক্সটি লাল থাকবে */
+        .input-card.is-invalid .status-icon-wrap .cross-icon { display: none; }
 
-        .key.empty {
-            background: transparent;
-            cursor: default;
+        /* 📱 iOS বাটন স্টাইল */
+        .ios-alert-buttons { display: flex; border-top: 0.5px solid #c8c8c8; }
+        .ios-alert-btn {
+            flex: 1; background: none; border: none; outline: none; padding: 12px;
+            font-size: 16px; color: var(--primary); cursor: pointer; text-align: center;
         }
-
-        .key.delete-btn {
-            background: transparent;
-            font-size: 22px;
-        }
-
-        .key.delete-btn:active {
-            background: transparent;
-            opacity: 0.5;
-        }
-
-        .pin-cancel {
-            background: transparent;
-            border: none;
-            color: #ffffff;
-            font-size: 16px;
-            font-weight: 400;
-            cursor: pointer;
-            opacity: 0.8;
-        }
-
-        .hidden {
-            display: none !important;
-        }
+        .ios-alert-btn.cancel { border-right: 0.5px solid #c8c8c8; font-weight: 400; }
+        .ios-alert-btn.save { font-weight: 600; }
+        
+        /* সেভ বাটন ডিজেবল থাকলে ওপাটিসি কমবে এবং ক্লিক নেওয়া বন্ধ হবে */
+        .ios-alert-btn.save:disabled { color: var(--muted); opacity: 0.4; pointer-events: none; }
+        
+        .ios-alert-btn.danger-action { color: var(--danger) !important; font-weight: 700; }
+        .ios-alert-btn:active { background: rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
 
-    <div class="ios-container">
-        <div class="ios-card">
-            <div class="card-title">প্রোফাইল এডিট করুন</div>
-            
-            <div class="ios-input-group">
-                <label class="ios-label">আপনার জিমেইল এড্রেস</label>
-                <input type="email" id="email-input" class="ios-input" placeholder="example@gmail.com" oninput="validateEmail()">
-            </div>
-            
-            <button class="ios-btn ios-btn-primary" onclick="saveData()">তথ্য সেভ করুন</button>
+    <div id="topNotification">
+        <div class="toast-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
+        <span id="notificationText">Copied Successfully!</span>
+    </div>
 
-        <div class="ios-card">
-            <div class="card-title">অ্যাকাউন্ট অ্যাকশন</div>
-            <button class="ios-btn ios-btn-danger" onclick="openPinModal()">Delete Account</button>
+    <div id="iosModalOverlay" class="modal-overlay">
+        <div class="ios-alert-box">
+            <div class="ios-alert-body">
+                <div class="ios-alert-title">Edit Account</div>
+                <div class="ios-alert-subtitle" id="modalTargetEmail">email@gmail.com</div>
+                
+                <div class="ios-input-group">
+                    <label>Recovery Mail</label>
+                    <div id="modalRecoveryCard" class="input-card">
+                        <input type="email" id="modalRecoveryInput" class="field-input" placeholder="recovery@gmail.com" oninput="checkModalRecoveryLive()">
+                        <div class="status-icon-wrap">
+                            <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                            <svg class="cross-icon" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ios-input-group">
+                    <label>2FA Secret Key</label>
+                    <div id="modalTfaCard" class="input-card">
+                        <input type="text" id="modal2faInput" class="field-input" placeholder="Enter 16+ Character Secret" oninput="checkModalTfaLive()">
+                        <div class="status-icon-wrap">
+                            <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                            <svg class="cross-icon" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ios-alert-buttons">
+                <button class="ios-alert-btn cancel" onclick="closeEditModal()">Cancel</button>
+                <button class="ios-alert-btn save" id="modalSaveBtn" onclick="saveAccountEdits()">Save</button>
+            </div>
         </div>
     </div>
 
-    <div id="pin-modal" class="ios-pin-modal hidden">
-        <div class="ios-pin-container">
-            <div class="pin-header">সিকিউরিটি পিন লিখুন</div>
-            
-            <div class="pin-dots">
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
+    <div id="iosDeleteModalOverlay" class="modal-overlay">
+        <div class="ios-alert-box">
+            <div class="ios-alert-body" style="padding: 24px 16px 20px 16px;">
+                <div style="margin-bottom: 12px; display: flex; justify-content: center;">
+                    <svg viewBox="0 0 24 24" style="width: 42px; height: 42px; fill: var(--danger);"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                </div>
+                <div class="ios-alert-title" style="font-size:18px; font-weight:800; color:var(--text)">Delete Account?</div>
+                <div class="ios-alert-subtitle" id="deleteTargetEmail" style="color:var(--muted); font-size:13px; font-weight:600; margin-top:4px; margin-bottom:8px;">email@gmail.com</div>
+                <p style="font-size: 12px; color: #8e8e93; line-height: 1.4; font-weight: 500;">Are you sure you want to delete this account? This action cannot be reverted.</p>
             </div>
-            
-            <div class="pin-keypad">
-                <button class="key" onclick="pressKey(1)">1</button>
-                <button class="key" onclick="pressKey(2)">2</button>
-                <button class="key" onclick="pressKey(3)">3</button>
-                <button class="key" onclick="pressKey(4)">4</button>
-                <button class="key" onclick="pressKey(5)">5</button>
-                <button class="key" onclick="pressKey(6)">6</button>
-                <button class="key" onclick="pressKey(7)">7</button>
-                <button class="key" onclick="pressKey(8)">8</button>
-                <button class="key" onclick="pressKey(9)">9</button>
-                
-                <div class="key empty"></div> 
-                <button class="key" onclick="pressKey(0)">0</button>
-                <button class="key delete-btn" onclick="pressDelete()">⌫</button>
+            <div class="ios-alert-buttons">
+                <button class="ios-alert-btn cancel" onclick="closeDeleteModal()" style="font-weight: 600;">Cancel</button>
+                <button class="ios-alert-btn danger-action" onclick="confirmDeleteAccount()">Delete</button>
             </div>
-            
-            <button class="pin-cancel" onclick="closePinModal()">বাতিল করুন</button>
+        </div>
+    </div>
+
+    <h2 class="page-title">GMAIL SAVER</h2>
+
+    <div class="search-wrapper">
+        <input type="text" id="searchInput" class="search-input" placeholder="Enter exact Gmail to search..." onkeydown="if(event.key === 'Enter') handleGmailSearch()">
+        <button class="search-btn" onclick="handleGmailSearch()">Search</button>
+    </div>
+
+    <div class="counter-container">
+        <span>Accounts Found:</span>
+        <span id="totalCount" class="counter-value">0</span>
+    </div>
+
+    <div id="historyBox">
+        <div class="skeleton-card">
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line long"></div>
+            <div class="skeleton-line medium"></div>
+            <div class="skeleton-line long"></div>
+        </div>
+        <div class="skeleton-card">
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line long"></div>
+            <div class="skeleton-line medium"></div>
+            <div class="skeleton-line long"></div>
         </div>
     </div>
 
     <script>
-        // টেলিগ্রাম ওয়েব অ্যাপ ইনিশিয়ালাইজেশন
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.ready();
-            window.Telegram.WebApp.expand(); // অ্যাপটি ফুল স্ক্রিন করার জন্য
-        }
+        let allOrdersGlobal = [];
+        let live2FAEngineTimer = null;
+        let currentEditingEmail = null;
+        let currentDeletingEmail = null;
 
-        /* --- ১. ইমেইল চেকিং লজিক (ক্রস চিহ্ন ছাড়া শুধু লাল বক্স) --- */
-        function validateEmail() {
-            const emailInput = document.getElementById('email-input');
-            const emailValue = emailInput.value.trim();
-            
-            // ইমেইলের শেষে যদি @gmail.com না থাকে তবে বক্সটি লাল হবে
-            if (emailValue !== "" && !emailValue.endsWith('@gmail.com')) {
-                emailInput.classList.add('input-error');
-            } else {
-                // সঠিক হলে বা খালি থাকলে লাল বর্ডার চলে যাবে
-                emailInput.classList.remove('input-error');
+        // ২এফএ ক্যালকুলেশন ফাংশনসমূহ
+        function dec2hex(s) { return (s < 15.5 ? '0' : '') + Math.round(s).toString(16); }
+        function hex2dec(s) { return parseInt(s, 16); }
+        function base32tohex(base32) {
+            let base32chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+            let bits = ""; let hex = "";
+            for (let i = 0; i < base32.length; i++) {
+                let val = base32chars.indexOf(base32.charAt(i).toUpperCase());
+                if(val === -1) continue;
+                bits += leftpad(val.toString(2), 5, '0');
             }
-        }
-
-        function saveData() {
-            const emailInput = document.getElementById('email-input');
-            if (emailInput.classList.contains('input-error') || emailInput.value.trim() === "") {
-                if (window.Telegram && window.Telegram.WebApp.HapticFeedback) {
-                    window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
-                }
-                alert('অনুগ্রহ করে সঠিক জিমেইল এড্রেস দিন!');
-            } else {
-                alert('তথ্য সফলভাবে সেভ হয়েছে!');
+            for (let i = 0; i + 4 <= bits.length; i += 4) {
+                let chunk = bits.substr(i, 4);
+                hex = hex + parseInt(chunk, 2).toString(16);
             }
+            return hex;
         }
+        function leftpad(str, len, pad) { if (len + 1 >= str.length) { str = Array(len + 1 - str.length).join(pad) + str; } return str; }
 
-
-        /* --- ২. ৬ ডিজিট প্রিমিয়াম মাস্টার পিন লজিক --- */
-        let currentPin = "";
-        const correctPin = "123456"; // আপনার ডাটাবেজ বা ব্যাকএন্ডের পিন কোডটি এখানে ম্যাচ করবেন
-
-        function openPinModal() {
-            currentPin = "";
-            updateDots();
-            document.getElementById('pin-modal').classList.remove('hidden');
-        }
-
-        function closePinModal() {
-            document.getElementById('pin-modal').classList.add('hidden');
-        }
-
-        function pressKey(num) {
-            if (currentPin.length < 6) {
-                currentPin += num;
-                updateDots();
+        function getLocalTOTP(secret) {
+            try {
+                if(!secret || secret.trim() === "" || secret.toLowerCase() === "n/a") return "------";
+                let key = base32tohex(secret.toUpperCase().replace(/\s+/g, ""));
+                let epoch = Math.round(new Date().getTime() / 1000.0);
+                let time = leftpad(dec2hex(Math.floor(epoch / 30)), 16, '0');
                 
-                // Telegram Light Haptic Feedback (টাইপিং ভাইব্রেশন)
-                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-                    window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-                }
-
-                // ৬ ডিজিট পূরণ হলে অটোমেটিক ভেরিফাই হবে
-                if (currentPin.length === 6) {
-                    setTimeout(verifyPin, 250); 
-                }
-            }
-        }
-
-        function pressDelete() {
-            if (currentPin.length > 0) {
-                currentPin = currentPin.slice(0, -1);
-                updateDots();
+                let shaObj = new jsSHA("SHA-1", "HEX");
+                shaObj.setHMACKey(key, "HEX");
+                shaObj.update(time);
+                let hmac = shaObj.getHMAC("HEX");
                 
-                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-                    window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-                }
+                let offset = hex2dec(hmac.substring(hmac.length - 1));
+                let otp = (hex2dec(hmac.substr(offset * 2, 8)) & hex2dec('7fffffff')) + '';
+                otp = otp.substr(otp.length - 6, 6);
+                return leftpad(otp, 6, '0');
+            } catch (err) {
+                return "000000";
             }
         }
 
-        function updateDots() {
-            const dots = document.querySelectorAll('.dot');
-            dots.forEach((dot, index) => {
-                if (index < currentPin.length) {
-                    dot.classList.add('filled');
-                } else {
-                    dot.classList.remove('filled');
-                }
+        function triggerNotification(message, statusType = 'success') {
+            const notif = document.getElementById('topNotification');
+            const checkContainer = notif.querySelector('.toast-check');
+            document.getElementById('notificationText').innerText = message;
+
+            if(statusType === 'danger') {
+                checkContainer.style.background = "var(--danger)";
+                checkContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+            } else {
+                checkContainer.style.background = "var(--success)";
+                checkContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+            }
+
+            notif.classList.add('show');
+            setTimeout(() => { notif.classList.remove('show'); }, 2200);
+        }
+
+        function copyOrder(text, btnId) {
+            if(!text || text.includes("---") || text.includes("Calculat") || text === 'N/A') return;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById(btnId);
+                const icon = btn.querySelector('svg');
+                
+                btn.classList.add('copied');
+                icon.innerHTML = '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#ffffff"/>';
+                triggerNotification("Copied Successfully!", 'success');
+                
+                setTimeout(function() {
+                    btn.classList.remove('copied');
+                    icon.innerHTML = '<path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" fill="#8e8e93"/>';
+                }, 2200);
             });
         }
 
-        function verifyPin() {
-            if (currentPin === correctPin) {
-                // সঠিক পিন হলে Success Vibration দেবে
-                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-                    window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-                }
-                
-                alert('পিন সঠিক হয়েছে! অ্যাকাউন্টটি চিরতরে ডিলিট করা হচ্ছে...');
-                closePinModal();
-                
-                // এখানে আপনার অ্যাকাউন্ট ডিলিট করার ব্যাকএন্ড বা এপিআই কল করতে পারেন।
-                
+        /* --- সেভ বাটনের স্টেট কন্ট্রোল করার গ্লোবাল ফাংশন --- */
+        function updateSaveButtonState() {
+            const recoveryCard = document.getElementById('modalRecoveryCard');
+            const tfaCard = document.getElementById('modalTfaCard');
+            const saveBtn = document.getElementById('modalSaveBtn');
+            
+            // যেকোনো একটি বক্স যদি ভুল (is-invalid) থাকে, তবে বাটন ডিজেবল হবে
+            if (recoveryCard.classList.contains('is-invalid') || tfaCard.classList.contains('is-invalid')) {
+                saveBtn.disabled = true;
             } else {
-                // ভুল পিন হলে Error Vibration দেবে
-                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-                    window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
-                }
-                
-                alert('ভুল সিকিউরিটি পিন! আবার চেষ্টা করুন।');
-                currentPin = "";
-                updateDots();
+                saveBtn.disabled = false;
             }
         }
+
+        /* --- মডাল রিকভারি লাইভ জিমেইল চেকার (ক্রস ছাড়া শুধু লাল বক্স) --- */
+        function checkModalRecoveryLive() {
+            const input = document.getElementById('modalRecoveryInput');
+            const card = document.getElementById('modalRecoveryCard');
+            const val = input.value.trim().toLowerCase();
+            
+            if (val === "") {
+                card.classList.remove('is-valid', 'is-invalid');
+            } else if (val.endsWith('@gmail.com')) {
+                card.classList.add('is-valid');
+                card.classList.remove('is-invalid');
+            } else {
+                card.classList.remove('is-valid');
+                card.classList.add('is-invalid');
+            }
+            updateSaveButtonState();
+        }
+
+        /* --- মডাল ২এফএ লাইভ কোড চেকার (ক্রস ছাড়া শুধু লাল বক্স) --- */
+        function checkModalTfaLive() {
+            const input = document.getElementById('modal2faInput');
+            const card = document.getElementById('modalTfaCard');
+            const val = input.value.trim().replace(/\s+/g, "");
+            
+            if (val === "") {
+                card.classList.remove('is-valid', 'is-invalid');
+            } else if (val.length >= 16) {
+                card.classList.add('is-valid');
+                card.classList.remove('is-invalid');
+            } else {
+                card.classList.remove('is-valid');
+                card.classList.add('is-invalid');
+            }
+            updateSaveButtonState();
+        }
+
+        // Live 2FA Dynamic Animation Loop
+        function startLive2FAEngine() {
+            if(live2FAEngineTimer) clearInterval(live2FAEngineTimer);
+            const totalRadius = 10;
+            const circumference = 2 * Math.PI * totalRadius; 
+
+            function updateLoop() {
+                const now = new Date();
+                const remainingTime = 30 - (now.getSeconds() % 30);
+
+                document.querySelectorAll('.card').forEach((card) => {
+                    const secret = card.getAttribute('data-tfa-secret');
+                    const otpSpan = card.querySelector('.otp-display');
+                    const ring = card.querySelector('.progress-ring');
+                    const textSec = card.querySelector('.timer-text-sec');
+                    const copyBtn = card.querySelector('.tfa-live-copy-btn');
+
+                    if (!secret || secret.trim() === "" || secret.toLowerCase() === "n/a") return;
+
+                    const currentLiveCode = getLocalTOTP(secret);
+                    if(otpSpan) otpSpan.innerText = currentLiveCode;
+                    if(copyBtn) copyBtn.setAttribute('onclick', `copyOrder('${currentLiveCode}', '${copyBtn.id}')`);
+                    if(textSec) textSec.innerText = remainingTime;
+                    
+                    if(ring && textSec) {
+                        if(remainingTime <= 5) {
+                            ring.style.stroke = "var(--danger)";
+                            textSec.style.color = "var(--danger)";
+                        } else {
+                            ring.style.stroke = "var(--primary)";
+                            textSec.style.color = "var(--primary)";
+                        }
+                        ring.style.strokeDashoffset = circumference - (remainingTime / 30) * circumference;
+                    }
+                });
+            }
+            updateLoop();
+            live2FAEngineTimer = setInterval(updateLoop, 1000);
+        }
+
+        function handleGmailSearch() {
+            const searchBtn = document.querySelector('.search-btn');
+            const originalText = searchBtn.innerText;
+            
+            searchBtn.innerHTML = '<div class="spinner"></div>';
+            searchBtn.disabled = true;
+
+            setTimeout(() => {
+                const query = document.getElementById('searchInput').value.trim().toLowerCase();
+                if (query === "") {
+                    renderOrders(allOrdersGlobal);
+                } else {
+                    const filtered = allOrdersGlobal.filter(item => {
+                        let emailVal = (item.email || '').trim().toLowerCase();
+                        return emailVal.includes(query); 
+                    });
+                    renderOrders(filtered);
+                }
+                searchBtn.innerHTML = originalText;
+                searchBtn.disabled = false;
+            }, 400); 
+        }
+
+        function openEditModal(targetEmail) {
+            const account = allOrdersGlobal.find(item => (item.email || '').trim().toLowerCase() === targetEmail.trim().toLowerCase());
+            if (!account) return;
+
+            currentEditingEmail = targetEmail;
+            document.getElementById('modalTargetEmail').innerText = targetEmail;
+            document.getElementById('modalRecoveryInput').value = account.recovery && account.recovery !== 'N/A' ? account.recovery : '';
+            document.getElementById('modal2faInput').value = account['2fa'] && account['2fa'] !== 'N/A' ? account['2fa'] : '';
+            
+            // মডাল ওপেন হওয়ার সাথে সাথেই ভ্যালিডেশন স্টেট রান হবে
+            checkModalRecoveryLive();
+            checkModalTfaLive();
+            
+            document.getElementById('iosModalOverlay').style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('iosModalOverlay').style.display = 'none';
+            currentEditingEmail = null;
+        }
+
+        function saveAccountEdits() {
+            if (!currentEditingEmail) return;
+
+            const newRecovery = document.getElementById('modalRecoveryInput').value.trim();
+            const new2fa = document.getElementById('modal2faInput').value.trim();
+
+            allOrdersGlobal = allOrdersGlobal.map(item => {
+                if ((item.email || '').trim().toLowerCase() === currentEditingEmail.trim().toLowerCase()) {
+                    return { ...item, recovery: newRecovery || 'N/A', '2fa': new2fa || 'N/A' };
+                }
+                return item;
+            });
+
+            renderOrders(allOrdersGlobal);
+            closeEditModal();
+            triggerNotification("Account Updated Successfully!", 'success');
+
+            if (window.Telegram && window.Telegram.WebApp) {
+                try {
+                    window.Telegram.WebApp.sendData(JSON.stringify({
+                        action: "edit_account",
+                        email: currentEditingEmail,
+                        recovery: newRecovery,
+                        tfa: new2fa
+                    }));
+                } catch(tgErr) { console.log(tgErr); }
+            }
+        }
+
+        // 🗑️ কাস্টম ডিলিট ক্লিক লজিক
+        function executeDeleteAccount(targetEmail) {
+            if (!targetEmail) return;
+            currentDeletingEmail = targetEmail;
+            document.getElementById('deleteTargetEmail').innerText = targetEmail;
+            document.getElementById('iosDeleteModalOverlay').style.display = 'flex';
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('iosDeleteModalOverlay').style.display = 'none';
+            currentDeletingEmail = null;
+        }
+
+        function confirmDeleteAccount() {
+            if (!currentDeletingEmail) return;
+
+            allOrdersGlobal = allOrdersGlobal.filter(item => (item.email || '').trim().toLowerCase() !== currentDeletingEmail.trim().toLowerCase());
+            renderOrders(allOrdersGlobal);
+            triggerNotification("Account Deleted Successfully!", 'danger');
+
+            if (window.Telegram && window.Telegram.WebApp) {
+                try {
+                    window.Telegram.WebApp.sendData(JSON.stringify({
+                        action: "delete_account",
+                        email: currentDeletingEmail
+                    }));
+                } catch(tgErr) { console.log(tgErr); }
+            }
+            closeDeleteModal();
+        }
+
+        // ডাটা রেন্ডারিং ইঞ্জিন
+        function renderOrders(ordersList) {
+            const historyBox = document.getElementById('historyBox');
+            
+            if(!ordersList || !Array.isArray(ordersList) || ordersList.length === 0) {
+                document.getElementById('totalCount').innerText = "0";
+                historyBox.innerHTML = '<div class="message-box">⚠️ No active accounts found.<br><span style="font-size:12px; font-weight:400; color:#ff3b30;">Please check if you passed the database variable in WebApp link correctly.</span></div>';
+                return;
+            }
+
+            document.getElementById('totalCount').innerText = ordersList.length;
+
+            historyBox.innerHTML = ordersList.map((item, index) => {
+                let btnEmail = 'b-em-' + index;
+                let btnPass = 'b-ps-' + index;
+                let btnRec = 'b-rc-' + index;
+                let btnSec = 'b-sc-' + index;
+                let btnOtp = 'b-ot-' + index;
+                
+                let emailVal = item.email || 'N/A';
+                let passVal = item.password || 'N/A';
+                let recoveryVal = item.recovery || 'N/A';
+                let tfaSecretVal = item['2fa'] || 'N/A'; 
+
+                return `
+                <div class="card" data-tfa-secret="${tfaSecretVal}">
+                    <div class="summary-row">
+                        <span class="row-label">Email</span>
+                        <div class="row-value-copy">
+                            <span class="value-text">${emailVal}</span>
+                            <button class="inline-copy-btn" id="${btnEmail}" onclick="copyOrder('${emailVal}', '${btnEmail}')">
+                                <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="summary-row">
+                        <span class="row-label">Password</span>
+                        <div class="row-value-copy">
+                            <span class="value-text">${passVal}</span>
+                            <button class="inline-copy-btn" id="${btnPass}" onclick="copyOrder('${passVal}', '${btnPass}')">
+                                <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="summary-row">
+                        <span class="row-label">Recovery Mail</span>
+                        <div class="row-value-copy">
+                            <span class="value-text">${recoveryVal}</span>
+                            <button class="inline-copy-btn" id="${btnRec}" onclick="copyOrder('${recoveryVal}', '${btnRec}')">
+                                <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="summary-row">
+                        <span class="row-label">2FA Secret Key</span>
+                        <div class="row-value-copy">
+                            <span class="value-text" style="font-weight:700; font-size:12px; color: var(--muted);">${tfaSecretVal}</span>
+                            <button class="inline-copy-btn" id="${btnSec}" onclick="copyOrder('${tfaSecretVal}', '${btnSec}')">
+                                <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="summary-row" style="background: rgba(0,122,255,0.02); border-bottom: none;">
+                        <span class="row-label" style="color: var(--primary); font-weight: 800;">Live 2FA OTP</span>
+                        <div class="row-value-copy">
+                            <div class="otp-controls-hub">
+                                <div class="authenticator-timer-box">
+                                    <svg><circle class="bg-ring" cx="12" cy="12" r="10"></circle><circle class="progress-ring" cx="12" cy="12" r="10"></circle></svg>
+                                    <span class="timer-text-sec">30</span>
+                                </div>
+                                <span class="otp-display">Calculating...</span>
+                            </div>
+                            <button class="inline-copy-btn tfa-live-copy-btn" id="${btnOtp}">
+                                <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        <button class="action-btn edit" onclick="openEditModal('${emailVal}')">
+                            <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                            Edit
+                        </button>
+                        <button class="action-btn delete" onclick="executeDeleteAccount('${emailVal}')">
+                            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                            Delete
+                        </button>
+                    </div>
+                </div>`;
+            }).join('');
+            
+            startLive2FAEngine();
+        }
+
+        // ডাটাবেজ থেকে ডাটা রিসিভ করার মেইন লজিক
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(() => {
+                try {
+                    const searchString = window.location.search || window.location.hash.replace('#', '?');
+                    const urlParams = new URLSearchParams(searchString);
+                    const historyData = urlParams.get('data') || urlParams.get('orders'); 
+
+                    if (historyData && historyData.trim() !== "" && !historyData.startsWith("{")) {
+                        const decodedData = decodeURIComponent(historyData);
+                        allOrdersGlobal = JSON.parse(decodedData);
+                        renderOrders(allOrdersGlobal);
+                    } else {
+                        renderOrders([]);
+                    }
+                } catch (error) {
+                    console.error("JSON Parsing Error:", error);
+                    document.getElementById('historyBox').innerHTML = '<div class="message-box" style="color:var(--danger)">❌ Invalid Data Format!<br><span style="font-size:12px; color:var(--text)">Make sure database contains valid JSON array.</span></div>';
+                }
+            }, 1000);
+
+            if (window.Telegram && window.Telegram.WebApp) {
+                try {
+                    window.Telegram.WebApp.ready();
+                    window.Telegram.WebApp.expand();
+                } catch(tgErr) { console.log(tgErr); }
+            }
+        });
     </script>
 </body>
 </html>
