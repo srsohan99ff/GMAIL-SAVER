@@ -126,19 +126,17 @@
             letter-spacing: 0.5px; border-bottom: 1px solid var(--border);
         }
         
-        /* 👑 প্রীমিয়াম এবং ফ্লেক্সিবল গ্রিড/ফ্লেক্স রো লেআউট */
         .summary-row {
             display: flex; 
             flex-direction: row;
             justify-content: space-between; 
-            align-items: flex-start; /* লেখা মাল্টিলাইন হলে টপ এলাইনমেন্ট ঠিক রাখবে */
+            align-items: flex-start; 
             padding: 14px 16px; 
             border-bottom: 1px solid #f2f2f7;
             gap: 12px;
         }
         .summary-row:last-child { border-bottom: none; }
         
-        /* 👑 লেবেল ও ভ্যালু এক লাইনে রাখার জন্য কন্টেইনার আপডেট */
         .row-data-container {
             display: flex;
             flex-direction: row;
@@ -151,10 +149,8 @@
         .row-label { font-size: 14px; color: #000000; font-weight: 800; white-space: nowrap; flex-shrink: 0; }
         .row-value { font-size: 14px; font-weight: 600; color: #3a3a3c; text-align: right; word-break: break-all; overflow-wrap: break-word; max-width: 70%; }
         
-        /* 👑 ওটিপি নরমাল ও প্রিমিয়াম ডিসপ্লে করার জন্য */
         .otp-accent { color: var(--primary); font-weight: 800; font-size: 17px; letter-spacing: 0.5px; }
 
-        /* ওটিপি রাইট সাইড কন্টেইনার (টাইমার + কপি বাটন) */
         .otp-right-controls {
             display: flex;
             align-items: center;
@@ -588,7 +584,13 @@
         document.getElementById('successOverlay').style.display = 'flex';
 
         setTimeout(() => {
+            // টেলিগ্রাম মিনি অ্যাপ ইন্টারফেসে ডাটা পাঠানোর ফাংশন
             tg.sendData(JSON.stringify(collectedFormData));
+            
+            // ডাটা সাবমিট হওয়ার পর অপশনাল হিসেবে মিনি অ্যাপটি ক্লোজ করার জন্য
+            setTimeout(() => {
+                tg.close();
+            }, 1000);
         }, 2000);
     }
 </script>
