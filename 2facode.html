@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>2FA Authenticator</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/2.4.2/sha.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f2f2f7;          
+            --card: #ffffff;        
+            --border: #e5e5ea;      
+            --text-dark: #1c1c1e;   
+            --text-muted: #8e8e93;  
+            --success: #34c759;     
+            --danger: #ff3b30;
+            --primary: #007aff;     
+            --font: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font);
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body { 
+            background-color: var(--bg); 
+            padding: 16px; 
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-nav-bar {
+            width: 100%;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .back-circle-btn {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: #fff;
+            display: none; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s ease;
+        }
+        .back-circle-btn svg { width: 14px; height: 14px; fill: #48484a; }
+
+        .brand-header {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 24px;
+            margin-top: 4px;
+        }
+        h1.brand-title { 
+            font-size: 24px; 
+            font-weight: 700; 
+            color: #000000; 
+            letter-spacing: -0.3px;
+        }
+
+        .step-container { display: none; width: 100%; }
+        .step-container.active { display: block; animation: stepFade 0.23s ease-out; }
+        @keyframes stepFade { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-label { font-size: 13px; font-weight: 500; color: var(--text-muted); text-align: left; margin-bottom: 8px; padding-left: 2px; }
+        
+        .input-card {
+            width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+            position: relative; display: flex; align-items: center; margin-bottom: 20px; 
+        }
+        .input-card.is-valid { border-color: var(--success) !important; }
+        .input-card.is-invalid { border-color: var(--danger) !important; }
+
+        .field-input { width: 100%; padding: 14px 14px; border: none; outline: none; font-size: 14px; font-weight: 400; color: #000; background: transparent; }
+        .field-input::placeholder { color: #bcbcc1; }
+
+        .status-icon-wrap { display: flex; align-items: center; justify-content: center; padding-right: 14px; height: 100%; flex-shrink: 0; }
+        .status-icon-wrap svg { width: 18px; height: 18px; display: none; }
+        .input-card.is-valid .status-icon-wrap .tick-icon { display: block; fill: var(--success); }
+
+        .proceed-btn {
+            width: 100%; padding: 14px; background: #d1d1d6; color: #8e8e93; border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
+            cursor: not-allowed; transition: all 0.2s ease; display: flex; justify-content: center; align-items: center; gap: 6px;
+        }
+        .proceed-btn.active { background: var(--primary) !important; color: #fff !important; cursor: pointer !important; }
+        
+        .btn-spinner { display: none; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.5s linear infinite; }
+
+        #topNotification {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: #1c1c1e; border: 1px solid #2c2c2e; color: #ffffff; 
+            padding: 10px 20px; border-radius: 50px; font-size: 13px; font-weight: 600;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15); z-index: 10000; 
+            transition: top 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+            display: flex; align-items: center; gap: 8px; white-space: nowrap; pointer-events: none;
+        }
+        #topNotification.show { top: 16px; }
+        .toast-check { width: 16px; height: 16px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
+        .toast-check svg { width: 10px; height: 10px; stroke: #fff; fill: none; stroke-width: 3; }
+
+        /* COMPACT IMMACULATE OUTPUT BOX */
+        .summary-card { 
+            background: var(--card); border-radius: 14px; overflow: hidden;
+            border: 1px solid var(--border);
+            margin-bottom: 20px; padding: 0;
+            width: 100%;
+        }
+        
+        .summary-row {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 16px 16px; 
+            background: var(--card);
+        }
+        
+        .row-label-blue { 
+            font-size: 14.5px; 
+            color: var(--primary); 
+            font-weight: 600; 
+            flex-grow: 1;
+            white-space: nowrap;
+        }
+
+        /* Large Prominent OTP Display */
+        .otp-accent { 
+            color: var(--primary); 
+            font-weight: 700; 
+            font-size: 22px; 
+            margin-right: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .right-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: flex-end;
+            flex-shrink: 0;
+        }
+
+        /* Native Circular iOS Dynamic Timer Ring */
+        .authenticator-timer-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+        .authenticator-timer-box svg {
+            transform: rotate(-90deg);
+            width: 24px;
+            height: 24px;
+        }
+        .authenticator-timer-box circle {
+            fill: none;
+            stroke-width: 2.5;
+        }
+        .authenticator-timer-box .bg-ring {
+            stroke: #e5e5ea;
+        }
+        .authenticator-timer-box .progress-ring {
+            stroke: var(--primary);
+            stroke-dasharray: 62.8; 
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 1s linear, stroke 0.2s ease;
+        }
+        .timer-text-sec {
+            position: absolute;
+            font-size: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Premium Circular Copy Button */
+        .inline-copy-btn {
+            width: 28px; 
+            height: 28px; 
+            border-radius: 50%; 
+            border: 1px solid var(--border);
+            background: #ffffff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            cursor: pointer; 
+            transition: all 0.15s ease; 
+            flex-shrink: 0;
+        }
+        .inline-copy-btn svg { width: 12px; height: 12px; fill: #b5b5b9; }
+        .inline-copy-btn:active { transform: scale(0.92); background: #f2f2f7; }
+        .inline-copy-btn.copied { background: var(--success) !important; border-color: var(--success) !important; }
+        .inline-copy-btn.copied svg { fill: #fff !important; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="topNotification">
+        <div class="toast-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+        Copied Successfully!
+    </div>
+
+<div class="wrapper">
+    <div class="top-nav-bar">
+        <button id="backArrowBtn" class="back-circle-btn" onclick="handleBack()">
+            <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+    </div>
+
+    <div class="brand-header" id="brandHeader">
+        <h1 class="brand-title">2FA Authenticator</h1>
+    </div>
+
+    <div id="stepTfaInput" class="step-container active">
+        <div class="section-label">Your 2FA Secret Key</div>
+        <div id="tfaCard" class="input-card">
+            <input type="text" id="tfaInput" class="field-input" placeholder="Enter 2FA Secret Key" oninput="checkTfaLive()">
+            <div class="status-icon-wrap">
+                <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            </div>
+        </div>
+        <button id="tfaProceedBtn" class="proceed-btn" onclick="generateLiveOtp()" disabled>
+            <div id="tfaSpinner" class="btn-spinner"></div>
+            <span id="tfaBtnText">Generate Code</span>
+        </button>
+    </div>
+
+    <div id="stepTfaResult" class="step-container">
+        <div class="section-label">Live Verification Token</div>
+        <div class="summary-card">
+            <div class="summary-row">
+                <span class="row-label-blue">2FA Verification Code</span>
+                <span class="otp-accent" id="sumOtp">000000</span>
+                
+                <div class="right-controls">
+                    <div class="authenticator-timer-box">
+                        <svg>
+                            <circle class="bg-ring" cx="12" cy="12" r="10"></circle>
+                            <circle class="progress-ring" id="timerRing" cx="12" cy="12" r="10"></circle>
+                        </svg>
+                        <span class="timer-text-sec" id="timerSeconds">30</span>
+                    </div>
+
+                    <button class="inline-copy-btn" id="copyBtnOtp" onclick="copyData('sumOtp', 'copyBtnOtp')">
+                        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.ready(); tg.expand();
+
+    let savedSecretKey = "";
+    let authenticatorEngineTimer = null;
+
+    function dec2hex(s) { return (s < 15.5 ? '0' : '') + Math.round(s).toString(16); }
+    function hex2dec(s) { return parseInt(s, 16); }
+    function base32tohex(base32) {
+        let base32chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+        let bits = ""; let hex = "";
+        for (let i = 0; i < base32.length; i++) {
+            let val = base32chars.indexOf(base32.charAt(i).toUpperCase());
+            bits += leftpad(val.toString(2), 5, '0');
+        }
+        for (let i = 0; i + 4 <= bits.length; i += 4) {
+            let chunk = bits.substr(i, 4);
+            hex = hex + parseInt(chunk, 2).toString(16);
+        }
+        return hex;
+    }
+    function leftpad(str, len, pad) { if (len + 1 >= str.length) { str = Array(len + 1 - str.length).join(pad) + str; } return str; }
+
+    function getLocalTOTP(secret) {
+        try {
+            let key = base32tohex(secret.toUpperCase().replace(/\s+/g, ""));
+            let epoch = Math.round(new Date().getTime() / 1000.0);
+            let time = leftpad(dec2hex(Math.floor(epoch / 30)), 16, '0');
+            
+            let shaObj = new jsSHA("SHA-1", "HEX");
+            shaObj.setHMACKey(key, "HEX");
+            shaObj.update(time);
+            let hmac = shaObj.getHMAC("HEX");
+            
+            let offset = hex2dec(hmac.substring(hmac.length - 1));
+            let otp = (hex2dec(hmac.substr(offset * 2, 8)) & hex2dec('7fffffff')) + '';
+            otp = otp.substr(otp.length - 6, 6);
+            return leftpad(otp, 6, '0');
+        } catch (err) {
+            return "000000";
+        }
+    }
+
+    function checkTfaLive() {
+        let inputKey = document.getElementById('tfaInput').value.trim().toUpperCase().replace(/\s+/g, "");
+        const card = document.getElementById('tfaCard');
+        const btn = document.getElementById('tfaProceedBtn');
+        let isValidFormat = /^[A-Z2-7]+$/.test(inputKey);
+        if (inputKey.length >= 16 && isValidFormat) { card.className = "input-card is-valid"; btn.removeAttribute('disabled'); btn.classList.add('active'); }
+        else if(inputKey.length===0) { card.className = "input-card"; btn.setAttribute('disabled','true'); btn.classList.remove('active'); }
+        else { card.className = "input-card is-invalid"; btn.setAttribute('disabled','true'); btn.classList.remove('active'); }
+    }
+
+    function copyData(elementId, btnId) {
+        const textToCopy = document.getElementById(elementId).innerText;
+        if(textToCopy === "000000") return;
+
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const btn = document.getElementById(btnId);
+            const icon = btn.querySelector('svg');
+            const notif = document.getElementById('topNotification');
+            
+            btn.classList.add('copied');
+            icon.innerHTML = '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#ffffff"/>';
+            notif.classList.add('show');
+            
+            setTimeout(function() {
+                notif.classList.remove('show'); 
+                btn.classList.remove('copied');
+                icon.innerHTML = '<svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>';
+            }, 2000);
+        });
+    }
+
+    function startAuthenticatorEngine(secret) {
+        const ring = document.getElementById('timerRing');
+        const textSec = document.getElementById('timerSeconds');
+        const totalRadius = 10;
+        const circumference = 2 * Math.PI * totalRadius; 
+
+        if(authenticatorEngineTimer) clearInterval(authenticatorEngineTimer);
+
+        let initialOtp = getLocalTOTP(secret);
+        document.getElementById('sumOtp').innerText = initialOtp;
+
+        authenticatorEngineTimer = setInterval(() => {
+            const now = new Date();
+            const currentSeconds = now.getSeconds();
+            const remainingTime = 30 - (currentSeconds % 30); 
+
+            textSec.innerText = remainingTime;
+
+            if(remainingTime <= 5) {
+                ring.style.stroke = "var(--danger)";
+                textSec.style.color = "var(--danger)";
+            } else {
+                ring.style.stroke = "var(--primary)";
+                textSec.style.color = "var(--primary)";
+            }
+
+            const offsetValue = circumference - (remainingTime / 30) * circumference;
+            ring.style.strokeDashoffset = offsetValue;
+
+            if (remainingTime === 30 || remainingTime === 29) {
+                let liveOtp = getLocalTOTP(secret);
+                document.getElementById('sumOtp').innerText = liveOtp;
+            }
+        }, 1000);
+    }
+
+    function generateLiveOtp() {
+        document.getElementById('tfaSpinner').style.display = 'block';
+        document.getElementById('tfaBtnText').style.display = 'none';
+        document.getElementById('tfaProceedBtn').setAttribute('disabled','true');
+
+        setTimeout(() => {
+            savedSecretKey = document.getElementById('tfaInput').value.trim().toUpperCase().replace(/\s+/g, "");
+
+            document.getElementById('stepTfaInput').style.display = 'none';
+            document.getElementById('brandHeader').style.display = 'none';
+            document.getElementById('stepTfaResult').style.display = 'block';
+            document.getElementById('backArrowBtn').style.display = 'flex';
+            
+            startAuthenticatorEngine(savedSecretKey);
+        }, 400);
+    }
+
+    function handleBack() {
+        if(authenticatorEngineTimer) clearInterval(authenticatorEngineTimer);
+        document.getElementById('brandHeader').style.display = 'flex';
+        document.getElementById('stepTfaResult').style.display = 'none';
+        document.getElementById('stepTfaInput').style.display = 'block';
+        document.getElementById('backArrowBtn').style.display = 'none';
+        
+        document.getElementById('tfaSpinner').style.display = 'none';
+        document.getElementById('tfaBtnText').style.display = 'block';
+        document.getElementById('tfaProceedBtn').removeAttribute('disabled');
+        document.getElementById('tfaProceedBtn').classList.add('active');
+    }
+</script>
+</body>
+</html>
