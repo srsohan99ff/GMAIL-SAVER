@@ -96,6 +96,22 @@
         .status-icon-wrap { display: flex; align-items: center; justify-content: center; padding-right: 14px; height: 100%; flex-shrink: 0; }
         .status-icon-wrap svg { width: 18px; height: 18px; display: none; }
         .input-card.is-valid .status-icon-wrap .tick-icon { display: block; fill: var(--success); }
+        .input-card.is-invalid .status-icon-wrap .cross-icon { display: block; fill: var(--danger); }
+
+        /* ইনস্টাগ্রাম স্টাইল এরর নোটিশ পপআপ */
+        .insta-error-popup {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            margin-top: -14px;
+            margin-bottom: 18px;
+            font-size: 12.5px;
+            color: var(--danger);
+            font-weight: 500;
+            padding-left: 4px;
+            animation: stepFade 0.2s ease-out;
+        }
+        .insta-error-popup svg { width: 15px; height: 15px; fill: var(--danger); flex-shrink: 0; }
 
         .proceed-btn {
             width: 100%; padding: 14px; background: #d1d1d6; color: #8e8e93; border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
@@ -117,7 +133,6 @@
         .toast-check { width: 16px; height: 16px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
         .toast-check svg { width: 10px; height: 10px; stroke: #fff; fill: none; stroke-width: 3; }
 
-        /* SUMMARY CONTAINER CONFIGURATION */
         .summary-card { 
             background: var(--card); border-radius: 14px; overflow: hidden;
             border: 1px solid var(--border);
@@ -125,7 +140,6 @@
             width: 100%;
         }
         
-        /* Adjusted layout to push text to the left right after label */
         .summary-row {
             display: flex;
             align-items: center;
@@ -136,7 +150,6 @@
         }
         .summary-row:last-child { border-bottom: none; }
         
-        /* Fixed width labels to keep everything aligned perfectly */
         .row-label-normal { 
             width: 110px;
             font-size: 14px; 
@@ -153,7 +166,6 @@
             white-space: nowrap;
         }
 
-        /* Value Content: Starts immediately with minor space, wraps into 2nd line if too long */
         .row-value { 
             font-size: 13.5px; 
             font-weight: 400; 
@@ -164,7 +176,6 @@
             padding-left: 10px;
         }
         
-        /* Muted styling for Secret Key */
         .secret-value {
             font-size: 13px;
             color: #8e8e93;
@@ -175,7 +186,6 @@
             padding-left: 10px;
         }
         
-        /* Crisp Blue Color and Bold Style for OTP text */
         .otp-accent { 
             color: var(--primary); 
             font-weight: 600; 
@@ -192,7 +202,6 @@
             flex-shrink: 0;
         }
 
-        /* Smaller Native iOS style Circular Progress */
         .authenticator-timer-box {
             display: flex;
             align-items: center;
@@ -227,7 +236,6 @@
             color: var(--primary);
         }
 
-        /* Circular Copy Button Layout used only for OTP */
         .inline-copy-btn {
             width: 26px; 
             height: 26px; 
@@ -287,8 +295,15 @@
             <input type="email" id="gmailInput" class="field-input" placeholder="Enter Email Address" oninput="checkGmailLive()">
             <div class="status-icon-wrap">
                 <svg class="tick-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                <svg class="cross-icon" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
             </div>
         </div>
+        
+        <div id="instaPopup" class="insta-error-popup">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            <span id="instaPopupText">Email already submitted!</span>
+        </div>
+
         <button id="gmailProceedBtn" class="proceed-btn" onclick="goToStep('Password')" disabled>
             <div id="gmailSpinner" class="btn-spinner"></div>
             <span id="gmailBtnText">Proceed</span>
@@ -337,7 +352,6 @@
         </button>
     </div>
 
-    <!-- SUMMARY SECTION WITH IMMACULATE SPACE AND ONLY OTP COPY BUTTON -->
     <div id="stepSummary" class="step-container">
         <div class="section-label">Account Security Summary</div>
         <div class="summary-card">
@@ -374,7 +388,6 @@
                         <span class="timer-text-sec" id="timerSeconds">30</span>
                     </div>
 
-                    <!-- Only this Copy Button remains active -->
                     <button class="inline-copy-btn" id="copyBtnOtp" onclick="copyData('sumOtp', 'copyBtnOtp')">
                         <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                     </button>
@@ -402,6 +415,11 @@
 <script>
     const tg = window.Telegram.WebApp;
     tg.ready(); tg.expand();
+
+    // 👑 URL থেকে পাঠানো ব্যাকএন্ড হিস্টোরির ডাটা রিসিভ ও পার্স করা
+    const urlParams = new URLSearchParams(window.location.search);
+    const rawData = urlParams.get('data');
+    const historyAccounts = rawData ? JSON.parse(decodeURIComponent(rawData)) : [];
 
     let collectedFormData = { gmail: "", password: "", recovery: "", secretKey: "", dynamicOtp: "" };
     let currentStepName = "Gmail";
@@ -444,13 +462,53 @@
         }
     }
 
+    // 👑 লাইভ ইমেইল ভ্যালিডেশন এবং ডুপ্লিকেট চেকার লজিক
     function checkGmailLive() {
-        const val = document.getElementById('gmailInput').value.trim();
+        const val = document.getElementById('gmailInput').value.trim().toLowerCase();
         const card = document.getElementById('gmailCard');
         const btn = document.getElementById('gmailProceedBtn');
-        if (val.endsWith('@gmail.com') && val.length >= 11) { card.className = "input-card is-valid"; btn.removeAttribute('disabled'); btn.classList.add('active'); }
-        else if(val.length===0) { card.className = "input-card"; btn.setAttribute('disabled','true'); btn.classList.remove('active'); }
-        else { card.className = "input-card is-invalid"; btn.setAttribute('disabled','true'); btn.classList.remove('active'); }
+        const instaPopup = document.getElementById('instaPopup');
+        const instaPopupText = document.getElementById('instaPopupText');
+
+        if (val.length === 0) {
+            card.className = "input-card";
+            btn.setAttribute('disabled', 'true');
+            btn.classList.remove('active');
+            instaPopup.style.display = "none";
+            return;
+        }
+
+        // মৌলিক জিমেইল ফর্ম্যাট ভ্যালিডেশন
+        const isGmailFormat = val.endsWith('@gmail.com') && val.length >= 11;
+
+        if (isGmailFormat) {
+            // হিস্টোরির ডাটার ভেতর ইমেইল অলরেডি আছে কিনা নিখুঁতভাবে চেক করা (gmail বা email অবজেক্ট কী ম্যাচ করে)
+            const isAlreadySubmitted = historyAccounts.some(account => {
+                let savedEmail = (account.gmail || account.email || "").trim().toLowerCase();
+                return savedEmail === val;
+            });
+
+            if (isAlreadySubmitted) {
+                // ডুপ্লিকেট এরর স্টেট: লাল বক্স, ক্রস আইকন এবং ইনস্টাগ্রাম পপআপ শো
+                card.className = "input-card is-invalid";
+                btn.setAttribute('disabled', 'true');
+                btn.classList.remove('active');
+                instaPopupText.innerText = "Email already submitted!";
+                instaPopup.style.display = "flex";
+            } else {
+                // ভ্যালিড স্টেট: সবুজ বক্স এবং টিক মার্ক আইকন
+                card.className = "input-card is-valid";
+                btn.removeAttribute('disabled');
+                btn.classList.add('active');
+                instaPopup.style.display = "none";
+            }
+        } else {
+            // ভুল ইমেইল ফরম্যাটের জন্য সাধারণ এরর স্টেট
+            card.className = "input-card is-invalid";
+            btn.setAttribute('disabled', 'true');
+            btn.classList.remove('active');
+            instaPopup.style.display = "none"; // সাধারণ ভুল ফরম্যাটে পপআপ হাইড থাকবে, শুধু লাল ক্রস উঠবে
+        }
     }
 
     function checkPasswordLive() {
