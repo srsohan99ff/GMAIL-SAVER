@@ -42,44 +42,63 @@
             width: 100%;
             display: flex;
             flex-direction: column;
+            max-width: 400px;
+            animation: pageFade 0.3s ease-out;
         }
+
+        @keyframes pageFade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .brand-header {
             display: flex;
             justify-content: center;
             width: 100%;
-            margin-bottom: 20px;
-            margin-top: 4px;
+            margin-bottom: 16px; 
+            margin-top: 5px;
         }
         h1.brand-title { 
-            font-size: 24px; 
+            font-size: 23px; 
             font-weight: 700; 
             color: #000000; 
             letter-spacing: -0.3px;
         }
 
-        .section-label { font-size: 13px; font-weight: 500; color: var(--text-muted); text-align: left; margin-bottom: 8px; padding-left: 2px; }
+        .section-label { 
+            font-size: 13px; 
+            font-weight: 500; 
+            color: var(--text-muted); 
+            text-align: left; 
+            margin-bottom: 4px; 
+            padding-left: 2px; 
+        }
         
-        /* 👑 সাইজ এবং চওড়া একদম আগের ইনপুট বক্সের মতো ম্যাচ করা হয়েছে */
-        .mail-display-card {
-            width: 100%; background: var(--card); border: 1px solid var(--success); border-radius: 10px;
-            position: relative; display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 20px; padding: 14px 14px;
-            animation: stepFade 0.23s ease-out;
+        /* 👑 ইনপুট কার্ডের সাইজ ও থিম একদম আপনার দেওয়া কোডের মতো করা হয়েছে */
+        .input-card {
+            width: 100%; 
+            background: var(--card); 
+            border: 1px solid var(--success); 
+            border-radius: 10px;
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 12px; 
+            box-shadow: 0 1px 4px rgba(52, 199, 89, 0.02);
         }
 
-        .mail-text {
-            font-size: 14px;
-            font-weight: 400;
-            color: #000;
-            word-break: break-all;
-            user-select: text;
-            padding-right: 10px;
+        .field-input { 
+            width: 100%; 
+            padding: 12px 14px; 
+            border: none; 
+            outline: none; 
+            font-size: 14px; 
+            font-weight: 500; 
+            color: #1c1c1e; 
+            background: transparent; 
         }
 
+        /* কপি বাটন */
         .inline-copy-btn {
-            width: 26px; 
-            height: 26px; 
+            width: 30px; 
+            height: 30px; 
             border-radius: 50%; 
             border: 1px solid var(--border);
             background: #ffffff; 
@@ -89,8 +108,9 @@
             cursor: pointer; 
             transition: all 0.15s ease; 
             flex-shrink: 0;
+            margin-right: 10px; 
         }
-        .inline-copy-btn svg { width: 11px; height: 11px; fill: #b5b5b9; }
+        .inline-copy-btn svg { width: 12px; height: 12px; fill: #b5b5b9; }
         .inline-copy-btn:active { transform: scale(0.92); background: #f2f2f7; }
         .inline-copy-btn.copied { background: var(--success) !important; border-color: var(--success) !important; }
         .inline-copy-btn.copied svg { fill: #fff !important; }
@@ -100,25 +120,49 @@
             display: flex;
             gap: 12px;
             width: 100%;
+            margin-top: 6px;
         }
 
-        .action-btn {
-            flex: 1; padding: 14px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
-            cursor: pointer; transition: all 0.2s ease; display: flex; justify-content: center; align-items: center; gap: 6px;
+        /* 👑 বাটন হাইট ও স্টাইল পরিবর্তনহীনভাবে সমান রাখা হয়েছে */
+        .proceed-btn {
+            flex: 1;
+            padding: 14px; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 15px; 
+            font-weight: 600;
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            gap: 8px; 
+            min-height: 49px; 
         }
         
-        .btn-change { background: #e5e5ea; color: #48484a; }
-        .btn-change:active { background: #d1d1d6; }
-        .btn-change svg { width: 15px; height: 15px; fill: none; stroke: #48484a; stroke-width: 2.5; }
+        .btn-change { 
+            background: var(--primary); 
+            color: #fff; 
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.12);
+        }
+        .btn-change:active { transform: scale(0.98); opacity: 0.95; }
+        .btn-change:disabled { background: #a2caff !important; cursor: not-allowed; box-shadow: none; }
         
-        .btn-save { background: var(--primary); color: #fff; }
-        .btn-save:active { opacity: 0.9; }
-        .btn-save:disabled { background: #d1d1d6; color: #8e8e93; cursor: not-allowed; }
-        .btn-save svg { width: 15px; height: 15px; fill: none; stroke: #fff; stroke-width: 3; }
-        
-        .btn-spinner { display: none; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.5s linear infinite; }
-        .btn-change .btn-spinner { border-top-color: #48484a; }
+        .btn-save { 
+            background: var(--success); 
+            color: #fff; 
+            box-shadow: 0 4px 12px rgba(52, 199, 89, 0.12);
+        }
+        .btn-save:active { transform: scale(0.98); opacity: 0.95; }
+        .btn-save:disabled { background: #a3e6b5 !important; cursor: not-allowed; box-shadow: none; }
 
+        /* বাটন আইকন ও স্পিনার স্টাইল */
+        .btn-icon { width: 16px; height: 16px; fill: #ffffff; display: block; }
+        .btn-spinner { display: none; width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.55s linear infinite; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* টোস্ট নোটিফিকেশন */
         #topNotification {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: #1c1c1e; border: 1px solid #2c2c2e; color: #ffffff; 
@@ -131,6 +175,7 @@
         .toast-check { width: 16px; height: 16px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
         .toast-check svg { width: 10px; height: 10px; stroke: #fff; fill: none; stroke-width: 3; }
 
+        /* সাকসেস ওভারলে পপআপ */
         #successOverlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.25); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
@@ -144,9 +189,6 @@
         .tick-svg { width: 32px; height: 32px; stroke: #fff; fill: none; stroke-width: 3.5; }
         .success-heading { font-size: 18px; font-weight: 700; color: var(--text-dark); margin-bottom: 6px; }
         .success-sub { font-size: 13px; font-weight: 500; color: var(--text-muted); text-align: center; line-height: 1.4; }
-
-        @keyframes stepFade { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -157,33 +199,39 @@
     </div>
 
 <div class="wrapper">
+    
     <div class="brand-header">
         <h1 class="brand-title">Gmail Account</h1>
     </div>
 
     <div class="section-label">Your Temporary Email</div>
-    <div class="mail-display-card">
-        <span id="mailAddressText" class="mail-text">Generating mail...</span>
+    <div class="input-card">
+        <input type="text" id="mailAddressText" class="field-input" readonly value="Generating mail...">
         <button class="inline-copy-btn" id="copyMailBtn" onclick="copyMailAddress()">
             <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
         </button>
     </div>
 
     <div class="btn-group">
-        <!-- 👑 Change Mail SVG এরো যুক্ত করা হলো -->
-        <button id="changeBtn" class="action-btn btn-change" onclick="generateNewMail()">
+        <!-- 👑 Change বাটনে আপনার দেওয়া এরো SVG এবং শুধু "Change" টেক্সট -->
+        <button id="changeBtn" class="proceed-btn btn-change" onclick="generateNewMail()">
             <div id="changeSpinner" class="btn-spinner"></div>
-            <svg id="changeIcon" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-            <span id="changeBtnText">Change Mail</span>
+            <svg id="changeIcon" class="btn-icon" viewBox="0 0 24 24">
+                <path d="M19 8l-4 4h3c0 3.31-2.69 6-6 6-1.01 0-1.97-.25-2.8-.7l-1.46 1.46C8.97 19.54 10.43 20 12 20c4.42 0 8-3.58 8-8h3l-4-4zM6 12c0-3.31 2.69-6 6-6 1.01 0 1.97.25 2.8.7l1.46-1.46C15.03 4.46 13.57 4 12 4c-4.42 0-8 3.58-8 8H1l4 4 4-4H6z"/>
+            </svg>
+            <span id="changeBtnText">Change</span>
         </button>
         
-        <!-- 👑 Save Account SVG টিক মার্ক যুক্ত করা হলো -->
-        <button id="saveBtn" class="action-btn btn-save" onclick="submitMailToBot()" disabled>
+        <!-- 👑 Save বাটনে সবুজ ব্যাকগ্রাউন্ডে গোলাকার SVG টিক এবং শুধু "Save" টেক্সট -->
+        <button id="saveBtn" class="proceed-btn btn-save" onclick="submitMailToBot()" disabled>
             <div id="saveSpinner" class="btn-spinner"></div>
-            <svg id="saveIcon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-            <span id="saveBtnText">Save Account</span>
+            <svg id="saveIcon" class="btn-icon" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#ffffff"/>
+            </svg>
+            <span id="saveBtnText">Save</span>
         </button>
     </div>
+
 </div>
 
 <div id="successOverlay">
@@ -214,7 +262,7 @@
 
     async function generateNewMail() {
         setLoadingState(true);
-        document.getElementById('mailAddressText').innerText = "Generating mail...";
+        document.getElementById('mailAddressText').value = "Generating mail...";
         
         try {
             const domainRes = await fetch('https://api.mail.tm/domains');
@@ -249,7 +297,7 @@
                 currentAccountData.token = tokenInfo.token;
                 currentAccountData.createdAt = new Date().toISOString();
 
-                document.getElementById('mailAddressText').innerText = emailAddress;
+                document.getElementById('mailAddressText').value = emailAddress;
                 setLoadingState(false);
             } else {
                 throw new Error("Token generation failed");
@@ -257,7 +305,7 @@
 
         } catch (error) {
             console.error(error);
-            document.getElementById('mailAddressText').innerText = "Failed to generate. Try again.";
+            document.getElementById('mailAddressText').value = "Failed to generate. Try again.";
             setLoadingState(false);
             document.getElementById('saveBtn').setAttribute('disabled', 'true');
         }
@@ -289,10 +337,10 @@
     }
 
     function copyMailAddress() {
-        const textToCopy = document.getElementById('mailAddressText').innerText;
-        if(textToCopy.includes("Generating") || textToCopy.includes("Failed")) return;
+        const inputEl = document.getElementById('mailAddressText');
+        if(inputEl.value.includes("Generating") || inputEl.value.includes("Failed")) return;
 
-        navigator.clipboard.writeText(textToCopy).then(() => {
+        navigator.clipboard.writeText(inputEl.value).then(() => {
             const btn = document.getElementById('copyMailBtn');
             const icon = btn.querySelector('svg');
             const notif = document.getElementById('topNotification');
@@ -305,7 +353,7 @@
                 notif.classList.remove('show'); 
                 btn.classList.remove('copied');
                 icon.innerHTML = '<path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>';
-            }, 2000);
+            }, 1800);
         });
     }
 
