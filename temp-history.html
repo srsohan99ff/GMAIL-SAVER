@@ -434,10 +434,33 @@
                     const urlParams = new URLSearchParams(searchString);
                     const historyData = urlParams.get('data') || urlParams.get('orders'); 
 
-                    if (historyData && historyData.trim() !== "" && !historyData.startsWith("{")) {
+                    if (historyData && historyData.trim() !== "") {
                         const decodedData = decodeURIComponent(historyData);
-                        allMailsGlobal = JSON.parse(decodedData);
-                        renderMails(allMailsGlobal);
+                        
+                        // 🔥 [NEW] সেশন আইডি থাকলে বটের ডাটাবেজ থেকে রিয়েল-টাইমে আনলিমিটেড মেইল ও টোকেন নিয়ে আসবে
+                        if (decodedData.startsWith("session_")) {
+                            // ⚠️ এখানে আপনার বটের সঠিক ইউজারনেমটি বসিয়ে দিন (যেমন: MyGmailSaverBot)
+                            let botName = "myallgmail99_bot"; 
+                            
+                            fetch(`https://api.bots.business/v1/bots/${botName}/properties?name=${decodedData}`)
+                            .then(res => res.json())
+                            .then(dbData => {
+                                if (dbData && dbData.value) {
+                                    allMailsGlobal = typeof dbData.value === 'string' ? JSON.parse(dbData.value) : dbData.value;
+                                    renderMails(allMailsGlobal);
+                                } else {
+                                    renderMails([]);
+                                }
+                            })
+                            .catch(err => {
+                                console.error("Database Fetch Error:", err);
+                                renderMails([]);
+                            });
+                        } else {
+                            // আগের মতোই ডিরেক্ট ডাটা লোড করার সিস্টেম (যদি সেশন না আসে)
+                            allMailsGlobal = JSON.parse(decodedData);
+                            renderMails(allMailsGlobal);
+                        }
                     } else {
                         renderMails([]);
                     }
