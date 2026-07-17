@@ -3,19 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TEMP MAIL - Premium Dashboard</title>
+    <title>Temp Mail Generator</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #f2f2f7;          
             --card: #ffffff;        
             --border: #e5e5ea;      
-            --text: #000000;        
-            --muted: #8e8e93;       
+            --text-dark: #1c1c1e;   
+            --text-muted: #8e8e93;  
             --success: #34c759;     
-            --danger: #ff3b30;    
             --primary: #007aff;     
             --font: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
         }
@@ -31,429 +29,349 @@
 
         body { 
             background-color: var(--bg); 
-            padding: 20px 14px; 
-            color: var(--text);
+            padding: 16px; 
+            color: var(--text-dark);
             -webkit-font-smoothing: antialiased;
-        }
-
-        .page-title {
-            text-align: center;
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--text);
-            margin-bottom: 16px;
-            letter-spacing: -0.5px;
-        }
-
-        /* 🔍 সার্চ বক্স */
-        .search-wrapper {
             display: flex;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-            align-items: center;
-        }
-        
-        .premium-search-icon {
-            margin-left: 12px;
-            margin-right: 2px;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            flex-shrink: 0;
+            align-items: flex-start;
+            min-height: 100vh;
         }
 
-        .search-input {
-            flex: 1;
-            border: none;
-            outline: none;
-            padding: 8px 10px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text);
-            background: transparent;
-            user-select: text;
+        .wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            max-width: 400px;
+            animation: pageFade 0.3s ease-out;
         }
-        .search-input::placeholder { color: var(--muted); }
-        
-        .search-btn {
-            background: var(--primary);
-            color: #ffffff;
-            border: none;
-            outline: none;
-            height: 32px;
-            padding: 0 14px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: opacity 0.2s;
-            display: flex; align-items: center; justify-content: center;
-            min-width: 68px;
-        }
-        .search-btn:active { opacity: 0.8; }
-        
-        .spinner {
-            width: 16px; height: 16px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: #ffffff;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-        }
-        .dark-spinner {
-            width: 24px; height: 24px; border: 3px solid rgba(0,0,0,0.1);
-            border-top-color: var(--primary); border-radius: 50%; animation: spin 0.6s linear infinite;
-            margin: 30px auto;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        /* 🍏 iOS Premium Shimmer Loader */
-        .skeleton-card {
-            background: var(--card); border-radius: 14px; padding: 16px;
-            margin-bottom: 16px; border: 1px solid rgba(0, 0, 0, 0.03);
-        }
-        .skeleton-line {
-            height: 14px; margin-bottom: 12px; border-radius: 6px;
-            background: linear-gradient(90deg, #e5e5ea 25%, #f2f2f7 50%, #e5e5ea 75%);
-            background-size: 200% 100%; animation: shimmer 1.4s infinite linear;
-        }
-        .skeleton-line.short { width: 35%; height: 12px; }
-        .skeleton-line.long { width: 100%; }
-        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-        /* 👑 উপর থেকে নেমে আসা iOS নোটিফিকেশন */
-        #topNotification {
-            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-            background: #1c1c1e; border: 1px solid #2c2c2e; color: #ffffff; 
-            padding: 10px 22px; border-radius: 50px; font-size: 13px; font-weight: 600;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.2); z-index: 30000; 
-            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15);
-            display: flex; align-items: center; gap: 10px; white-space: nowrap; pointer-events: none;
-        }
-        #topNotification.show { top: 20px; }
-        .toast-check { width: 18px; height: 18px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
-        .toast-check svg { width: 11px; height: 11px; stroke: #fff; fill: none; stroke-width: 3; }
+        @keyframes pageFade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 👑 কার্ড স্টাইল */
-        .card { 
-            background: var(--card); border-radius: 14px; overflow: hidden;
-            border: 1px solid rgba(0, 0, 0, 0.03); box-shadow: 0 2px 6px rgba(0,0,0,0.02); 
-            margin-bottom: 16px; padding-top: 4px;
-            animation: iosPop 0.3s cubic-bezier(0.1, 0.8, 0.25, 1);
+        .brand-header {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 16px; 
+            margin-top: 5px;
+        }
+        h1.brand-title { 
+            font-size: 23px; 
+            font-weight: 700; 
+            color: #000000; 
+            letter-spacing: -0.3px;
+        }
+
+        .section-label { 
+            font-size: 13px; 
+            font-weight: 500; 
+            color: var(--text-muted); 
+            text-align: left; 
+            margin-bottom: 4px; 
+            padding-left: 2px; 
         }
         
-        .summary-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 14px; gap: 10px;
+        /* 👑 ইনপুট কার্ডের সাইজ ও থিম একদম আপনার দেওয়া কোডের মতো করা হয়েছে */
+        .input-card {
+            width: 100%; 
+            background: var(--card); 
+            border: 1px solid var(--success); 
+            border-radius: 10px;
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 12px; 
+            box-shadow: 0 1px 4px rgba(52, 199, 89, 0.02);
         }
-        
-        .row-label { font-size: 13px; color: #48484a; font-weight: 700; white-space: nowrap; }
-        .row-value-copy { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text); justify-content: flex-end; max-width: 75%; }
-        .value-text { font-family: monospace; color: var(--text); word-break: break-all; text-align: right; user-select: text; }
 
+        .field-input { 
+            width: 100%; 
+            padding: 12px 14px; 
+            border: none; 
+            outline: none; 
+            font-size: 14px; 
+            font-weight: 500; 
+            color: #1c1c1e; 
+            background: transparent; 
+        }
+
+        /* কপি বাটন */
         .inline-copy-btn {
-            width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border);
-            background: #ffffff; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.2s ease; flex-shrink: 0;
+            width: 30px; 
+            height: 30px; 
+            border-radius: 50%; 
+            border: 1px solid var(--border);
+            background: #ffffff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            cursor: pointer; 
+            transition: all 0.15s ease; 
+            flex-shrink: 0;
+            margin-right: 10px; 
         }
-        .inline-copy-btn svg { width: 12px; height: 12px; fill: var(--muted); }
-        .inline-copy-btn:active { transform: scale(0.88); background: #f2f2f7; }
+        .inline-copy-btn svg { width: 12px; height: 12px; fill: #b5b5b9; }
+        .inline-copy-btn:active { transform: scale(0.92); background: #f2f2f7; }
         .inline-copy-btn.copied { background: var(--success) !important; border-color: var(--success) !important; }
         .inline-copy-btn.copied svg { fill: #fff !important; }
 
-        /* 🛠️ অ্যাকশন বাটন প্যানেল */
-        .card-actions {
-            display: flex; justify-content: flex-end;
-            padding: 10px 14px; background: rgba(0,0,0,0.005);
-            border-top: 1px solid #f2f2f7;
+        /* বাটন গ্রুপ লেআউট */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            margin-top: 6px;
         }
-        .action-btn {
-            border: none; background: none; font-size: 13px; font-weight: 700;
-            cursor: pointer; display: flex; align-items: center; gap: 4px;
-            padding: 6px 12px; border-radius: 8px; transition: background 0.2s;
+
+        /* 👑 বাটন হাইট ও স্টাইল পরিবর্তনহীনভাবে সমান রাখা হয়েছে */
+        .proceed-btn {
+            flex: 1;
+            padding: 14px; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 15px; 
+            font-weight: 600;
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            gap: 8px; 
+            min-height: 49px; 
         }
-        .action-btn.view-inbox { color: var(--primary); }
-        .action-btn.view-inbox:active { background: rgba(0, 122, 255, 0.08); }
-        .action-btn.view-inbox svg { width: 14px; height: 14px; fill: none; stroke: var(--primary); stroke-width: 2.5; }
         
-        .message-box { text-align: center; color: var(--muted); font-weight: 600; padding: 40px 20px; font-size: 14px; }
+        .btn-change { 
+            background: var(--primary); 
+            color: #fff; 
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.12);
+        }
+        .btn-change:active { transform: scale(0.98); opacity: 0.95; }
+        .btn-change:disabled { background: #a2caff !important; cursor: not-allowed; box-shadow: none; }
+        
+        .btn-save { 
+            background: var(--success); 
+            color: #fff; 
+            box-shadow: 0 4px 12px rgba(52, 199, 89, 0.12);
+        }
+        .btn-save:active { transform: scale(0.98); opacity: 0.95; }
+        .btn-save:disabled { background: #a3e6b5 !important; cursor: not-allowed; box-shadow: none; }
 
-        .counter-container {
-            display: flex; justify-content: space-between; align-items: center;
-            font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 16px; padding: 0 4px;
-        }
-        .counter-value {
-            color: var(--primary); font-weight: 700; background: rgba(0, 122, 255, 0.1);
-            padding: 3px 10px; border-radius: 20px; font-size: 13px;
-        }
+        /* বাটন আইকন ও স্পিনার স্টাইল */
+        .btn-icon { width: 16px; height: 16px; fill: #ffffff; display: block; }
+        .btn-spinner { display: none; width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.55s linear infinite; }
 
-        /* 📥 ইনবক্স ওভারলে সিস্টেম */
-        .inbox-section {
-            margin-top: 25px; padding-top: 15px; border-top: 2px dashed var(--border);
-            display: none; animation: iosPop 0.3s cubic-bezier(0.1, 0.8, 0.25, 1);
-        }
-        .inbox-title-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-        .inbox-title-bar h3 { font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
-        .close-inbox-btn { background: #e5e5ea; color: #48484a; border: none; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; }
-        .close-inbox-btn:active { background: #d1d1d6; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ✉️ মেইল বক্স ডিজাইন */
-        .mail-item {
-            background: var(--card); border-radius: 14px; padding: 14px; margin-bottom: 12px;
-            border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.01);
-            animation: iosPop 0.25s ease;
+        /* টোস্ট নোটিফিকেশন */
+        #topNotification {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: #1c1c1e; border: 1px solid #2c2c2e; color: #ffffff; 
+            padding: 10px 20px; border-radius: 50px; font-size: 13px; font-weight: 600;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15); z-index: 10000; 
+            transition: top 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+            display: flex; align-items: center; gap: 8px; white-space: nowrap; pointer-events: none;
         }
-        .mail-meta { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 8px; display: flex; flex-direction: column; gap: 3px;}
-        .mail-meta span b { color: #48484a; font-weight: 600; }
-        .mail-subject { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
-        .mail-body { font-size: 13px; color: #3a3a3c; line-height: 1.5; padding-top: 8px; border-top: 1px solid #f2f2f7; word-break: break-word; user-select: text; }
+        #topNotification.show { top: 16px; }
+        .toast-check { width: 16px; height: 16px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
+        .toast-check svg { width: 10px; height: 10px; stroke: #fff; fill: none; stroke-width: 3; }
 
-        @keyframes iosPop {
-            from { transform: translateY(10px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        /* সাকসেস ওভারলে পপআপ */
+        #successOverlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.25); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            z-index: 9999; justify-content: center; align-items: center;
         }
+        .success-card {
+            background: #ffffff; border-radius: 20px; padding: 30px; width: 80%; max-width: 300px;
+            display: flex; flex-direction: column; align-items: center; box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+        }
+        .success-circle { width: 64px; height: 64px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;}
+        .tick-svg { width: 32px; height: 32px; stroke: #fff; fill: none; stroke-width: 3.5; }
+        .success-heading { font-size: 18px; font-weight: 700; color: var(--text-dark); margin-bottom: 6px; }
+        .success-sub { font-size: 13px; font-weight: 500; color: var(--text-muted); text-align: center; line-height: 1.4; }
     </style>
 </head>
 <body>
 
-    <!-- টপ নোটিফিকেশন টোস্ট -->
     <div id="topNotification">
-        <div class="toast-check">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        <div class="toast-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+        Copied Successfully!
+    </div>
+
+<div class="wrapper">
+    
+    <div class="brand-header">
+        <h1 class="brand-title">Gmail Account</h1>
+    </div>
+
+    <div class="section-label">Your Temporary Email</div>
+    <div class="input-card">
+        <input type="text" id="mailAddressText" class="field-input" readonly value="Generating mail...">
+        <button class="inline-copy-btn" id="copyMailBtn" onclick="copyMailAddress()">
+            <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+        </button>
+    </div>
+
+    <div class="btn-group">
+        <!-- 👑 Change বাটনে আপনার দেওয়া এরো SVG এবং শুধু "Change" টেক্সট -->
+        <button id="changeBtn" class="proceed-btn btn-change" onclick="generateNewMail()">
+            <div id="changeSpinner" class="btn-spinner"></div>
+            <svg id="changeIcon" class="btn-icon" viewBox="0 0 24 24">
+                <path d="M19 8l-4 4h3c0 3.31-2.69 6-6 6-1.01 0-1.97-.25-2.8-.7l-1.46 1.46C8.97 19.54 10.43 20 12 20c4.42 0 8-3.58 8-8h3l-4-4zM6 12c0-3.31 2.69-6 6-6 1.01 0 1.97.25 2.8.7l1.46-1.46C15.03 4.46 13.57 4 12 4c-4.42 0-8 3.58-8 8H1l4 4 4-4H6z"/>
+            </svg>
+            <span id="changeBtnText">Change</span>
+        </button>
+        
+        <!-- 👑 Save বাটনে সবুজ ব্যাকগ্রাউন্ডে গোলাকার SVG টিক এবং শুধু "Save" টেক্সট -->
+        <button id="saveBtn" class="proceed-btn btn-save" onclick="submitMailToBot()" disabled>
+            <div id="saveSpinner" class="btn-spinner"></div>
+            <svg id="saveIcon" class="btn-icon" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#ffffff"/>
+            </svg>
+            <span id="saveBtnText">Save</span>
+        </button>
+    </div>
+
+</div>
+
+<div id="successOverlay">
+    <div class="success-card">
+        <div class="success-circle">
+            <svg class="tick-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
-        <span id="notificationText">Copied Successfully!</span>
+        <div class="success-heading">Saved Successfully!</div>
+        <div class="success-sub">Temp mail has been added to history. Closing app...</div>
     </div>
+</div>
 
-    <h2 class="page-title">Temp Mail History</h2>
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.ready(); tg.expand();
 
-    <!-- সার্চ বার -->
-    <div class="search-wrapper">
-        <div class="premium-search-icon">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--muted)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        </div>
-        <input type="text" id="searchInput" class="search-input" placeholder="Search by email..." onkeydown="if(event.key === 'Enter') handleMailSearch()">
-        <button class="search-btn" onclick="handleMailSearch()">Search</button>
-    </div>
+    let currentAccountData = {
+        action: "save_temp_mail",
+        email: "",
+        password: "",
+        token: "",
+        createdAt: ""
+    };
 
-    <!-- কাউন্টার -->
-    <div class="counter-container">
-        <span>Total Mails:</span>
-        <span id="totalCount" class="counter-value">0</span>
-    </div>
+    window.addEventListener('DOMContentLoaded', () => {
+        generateNewMail();
+    });
 
-    <!-- হিস্টোরি বক্স -->
-    <div id="historyBox">
-        <div class="skeleton-card"><div class="skeleton-line short"></div><div class="skeleton-line long"></div></div>
-        <div class="skeleton-card"><div class="skeleton-line short"></div><div class="skeleton-line long"></div></div>
-    </div>
+    async function generateNewMail() {
+        setLoadingState(true);
+        document.getElementById('mailAddressText').value = "Generating mail...";
+        
+        try {
+            const domainRes = await fetch('https://api.mail.tm/domains');
+            const domainData = await domainRes.json();
+            
+            if(!domainData['hydra:member'] || domainData['hydra:member'].length === 0) {
+                throw new Error("No domains available");
+            }
+            const domain = domainData['hydra:member'][0].domain;
 
-    <!-- 📥 লাইভ ইনবক্স ডিসপ্লে প্যানেল -->
-    <div class="inbox-section" id="inboxSection">
-        <div class="inbox-title-bar">
-            <h3>Recent Mails (<span id="activeInboxName" style="font-size: 13px; color: var(--primary); font-weight: 600; font-family: monospace;">mail</span>)</h3>
-            <button class="close-inbox-btn" onclick="closeInboxView()">Close</button>
-        </div>
-        <div id="inboxContentBox"></div>
-    </div>
+            const randomUser = 'temp_' + Math.random().toString(36).substring(2, 11);
+            const randomPassword = Math.random().toString(36).substring(2, 15) + 'tM!';
+            const emailAddress = `${randomUser}@${domain}`;
 
-    <script>
-        let allMailsGlobal = [];
+            const createAccountRes = await fetch('https://api.mail.tm/accounts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address: emailAddress, password: randomPassword })
+            });
+            await createAccountRes.json();
 
-        function triggerNotification(message, statusType = 'success') {
-            const notif = document.getElementById('topNotification');
-            const checkContainer = notif.querySelector('.toast-check');
-            document.getElementById('notificationText').innerText = message;
+            const tokenRes = await fetch('https://api.mail.tm/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address: emailAddress, password: randomPassword })
+            });
+            const tokenInfo = await tokenRes.json();
 
-            if(statusType === 'danger') {
-                checkContainer.style.background = "var(--danger)";
-                checkContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+            if (tokenInfo.token) {
+                currentAccountData.email = emailAddress;
+                currentAccountData.password = randomPassword;
+                currentAccountData.token = tokenInfo.token;
+                currentAccountData.createdAt = new Date().toISOString();
+
+                document.getElementById('mailAddressText').value = emailAddress;
+                setLoadingState(false);
             } else {
-                checkContainer.style.background = "var(--success)";
-                checkContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+                throw new Error("Token generation failed");
             }
+
+        } catch (error) {
+            console.error(error);
+            document.getElementById('mailAddressText').value = "Failed to generate. Try again.";
+            setLoadingState(false);
+            document.getElementById('saveBtn').setAttribute('disabled', 'true');
+        }
+    }
+
+    function setLoadingState(isLoading) {
+        const changeSpinner = document.getElementById('changeSpinner');
+        const changeText = document.getElementById('changeBtnText');
+        const changeIcon = document.getElementById('changeIcon');
+        const saveIcon = document.getElementById('saveIcon');
+        const saveBtn = document.getElementById('saveBtn');
+        const changeBtn = document.getElementById('changeBtn');
+
+        if(isLoading) {
+            changeSpinner.style.display = 'block';
+            changeText.style.display = 'none';
+            changeIcon.style.display = 'none';
+            saveIcon.style.display = 'none';
+            saveBtn.setAttribute('disabled', 'true');
+            changeBtn.setAttribute('disabled', 'true');
+        } else {
+            changeSpinner.style.display = 'none';
+            changeText.style.display = 'block';
+            changeIcon.style.display = 'block';
+            saveIcon.style.display = 'block';
+            saveBtn.removeAttribute('disabled');
+            changeBtn.removeAttribute('disabled');
+        }
+    }
+
+    function copyMailAddress() {
+        const inputEl = document.getElementById('mailAddressText');
+        if(inputEl.value.includes("Generating") || inputEl.value.includes("Failed")) return;
+
+        navigator.clipboard.writeText(inputEl.value).then(() => {
+            const btn = document.getElementById('copyMailBtn');
+            const icon = btn.querySelector('svg');
+            const notif = document.getElementById('topNotification');
+            
+            btn.classList.add('copied');
+            icon.innerHTML = '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#ffffff"/>';
             notif.classList.add('show');
-            setTimeout(() => { notif.classList.remove('show'); }, 2200);
-        }
-
-        function copyMailText(text, btnId) {
-            if(!text || text === 'N/A') return;
-            navigator.clipboard.writeText(text).then(() => {
-                const btn = document.getElementById(btnId);
-                const icon = btn.querySelector('svg');
-                btn.classList.add('copied');
-                icon.innerHTML = '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#ffffff"/>';
-                triggerNotification("Copied Successfully!", 'success');
-                setTimeout(function() {
-                    btn.classList.remove('copied');
-                    icon.innerHTML = '<path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" fill="#8e8e93"/>';
-                }, 2200);
-            });
-        }
-
-        function handleMailSearch() {
-            const searchBtn = document.querySelector('.search-btn');
-            const originalText = searchBtn.innerText;
-            searchBtn.innerHTML = '<div class="spinner"></div>';
-            searchBtn.disabled = true;
-
-            setTimeout(() => {
-                const query = document.getElementById('searchInput').value.trim().toLowerCase();
-                if (query === "") {
-                    renderMails(allMailsGlobal);
-                } else {
-                    const filtered = allMailsGlobal.filter(item => (item.email || '').trim().toLowerCase() === query);
-                    renderMails(filtered);
-                }
-                searchBtn.innerHTML = originalText;
-                searchBtn.disabled = false;
-            }, 400); 
-        }
-
-        function escapeHtml(text) {
-            if(!text) return "";
-            return text.replace(/[&<>]/g, function(c) {
-                return {'&': '&amp;', '<': '&lt;', '>': '&gt;'}[c];
-            });
-        }
-
-        function viewInboxAction(index) {
-            const mailData = allMailsGlobal[index];
-            if (!mailData) return;
-
-            const inboxSection = document.getElementById('inboxSection');
-            const inboxContentBox = document.getElementById('inboxContentBox');
-            const activeInboxName = document.getElementById('activeInboxName');
-
-            activeInboxName.innerText = mailData.email;
-            inboxSection.style.display = 'block';
-            inboxContentBox.innerHTML = '<div class="dark-spinner"></div>';
-            inboxSection.scrollIntoView({ behavior: 'smooth' });
-
-            fetchInboxFromServer(mailData.email, mailData.token, function(err, messages) {
-                if(err || !messages || messages.length === 0) {
-                    inboxContentBox.innerHTML = '<div class="message-box">You have no messages yet.</div>';
-                    return;
-                }
-
-                const displayMessages = messages.slice(0, 5);
-
-                inboxContentBox.innerHTML = displayMessages.map((msg, i) => {
-                    let fromAddress = msg.from && msg.from.address ? msg.from.address : "(unknown)";
-                    let subjectText = msg.subject ? msg.subject : "(No Subject)";
-                    let messageIntro = msg.intro ? msg.intro : "(No message)";
-
-                    if (/<[^>]+>/.test(msg.intro)) {
-                        messageIntro = "(HTML content - viewable in main text)";
-                    }
-
-                    return `
-                    <div class="mail-item">
-                        <div class="mail-meta">
-                            <span><b>[${i + 1}] From:</b> ${escapeHtml(fromAddress)}</span>
-                            <span><b>To:</b> ${escapeHtml(mailData.email)}</span>
-                        </div>
-                        <div class="mail-subject">Subject: ${escapeHtml(subjectText)}</div>
-                        <div class="mail-body"><b>Message:</b> ${escapeHtml(messageIntro)}</div>
-                    </div>`;
-                }).join('');
-            });
-        }
-
-        function closeInboxView() {
-            document.getElementById('inboxSection').style.display = 'none';
-        }
-
-        function fetchInboxFromServer(email, token, callback) {
-            fetch(`https://api.mail.tm/messages`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(res => {
-                if (!res.ok) throw new Error('Network response error');
-                return res.json();
-            })
-            .then(data => {
-                if (data && data["hydra:member"]) {
-                    callback(null, data["hydra:member"]);
-                } else {
-                    callback(null, []);
-                }
-            })
-            .catch(err => {
-                console.error("API Fetch Error:", err);
-                callback(err);
-            });
-        }
-
-        function renderMails(mailsList) {
-            const historyBox = document.getElementById('historyBox');
-            if(!mailsList || !Array.isArray(mailsList) || mailsList.length === 0) {
-                document.getElementById('totalCount').innerText = "0";
-                historyBox.innerHTML = '<div class="message-box">No temporary emails found.</div>';
-                return;
-            }
-
-            document.getElementById('totalCount').innerText = mailsList.length;
-
-            historyBox.innerHTML = mailsList.map((item, index) => {
-                let btnEmailId = 'b-em-' + index;
-                let emailVal = (item.email || 'N/A').trim();
-
-                return `
-                <div class="card">
-                    <div class="summary-row">
-                        <span class="row-label">Temp Mail</span>
-                        <div class="row-value-copy">
-                            <span class="value-text">${emailVal}</span>
-                            <button class="inline-copy-btn" id="${btnEmailId}" onclick="copyMailText('${emailVal}', '${btnEmailId}')">
-                                <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="card-actions">
-                        <button class="action-btn view-inbox" onclick="viewInboxAction(${index})">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                            View Inbox
-                        </button>
-                    </div>
-                </div>`;
-            }).join('');
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            setTimeout(() => {
-                try {
-                    const searchString = window.location.search || window.location.hash.replace('#', '?');
-                    const urlParams = new URLSearchParams(searchString);
-                    const historyData = urlParams.get('data') || urlParams.get('orders'); 
-
-                    if (historyData && historyData.trim() !== "" && !historyData.startsWith("{")) {
-                        const decodedData = decodeURIComponent(historyData);
-                        allMailsGlobal = JSON.parse(decodedData);
-                        renderMails(allMailsGlobal);
-                    } else {
-                        renderMails([]);
-                    }
-                } catch (error) {
-                    console.error("JSON Parsing Error:", error);
-                    document.getElementById('historyBox').innerHTML = '<div class="message-box" style="color:var(--danger)">❌ Invalid Data Format!<br><span style="font-size:12px; color:var(--text);">Check your database source format.</span></div>';
-                }
-            }, 1000);
-
-            if (window.Telegram && window.Telegram.WebApp) {
-                try {
-                    window.Telegram.WebApp.ready();
-                    window.Telegram.WebApp.expand();
-                } catch(tgErr) { console.log(tgErr); }
-            }
+            
+            setTimeout(function() {
+                notif.classList.remove('show'); 
+                btn.classList.remove('copied');
+                icon.innerHTML = '<path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>';
+            }, 1800);
         });
-    </script>
+    }
+
+    function submitMailToBot() {
+        document.getElementById('saveSpinner').style.display = 'block';
+        document.getElementById('saveBtnText').style.display = 'none';
+        document.getElementById('saveIcon').style.display = 'none';
+        document.getElementById('saveBtn').setAttribute('disabled', 'true');
+        document.getElementById('changeBtn').setAttribute('disabled', 'true');
+        document.getElementById('successOverlay').style.display = 'flex';
+
+        setTimeout(() => {
+            tg.sendData(JSON.stringify(currentAccountData));
+            setTimeout(() => {
+                tg.close();
+            }, 1000);
+        }, 1500);
+    }
+</script>
 </body>
 </html>
