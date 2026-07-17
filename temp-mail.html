@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Temp Mail Generator</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f2f2f7;          
+            --card: #ffffff;        
+            --border: #e5e5ea;      
+            --text-dark: #1c1c1e;   
+            --text-muted: #8e8e93;  
+            --success: #34c759;     
+            --primary: #007aff;     
+            --font: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font);
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body { 
+            background-color: var(--bg); 
+            padding: 16px; 
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-header {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+        h1.brand-title { 
+            font-size: 24px; 
+            font-weight: 700; 
+            color: #000000; 
+            letter-spacing: -0.3px;
+        }
+
+        .section-label { font-size: 13px; font-weight: 500; color: var(--text-muted); text-align: left; margin-bottom: 8px; padding-left: 2px; }
+        
+        /* সবুজ বর্ডারসহ মেইল ডিসপ্লে বক্স */
+        .mail-display-card {
+            width: 100%; background: var(--card); border: 1.5px solid var(--success); border-radius: 10px;
+            position: relative; display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 24px; padding: 14px;
+            animation: stepFade 0.23s ease-out;
+        }
+
+        .mail-text {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-dark);
+            word-break: break-all;
+            user-select: text; /* ইউজার চাইলে সিলেক্ট করতে পারবে */
+            padding-right: 10px;
+        }
+
+        .inline-copy-btn {
+            width: 28px; 
+            height: 28px; 
+            border-radius: 50%; 
+            border: 1px solid var(--border);
+            background: #ffffff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            cursor: pointer; 
+            transition: all 0.15s ease; 
+            flex-shrink: 0;
+        }
+        .inline-copy-btn svg { width: 12px; height: 12px; fill: #b5b5b9; }
+        .inline-copy-btn:active { transform: scale(0.92); background: #f2f2f7; }
+        .inline-copy-btn.copied { background: var(--success) !important; border-color: var(--success) !important; }
+        .inline-copy-btn.copied svg { fill: #fff !important; }
+
+        /* বাটন গ্রুপ লেআউট */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .action-btn {
+            flex: 1; padding: 14px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s ease; display: flex; justify-content: center; align-items: center; gap: 6px;
+        }
+        
+        .btn-change { background: #e5e5ea; color: #48484a; }
+        .btn-change:active { background: #d1d1d6; }
+        
+        .btn-save { background: var(--primary); color: #fff; }
+        .btn-save:active { opacity: 0.9; }
+        .btn-save:disabled { background: #d1d1d6; color: #8e8e93; cursor: not-allowed; }
+        
+        .btn-spinner { display: none; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.5s linear infinite; }
+        .btn-change .btn-spinner { border-top-color: #48484a; }
+
+        #topNotification {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: #1c1c1e; border: 1px solid #2c2c2e; color: #ffffff; 
+            padding: 10px 20px; border-radius: 50px; font-size: 13px; font-weight: 600;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15); z-index: 10000; 
+            transition: top 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+            display: flex; align-items: center; gap: 8px; white-space: nowrap; pointer-events: none;
+        }
+        #topNotification.show { top: 16px; }
+        .toast-check { width: 16px; height: 16px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
+        .toast-check svg { width: 10px; height: 10px; stroke: #fff; fill: none; stroke-width: 3; }
+
+        #successOverlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.25); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            z-index: 9999; justify-content: center; align-items: center;
+        }
+        .success-card {
+            background: #ffffff; border-radius: 20px; padding: 30px; width: 80%; max-width: 300px;
+            display: flex; flex-direction: column; align-items: center; box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+        }
+        .success-circle { width: 64px; height: 64px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; margin-bottom: 16px;}
+        .tick-svg { width: 32px; height: 32px; stroke: #fff; fill: none; stroke-width: 3.5; }
+        .success-heading { font-size: 18px; font-weight: 700; color: var(--text-dark); margin-bottom: 6px; }
+        .success-sub { font-size: 13px; font-weight: 500; color: var(--text-muted); text-align: center; line-height: 1.4; }
+
+        @keyframes stepFade { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="topNotification">
+        <div class="toast-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+        Copied Successfully!
+    </div>
+
+<div class="wrapper">
+    <div class="brand-header">
+        <h1 class="brand-title">Temp Mail Generator</h1>
+    </div>
+
+    <div class="section-label">Your Temporary Email</div>
+    <div class="mail-display-card">
+        <span id="mailAddressText" class="mail-text">Generating mail...</span>
+        <button class="inline-copy-btn" id="copyMailBtn" onclick="copyMailAddress()">
+            <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+        </button>
+    </div>
+
+    <div class="btn-group">
+        <button id="changeBtn" class="action-btn btn-change" onclick="generateNewMail()">
+            <div id="changeSpinner" class="btn-spinner"></div>
+            <span id="changeBtnText">Change Mail</span>
+        </button>
+        
+        <button id="saveBtn" class="action-btn btn-save" onclick="submitMailToBot()" disabled>
+            <div id="saveSpinner" class="btn-spinner"></div>
+            <span id="saveBtnText">Save Account</span>
+        </button>
+    </div>
+</div>
+
+<div id="successOverlay">
+    <div class="success-card">
+        <div class="success-circle">
+            <svg class="tick-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="success-heading">Saved Successfully!</div>
+        <div class="success-sub">Temp mail has been added to history. Closing app...</div>
+    </div>
+</div>
+
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.ready(); tg.expand();
+
+    let currentAccountData = {
+        action: "save_temp_mail", // যাতে বটে সনাক্ত করতে সুবিধা হয়
+        email: "",
+        password: "",
+        token: "",
+        createdAt: ""
+    };
+
+    // পেজ লোড হলেই অটোমেটিক মেইল জেনারেট শুরু হবে
+    window.addEventListener('DOMContentLoaded', () => {
+        generateNewMail();
+    });
+
+    async function generateNewMail() {
+        setLoadingState(true);
+        document.getElementById('mailAddressText').innerText = "Generating mail...";
+        
+        try {
+            // ১. mail.tm থেকে অ্যাভেইলেবল ডোমেন লিস্ট নেওয়া
+            const domainRes = await fetch('https://api.mail.tm/domains');
+            const domainData = await domainRes.parseJson ? await domainRes.parseJson() : await domainRes.json();
+            
+            if(!domainData['hydra:member'] || domainData['hydra:member'].length === 0) {
+                throw new Error("No domains available");
+            }
+            const domain = domainData['hydra:member'][0].domain;
+
+            // ২. র্যান্ডম ইউজারনেম এবং পাসওয়ার্ড তৈরি করা
+            const randomUser = 'temp_' + Math.random().toString(36).substring(2, 11);
+            const randomPassword = Math.random().toString(36).substring(2, 15) + 'tM!';
+            const emailAddress = `${randomUser}@${domain}`;
+
+            // ৩. mail.tm এ অ্যাকাউন্ট ক্রিয়েট করা
+            const createAccountRes = await fetch('https://api.mail.tm/accounts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address: emailAddress, password: randomPassword })
+            });
+            const accountInfo = await createAccountRes.json();
+
+            // ৪. অ্যাকাউন্ট এর লগইন টোকেন (JWT) জেনারেট করা
+            const tokenRes = await fetch('https://api.mail.tm/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address: emailAddress, password: randomPassword })
+            });
+            const tokenInfo = await tokenRes.json();
+
+            if (tokenInfo.token) {
+                // সাকসেসফুলি ডাটা অ্যাসাইন করা
+                currentAccountData.email = emailAddress;
+                currentAccountData.password = randomPassword;
+                currentAccountData.token = tokenInfo.token;
+                currentAccountData.createdAt = new Date().toISOString();
+
+                // স্ক্রিনে মেইল শো করা
+                document.getElementById('mailAddressText').innerText = emailAddress;
+                setLoadingState(false);
+            } else {
+                throw new Error("Token generation failed");
+            }
+
+        } catch (error) {
+            console.error(error);
+            document.getElementById('mailAddressText').innerText = "Failed to generate. Try again.";
+            setLoadingState(false);
+            document.getElementById('saveBtn').setAttribute('disabled', 'true');
+        }
+    }
+
+    function setLoadingState(isLoading) {
+        const changeSpinner = document.getElementById('changeSpinner');
+        const changeText = document.getElementById('changeBtnText');
+        const saveBtn = document.getElementById('saveBtn');
+        const changeBtn = document.getElementById('changeBtn');
+
+        if(isLoading) {
+            changeSpinner.style.display = 'block';
+            changeText.style.display = 'none';
+            saveBtn.setAttribute('disabled', 'true');
+            changeBtn.setAttribute('disabled', 'true');
+        } else {
+            changeSpinner.style.display = 'none';
+            changeText.style.display = 'block';
+            saveBtn.removeAttribute('disabled');
+            changeBtn.removeAttribute('disabled');
+        }
+    }
+
+    function copyMailAddress() {
+        const textToCopy = document.getElementById('mailAddressText').innerText;
+        if(textToCopy.includes("Generating") || textToCopy.includes("Failed")) return;
+
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const btn = document.getElementById('copyMailBtn');
+            const icon = btn.querySelector('svg');
+            const notif = document.getElementById('topNotification');
+            
+            btn.classList.add('copied');
+            icon.innerHTML = '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#ffffff"/>';
+            notif.classList.add('show');
+            
+            setTimeout(function() {
+                notif.classList.remove('show'); 
+                btn.classList.remove('copied');
+                icon.innerHTML = '<path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>';
+            }, 2000);
+        });
+    }
+
+    function submitMailToBot() {
+        document.getElementById('saveSpinner').style.display = 'block';
+        document.getElementById('saveBtnText').style.display = 'none';
+        document.getElementById('saveBtn').setAttribute('disabled', 'true');
+        document.getElementById('changeBtn').setAttribute('disabled', 'true');
+        document.getElementById('successOverlay').style.display = 'flex';
+
+        setTimeout(() => {
+            // টেম্প মেইলের সমস্ত সিক্রেট অবজেক্ট সহ ডেটা টেলিগ্রাম বটে পাঠানো হচ্ছে
+            tg.sendData(JSON.stringify(currentAccountData));
+            setTimeout(() => {
+                tg.close();
+            }, 1000);
+        }, 1500);
+    }
+</script>
+</body>
+</html>
