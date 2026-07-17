@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TEMP MAIL - History Dashboard</title>
+    <title>TEMP MAIL - History & Inbox</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     
@@ -17,6 +16,7 @@
             --muted: #8e8e93;       
             --success: #34c759;     
             --primary: #007aff;     
+            --danger: #ff3b30;
             --font: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
         }
 
@@ -26,12 +26,11 @@
             padding: 0;
             font-family: var(--font);
             -webkit-tap-highlight-color: transparent;
-            user-select: none;
         }
 
         body { 
             background-color: var(--bg); 
-            padding: 20px 14px; 
+            padding: 20px 14px 40px 14px; 
             color: var(--text);
             -webkit-font-smoothing: antialiased;
         }
@@ -45,7 +44,7 @@
             letter-spacing: -0.5px;
         }
 
-        /* 🔍 সার্চ বক্স স্টাইল */
+        /* 🔍 সার্চ বক্স */
         .search-wrapper {
             display: flex;
             background: var(--card);
@@ -57,137 +56,102 @@
             align-items: center;
         }
         
-        .premium-search-icon {
-            margin-left: 12px;
-            margin-right: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .search-input {
-            flex: 1;
-            border: none;
-            outline: none;
-            padding: 8px 10px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text);
-            background: transparent;
-            user-select: text;
-        }
+        .premium-search-icon { margin: 0 2px 0 12px; display: flex; align-items: center; justify-content: center; }
+        .search-input { flex: 1; border: none; outline: none; padding: 8px 10px; font-size: 14px; font-weight: 500; color: var(--text); background: transparent; }
         .search-input::placeholder { color: var(--muted); }
         
         .search-btn {
-            background: var(--primary);
-            color: #ffffff;
-            border: none;
-            outline: none;
-            height: 32px;
-            padding: 0 14px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: opacity 0.2s;
-            display: flex; align-items: center; justify-content: center;
-            min-width: 68px;
+            background: var(--primary); color: #ffffff; border: none; outline: none; height: 32px; padding: 0 14px;
+            border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; min-width: 68px;
         }
         .search-btn:active { opacity: 0.8; }
         
         .spinner {
-            width: 16px; height: 16px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: #ffffff;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
+            width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #ffffff; border-radius: 50%; animation: spin 0.6s linear infinite;
+        }
+        .dark-spinner {
+            width: 24px; height: 24px; border: 3px solid rgba(0,0,0,0.1);
+            border-top-color: var(--primary); border-radius: 50%; animation: spin 0.6s linear infinite;
+            margin: 30px auto;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        /* 🍏 iOS Premium Shimmer Loader */
-        .skeleton-card {
-            background: var(--card); border-radius: 14px; padding: 16px;
-            margin-bottom: 16px; border: 1px solid rgba(0, 0, 0, 0.03);
-        }
-        .skeleton-line {
-            height: 14px; margin-bottom: 12px; border-radius: 6px;
-            background: linear-gradient(90deg, #e5e5ea 25%, #f2f2f7 50%, #e5e5ea 75%);
-            background-size: 200% 100%; animation: shimmer 1.4s infinite linear;
-        }
+        /* 🍏 iOS Shimmer Loader */
+        .skeleton-card { background: var(--card); border-radius: 14px; padding: 16px; margin-bottom: 16px; border: 1px solid rgba(0, 0, 0, 0.03); }
+        .skeleton-line { height: 14px; margin-bottom: 12px; border-radius: 6px; background: linear-gradient(90deg, #e5e5ea 25%, #f2f2f7 50%, #e5e5ea 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite linear; }
         .skeleton-line.short { width: 35%; height: 12px; }
         .skeleton-line.long { width: 100%; }
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-        /* 👑 Top Notification Toast */
+        /* 👑 Top Toast Notification */
         #topNotification {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: #1c1c1e; border: 1px solid #2c2c2e; color: #ffffff; 
             padding: 10px 22px; border-radius: 50px; font-size: 13px; font-weight: 600;
             box-shadow: 0 12px 24px rgba(0,0,0,0.2); z-index: 30000; 
             transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15);
-            display: flex; align-items: center; gap: 10px; white-space: nowrap; pointer-events: none;
+            display: flex; align-items: center; gap: 10px; pointer-events: none;
         }
         #topNotification.show { top: 20px; }
-        .toast-check { width: 18px; height: 18px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; color: #fff; }
+        .toast-check { width: 18px; height: 18px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; }
         .toast-check svg { width: 11px; height: 11px; stroke: #fff; fill: none; stroke-width: 3; }
 
         /* 👑 কার্ড স্টাইল */
         .card { 
             background: var(--card); border-radius: 14px; overflow: hidden;
             border: 1px solid rgba(0, 0, 0, 0.03); box-shadow: 0 2px 6px rgba(0,0,0,0.02); 
-            margin-bottom: 16px; padding-top: 4px;
-            animation: iosPop 0.3s cubic-bezier(0.1, 0.8, 0.25, 1);
+            margin-bottom: 16px; padding-top: 4px; animation: iosPop 0.3s ease;
         }
         
-        .summary-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 14px 14px; gap: 10px;
-        }
-        
-        .row-label { font-size: 14px; color: #48484a; font-weight: 700; white-space: nowrap; }
-        .row-value-copy { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; color: var(--text); justify-content: flex-end; max-width: 75%; }
-        .value-text { font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: var(--text); word-break: break-all; text-align: right; user-select: text; font-weight: 600; }
+        .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 14px; gap: 10px; }
+        .row-label { font-size: 14px; color: #48484a; font-weight: 700; }
+        .row-value-copy { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; justify-content: flex-end; max-width: 75%; }
+        .value-text { color: var(--text); word-break: break-all; text-align: right; font-weight: 600; }
 
         .inline-copy-btn {
             width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border);
             background: #ffffff; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.2s ease; flex-shrink: 0;
+            cursor: pointer; transition: all 0.2s ease;
         }
         .inline-copy-btn svg { width: 14px; height: 14px; fill: var(--muted); }
         .inline-copy-btn:active { transform: scale(0.88); background: #f2f2f7; }
         .inline-copy-btn.copied { background: var(--success) !important; border-color: var(--success) !important; }
         .inline-copy-btn.copied svg { fill: #fff !important; }
 
-        /* 🛠️ অ্যাকশন বাটন প্যানেল */
-        .card-actions {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 14px; background: rgba(0,0,0,0.01);
-            border-top: 1px solid #f2f2f7;
-        }
-        .action-btn {
-            border: none; background: none; font-size: 13px; font-weight: 700;
-            cursor: pointer; display: flex; align-items: center; gap: 5px;
-            padding: 6px 10px; border-radius: 8px; transition: background 0.2s;
-        }
+        /* 🛠️ কার্ড অ্যাকশন */
+        .card-actions { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(0,0,0,0.01); border-top: 1px solid #f2f2f7; }
+        .action-btn { border: none; background: none; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; padding: 6px 10px; border-radius: 8px; }
         .action-btn.view-inbox { color: var(--primary); }
         .action-btn.view-inbox:active { background: rgba(0, 122, 255, 0.08); }
         .action-btn.view-inbox svg { width: 15px; height: 15px; fill: none; stroke: var(--primary); stroke-width: 2.5; }
         
-        .message-box { text-align: center; color: var(--muted); font-weight: 600; padding: 40px 20px; font-size: 14px; line-height: 1.5; }
+        .message-box { text-align: center; color: var(--muted); font-weight: 600; padding: 40px 20px; font-size: 14px; }
+        .counter-container { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 16px; padding: 0 4px; }
+        .counter-value { color: var(--primary); font-weight: 700; background: rgba(0, 122, 255, 0.1); padding: 3px 10px; border-radius: 20px; font-size: 13px; }
 
-        .counter-container {
-            display: flex; justify-content: space-between; align-items: center;
-            font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 16px; padding: 0 4px;
+        /* 📥 iOS ইনলাইন ইনবক্স ডিসপ্লে সেকশন */
+        .inbox-section {
+            margin-top: 25px; padding-top: 15px; border-top: 2px dashed var(--border);
+            display: none; animation: iosPop 0.4s ease;
         }
-        .counter-value {
-            color: var(--primary); font-weight: 700; background: rgba(0, 122, 255, 0.1);
-            padding: 3px 10px; border-radius: 20px; font-size: 13px;
+        .inbox-title-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .inbox-title-bar h3 { font-size: 18px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
+        .close-inbox-btn { background: #e5e5ea; color: #48484a; border: none; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; }
+        .close-inbox-btn:active { background: #d1d1d6; }
+
+        .mail-item {
+            background: var(--card); border-radius: 12px; padding: 14px; margin-bottom: 10px;
+            border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.01);
         }
+        .mail-meta { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 6px; display: flex; flex-direction: column; gap: 2px;}
+        .mail-meta span b { color: #48484a; font-weight: 600; }
+        .mail-subject { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+        .mail-body { font-size: 13.5px; color: #3a3a3c; line-height: 1.45; padding-top: 8px; border-top: 1px solid #f2f2f7; word-break: break-word; user-select: text; }
 
         @keyframes iosPop {
-            from { transform: scale(1.02); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
     </style>
 </head>
@@ -195,9 +159,7 @@
 
     <!-- টপ নোটিফিকেশন টোস্ট -->
     <div id="topNotification">
-        <div class="toast-check">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
+        <div class="toast-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
         <span id="notificationText">Copied Successfully!</span>
     </div>
 
@@ -206,7 +168,7 @@
     <!-- সার্চ বার -->
     <div class="search-wrapper">
         <div class="premium-search-icon">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--muted)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--muted)" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         </div>
         <input type="text" id="searchInput" class="search-input" placeholder="Search by email..." onkeydown="if(event.key === 'Enter') handleMailSearch()">
         <button class="search-btn" onclick="handleMailSearch()">Search</button>
@@ -220,20 +182,22 @@
 
     <!-- হিস্টোরি কন্টেইনার বক্স -->
     <div id="historyBox">
-        <div class="skeleton-card">
-            <div class="skeleton-line short"></div>
-            <div class="skeleton-line long"></div>
+        <div class="skeleton-card"><div class="skeleton-line short"></div><div class="skeleton-line long"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line short"></div><div class="skeleton-line long"></div></div>
+    </div>
+
+    <!-- 📥 লাইভ ইনবক্স ডিসপ্লে প্যানেল (একই পেজে লোড হবে) -->
+    <div class="inbox-section" id="inboxSection">
+        <div class="inbox-title-bar">
+            <h3>Live Inbox (<span id="activeInboxName">mail</span>)</h3>
+            <button class="close-inbox-btn" onclick="closeInboxView()">Close</button>
         </div>
-        <div class="skeleton-card">
-            <div class="skeleton-line short"></div>
-            <div class="skeleton-line long"></div>
-        </div>
+        <div id="inboxContentBox"></div>
     </div>
 
     <script>
         let allMailsGlobal = [];
 
-        // নোটিফিকেশন অ্যালার্ট ফাংশন
         function triggerNotification(message, statusType = 'success') {
             const notif = document.getElementById('topNotification');
             const checkContainer = notif.querySelector('.toast-check');
@@ -246,22 +210,18 @@
                 checkContainer.style.background = "var(--success)";
                 checkContainer.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
             }
-
             notif.classList.add('show');
             setTimeout(() => { notif.classList.remove('show'); }, 2200);
         }
 
-        // কপি ফাংশন
         function copyText(text, btnId) {
             if(!text || text === 'N/A') return;
             navigator.clipboard.writeText(text).then(() => {
                 const btn = document.getElementById(btnId);
                 const icon = btn.querySelector('svg');
-                
                 btn.classList.add('copied');
                 icon.innerHTML = '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="#ffffff"/>';
                 triggerNotification("Email Copied Successfully!", 'success');
-                
                 setTimeout(function() {
                     btn.classList.remove('copied');
                     icon.innerHTML = '<path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" fill="#8e8e93"/>';
@@ -269,11 +229,9 @@
             });
         }
 
-        // হুবহু ইমেইল ম্যাচিং সার্চ লজিক (Exact Match)
         function handleMailSearch() {
             const searchBtn = document.querySelector('.search-btn');
             const originalText = searchBtn.innerText;
-            
             searchBtn.innerHTML = '<div class="spinner"></div>';
             searchBtn.disabled = true;
 
@@ -282,10 +240,7 @@
                 if (query === "") {
                     renderMails(allMailsGlobal);
                 } else {
-                    const filtered = allMailsGlobal.filter(item => {
-                        let emailVal = (item.email || '').trim().toLowerCase();
-                        return emailVal === query;
-                    });
+                    const filtered = allMailsGlobal.filter(item => (item.email || '').trim().toLowerCase() === query);
                     renderMails(filtered);
                 }
                 searchBtn.innerHTML = originalText;
@@ -293,36 +248,78 @@
             }, 400); 
         }
 
-        // ভিউ ইনবক্স ক্লিক ইভেন্ট (এখানে টোকেন সহ যাবতীয় ডাটা প্রসেস হবে)
+        // 📥 একই পেজে সরাসরি ইনবক্স লোড ও ভিউ করার মেইন লজিক
         function viewInboxAction(index) {
             const mailData = allMailsGlobal[index];
             if (!mailData) return;
 
-            // টেস্ট করার জন্য কনসোলে দেখা যাবে টোকেন এবং ইমেইল দুটোই ব্যাকএন্ডে রিড হচ্ছে
-            console.log("Opening Inbox for:", mailData.email);
-            console.log("Using Token:", mailData.token || "No Token Found");
+            const inboxSection = document.getElementById('inboxSection');
+            const inboxContentBox = document.getElementById('inboxContentBox');
+            const activeInboxName = document.getElementById('activeInboxName');
 
-            // টেলিগ্রাম বটের WebApp ডাটা পাঠানোর লজিক
-            if (window.Telegram && window.Telegram.WebApp) {
-                try {
-                    window.Telegram.WebApp.sendData(JSON.stringify({
-                        action: "view_inbox",
-                        email: mailData.email,
-                        token: mailData.token || "N/A",
-                        allData: mailData // সম্পূর্ণ অবজেক্টটি পাস করে দেওয়া হলো সুরক্ষার জন্য
-                    }));
-                } catch(tgErr) { 
-                    console.log("Telegram WebApp Error:", tgErr); 
+            // ইনবক্স ভিউ ওপেন করা এবং স্ক্রল করে নিচে নামানো
+            activeInboxName.innerText = mailData.email;
+            inboxSection.style.display = 'block';
+            inboxContentBox.innerHTML = '<div class="dark-spinner"></div>';
+            inboxSection.scrollIntoView({ behavior: 'smooth' });
+
+            // 🌐 আপনার API থেকে মেইল ডাটা নিয়ে আসার রিয়েল ফাংশন
+            fetchInboxFromServer(mailData.email, mailData.token, function(err, messages) {
+                if(err || !messages || messages.length === 0) {
+                    inboxContentBox.innerHTML = '<div class="message-box">No messages inside this inbox yet.</div>';
+                    return;
                 }
-            } else {
-                alert("Viewing Inbox for: " + mailData.email + "\nToken: " + (mailData.token || 'N/A'));
-            }
+
+                // ইনবক্সের ডাটা সুন্দর করে রেন্ডার করা (From, To, Subject, Body)
+                inboxContentBox.innerHTML = messages.map(msg => {
+                    return `
+                    <div class="mail-item">
+                        <div class="mail-meta">
+                            <span><b>From:</b> ${msg.from || 'Unknown Sender'}</span>
+                            <span><b>To:</b> ${msg.to || mailData.email}</span>
+                        </div>
+                        <div class="mail-subject">${msg.subject || '(No Subject)'}</div>
+                        <div class="mail-body">${msg.body || msg.text || 'Empty message body.'}</div>
+                    </div>`;
+                }).join('');
+            });
         }
 
-        // মেইল লিস্ট রেন্ডারার ফাংশন
+        // ইনবক্স ক্লোজ করার ফাংশন
+        function closeInboxView() {
+            document.getElementById('inboxSection').style.display = 'none';
+        }
+
+        // 🛠️ API ইন্টিগ্রেশন কানেক্টর (এখানে মক ডাটা সেট করা আছে, আপনার API লিঙ্ক বসিয়ে নিবেন)
+        function fetchInboxFromServer(email, token, callback) {
+            
+            // উদাহরণস্বরূপ আপনার API যদি এমন হয় তবে নিচের ২ লাইনের কমেন্ট তুলে ব্যবহার করতে পারেন:
+            // fetch(`https://api.yourdomain.com/get-inbox?email=${email}&token=${token}`)
+            // .then(res => res.json()).then(data => callback(null, data.messages)).catch(err => callback(err));
+
+            // সাময়িক টেস্ট করার জন্য নিচের মক বা ডেমো রেসপন্সটি কাজ করবে:
+            setTimeout(() => {
+                const demoMessages = [
+                    {
+                        from: "facebook@security.com",
+                        to: email,
+                        subject: "Your Facebook Login Verification Code",
+                        body: "Hello, your temporary verification code is <b>849201</b>. Please do not share this code with anyone."
+                    },
+                    {
+                        from: "noreply@telegram.org",
+                        to: email,
+                        subject: "Telegram Web Login Attempt",
+                        body: "A login attempt was made from an unrecognised device. If this wasn't you, please secure your account."
+                    }
+                ];
+                callback(null, demoMessages);
+            }, 1000); // ১ সেকেন্ড লোডিং অ্যানিমেশন দেখাবে
+        }
+
+        // মেইল হিস্টোরি লিস্ট রেন্ডারার
         function renderMails(mailsList) {
             const historyBox = document.getElementById('historyBox');
-            
             if(!mailsList || !Array.isArray(mailsList) || mailsList.length === 0) {
                 document.getElementById('totalCount').innerText = "0";
                 historyBox.innerHTML = '<div class="message-box">No temporary emails found.</div>';
@@ -358,13 +355,12 @@
             }).join('');
         }
 
-        // ডকুমেন্ট লোড ও ইউআরএল ডাটা গেট করা
+        // ডকুমেন্ট লোড ও ডাটা পার্সিং
         document.addEventListener('DOMContentLoaded', function () {
             setTimeout(() => {
                 try {
                     const searchString = window.location.search || window.location.hash.replace('#', '?');
                     const urlParams = new URLSearchParams(searchString);
-                    // 'data' অথবা 'orders' কী দিয়ে ডাটা গ্রহণ করা হচ্ছে
                     const historyData = urlParams.get('data') || urlParams.get('orders'); 
 
                     if (historyData && historyData.trim() !== "" && !historyData.startsWith("{")) {
@@ -376,7 +372,7 @@
                     }
                 } catch (error) {
                     console.error("JSON Parsing Error:", error);
-                    document.getElementById('historyBox').innerHTML = '<div class="message-box" style="color:var(--danger)">❌ Invalid Data Format!<br><span style="font-size:12px; color:var(--text)">Make sure the database contains a valid JSON array.</span></div>';
+                    document.getElementById('historyBox').innerHTML = '<div class="message-box" style="color:var(--danger)">❌ Invalid Data Format!<br><span style="font-size:12px;">Check your database source format.</span></div>';
                 }
             }, 800);
 
