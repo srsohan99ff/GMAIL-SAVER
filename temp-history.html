@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TEMP MAIL - History & Inbox</title>
+    <title>TEMP MAIL - History & Live Inbox</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     
@@ -97,7 +97,7 @@
         .toast-check { width: 18px; height: 18px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; }
         .toast-check svg { width: 11px; height: 11px; stroke: #fff; fill: none; stroke-width: 3; }
 
-        /* 👑 কার্ড স্টাইল */
+        /* 👑 মেইল কার্ড স্টাইল */
         .card { 
             background: var(--card); border-radius: 14px; overflow: hidden;
             border: 1px solid rgba(0, 0, 0, 0.03); box-shadow: 0 2px 6px rgba(0,0,0,0.02); 
@@ -119,7 +119,7 @@
         .inline-copy-btn.copied { background: var(--success) !important; border-color: var(--success) !important; }
         .inline-copy-btn.copied svg { fill: #fff !important; }
 
-        /* 🛠️ কার্ড অ্যাকশন */
+        /* 🛠️ কার্ড অ্যাকশন বাটন */
         .card-actions { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(0,0,0,0.01); border-top: 1px solid #f2f2f7; }
         .action-btn { border: none; background: none; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; padding: 6px 10px; border-radius: 8px; }
         .action-btn.view-inbox { color: var(--primary); }
@@ -130,24 +130,25 @@
         .counter-container { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 16px; padding: 0 4px; }
         .counter-value { color: var(--primary); font-weight: 700; background: rgba(0, 122, 255, 0.1); padding: 3px 10px; border-radius: 20px; font-size: 13px; }
 
-        /* 📥 iOS ইনলাইন ইনবক্স ডিসপ্লে সেকশন */
+        /* 📥 লাইভ ইনবক্স ডিসপ্লে সেকশন */
         .inbox-section {
             margin-top: 25px; padding-top: 15px; border-top: 2px dashed var(--border);
             display: none; animation: iosPop 0.4s ease;
         }
         .inbox-title-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .inbox-title-bar h3 { font-size: 18px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
+        .inbox-title-bar h3 { font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
         .close-inbox-btn { background: #e5e5ea; color: #48484a; border: none; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; }
         .close-inbox-btn:active { background: #d1d1d6; }
 
+        /* ✉️ রিয়েল-টাইম মেইল আইটেম ডিজাইন */
         .mail-item {
-            background: var(--card); border-radius: 12px; padding: 14px; margin-bottom: 10px;
+            background: var(--card); border-radius: 12px; padding: 14px; margin-bottom: 12px;
             border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.01);
         }
-        .mail-meta { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 6px; display: flex; flex-direction: column; gap: 2px;}
+        .mail-meta { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 8px; display: flex; flex-direction: column; gap: 3px;}
         .mail-meta span b { color: #48484a; font-weight: 600; }
-        .mail-subject { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-        .mail-body { font-size: 13.5px; color: #3a3a3c; line-height: 1.45; padding-top: 8px; border-top: 1px solid #f2f2f7; word-break: break-word; user-select: text; }
+        .mail-subject { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
+        .mail-body { font-size: 13px; color: #3a3a3c; line-height: 1.5; padding-top: 8px; border-top: 1px solid #f2f2f7; word-break: break-word; user-select: text; }
 
         @keyframes iosPop {
             from { transform: translateY(10px); opacity: 0; }
@@ -186,10 +187,10 @@
         <div class="skeleton-card"><div class="skeleton-line short"></div><div class="skeleton-line long"></div></div>
     </div>
 
-    <!-- 📥 লাইভ ইনবক্স ডিসপ্লে প্যানেল (একই পেজে লোড হবে) -->
+    <!-- 📥 লাইভ ইনবক্স ডিসপ্লে প্যানেল (একই পেজে রিয়েল-টাইমে শো করবে) -->
     <div class="inbox-section" id="inboxSection">
         <div class="inbox-title-bar">
-            <h3>Live Inbox (<span id="activeInboxName">mail</span>)</h3>
+            <h3>Recent Mails (<span id="activeInboxName" style="font-size: 13px; color: var(--primary); font-weight: 600;">mail</span>)</h3>
             <button class="close-inbox-btn" onclick="closeInboxView()">Close</button>
         </div>
         <div id="inboxContentBox"></div>
@@ -248,7 +249,14 @@
             }, 400); 
         }
 
-        // 📥 একই পেজে সরাসরি ইনবক্স লোড ও ভিউ করার মেইন লজিক
+        function escapeHtml(text) {
+            if(!text) return "";
+            return text.replace(/[&<>]/g, function(c) {
+                return {'&': '&amp;', '<': '&lt;', '>': '&gt;'}[c];
+            });
+        }
+
+        // 📥 একই পেজে রিয়েল-টাইম ইনবক্স রেন্ডার লজিক
         function viewInboxAction(index) {
             const mailData = allMailsGlobal[index];
             if (!mailData) return;
@@ -257,64 +265,73 @@
             const inboxContentBox = document.getElementById('inboxContentBox');
             const activeInboxName = document.getElementById('activeInboxName');
 
-            // ইনবক্স ভিউ ওপেন করা এবং স্ক্রল করে নিচে নামানো
             activeInboxName.innerText = mailData.email;
             inboxSection.style.display = 'block';
             inboxContentBox.innerHTML = '<div class="dark-spinner"></div>';
             inboxSection.scrollIntoView({ behavior: 'smooth' });
 
-            // 🌐 আপনার API থেকে মেইল ডাটা নিয়ে আসার রিয়েল ফাংশন
+            // 🌐 রিয়েল-টাইম সার্ভার বা API থেকে ডাটা ফেচিং শুরু (Mail.tm অফিশিয়াল মেসেজ এন্ডপয়েন্ট)
             fetchInboxFromServer(mailData.email, mailData.token, function(err, messages) {
                 if(err || !messages || messages.length === 0) {
-                    inboxContentBox.innerHTML = '<div class="message-box">No messages inside this inbox yet.</div>';
+                    inboxContentBox.innerHTML = '<div class="message-box">You have no messages yet.</div>';
                     return;
                 }
 
-                // ইনবক্সের ডাটা সুন্দর করে রেন্ডার করা (From, To, Subject, Body)
-                inboxContentBox.innerHTML = messages.map(msg => {
+                // সাম্প্রতিক ৫টি মেইল ফিল্টার করে রেন্ডার করা হলো
+                const displayMessages = messages.slice(0, 5);
+
+                inboxContentBox.innerHTML = displayMessages.map((msg, i) => {
+                    let fromAddress = msg.from && msg.from.address ? msg.from.address : "(unknown)";
+                    let subjectText = msg.subject ? msg.subject : "(No Subject)";
+                    let messageIntro = msg.intro ? msg.intro : "(No message)";
+
+                    if (/<[^>]+>/.test(msg.intro)) {
+                        messageIntro = "(HTML content - viewable in main text)";
+                    }
+
                     return `
                     <div class="mail-item">
                         <div class="mail-meta">
-                            <span><b>From:</b> ${msg.from || 'Unknown Sender'}</span>
-                            <span><b>To:</b> ${msg.to || mailData.email}</span>
+                            <span><b>[${i + 1}] From:</b> ${escapeHtml(fromAddress)}</span>
+                            <span><b>To:</b> ${escapeHtml(mailData.email)}</span>
                         </div>
-                        <div class="mail-subject">${msg.subject || '(No Subject)'}</div>
-                        <div class="mail-body">${msg.body || msg.text || 'Empty message body.'}</div>
+                        <div class="mail-subject">Subject: ${escapeHtml(subjectText)}</div>
+                        <div class="mail-body"><b>Message:</b> ${escapeHtml(messageIntro)}</div>
                     </div>`;
                 }).join('');
             });
         }
 
-        // ইনবক্স ক্লোজ করার ফাংশন
         function closeInboxView() {
             document.getElementById('inboxSection').style.display = 'none';
         }
 
-        // 🛠️ API ইন্টিগ্রেশন কানেক্টর (এখানে মক ডাটা সেট করা আছে, আপনার API লিঙ্ক বসিয়ে নিবেন)
+        // 🛠️ রিয়েল-টাইম এপিআই কানেক্টর (Mail.tm এর অফিশিয়াল API সেটআপ সম্পন্ন)
         function fetchInboxFromServer(email, token, callback) {
-            
-            // উদাহরণস্বরূপ আপনার API যদি এমন হয় তবে নিচের ২ লাইনের কমেন্ট তুলে ব্যবহার করতে পারেন:
-            // fetch(`https://api.yourdomain.com/get-inbox?email=${email}&token=${token}`)
-            // .then(res => res.json()).then(data => callback(null, data.messages)).catch(err => callback(err));
-
-            // সাময়িক টেস্ট করার জন্য নিচের মক বা ডেমো রেসপন্সটি কাজ করবে:
-            setTimeout(() => {
-                const demoMessages = [
-                    {
-                        from: "facebook@security.com",
-                        to: email,
-                        subject: "Your Facebook Login Verification Code",
-                        body: "Hello, your temporary verification code is <b>849201</b>. Please do not share this code with anyone."
-                    },
-                    {
-                        from: "noreply@telegram.org",
-                        to: email,
-                        subject: "Telegram Web Login Attempt",
-                        body: "A login attempt was made from an unrecognised device. If this wasn't you, please secure your account."
-                    }
-                ];
-                callback(null, demoMessages);
-            }, 1000); // ১ সেকেন্ড লোডিং অ্যানিমেশন দেখাবে
+            // বটের সোর্স অনুযায়ী টোকেন দিয়ে রিয়েল-টাইম রিকোয়েস্ট পাঠানো হচ্ছে
+            fetch(`https://api.mail.tm/messages`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Network response error');
+                return res.json();
+            })
+            .then(data => {
+                // আপনার বটের রেসপন্স ফরম্যাট data["hydra:member"] অনুযায়ী পাস করা হলো
+                if (data && data["hydra:member"]) {
+                    callback(null, data["hydra:member"]);
+                } else {
+                    callback(null, []);
+                }
+            })
+            .catch(err => {
+                console.error("API Fetch Error:", err);
+                callback(err);
+            });
         }
 
         // মেইল হিস্টোরি লিস্ট রেন্ডারার
