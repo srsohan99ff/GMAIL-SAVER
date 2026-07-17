@@ -49,7 +49,7 @@
             justify-content: center;
             width: 100%;
             margin-bottom: 20px;
-            margin-top: 20px;
+            margin-top: 4px;
         }
         h1.brand-title { 
             font-size: 24px; 
@@ -60,26 +60,26 @@
 
         .section-label { font-size: 13px; font-weight: 500; color: var(--text-muted); text-align: left; margin-bottom: 8px; padding-left: 2px; }
         
-        /* সবুজ বর্ডারসহ মেইল ডিসপ্লে বক্স */
+        /* 👑 সাইজ এবং চওড়া একদম আগের ইনপুট বক্সের মতো ম্যাচ করা হয়েছে */
         .mail-display-card {
-            width: 100%; background: var(--card); border: 1.5px solid var(--success); border-radius: 10px;
+            width: 100%; background: var(--card); border: 1px solid var(--success); border-radius: 10px;
             position: relative; display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 24px; padding: 14px;
+            margin-bottom: 20px; padding: 14px 14px;
             animation: stepFade 0.23s ease-out;
         }
 
         .mail-text {
-            font-size: 15px;
-            font-weight: 500;
-            color: var(--text-dark);
+            font-size: 14px;
+            font-weight: 400;
+            color: #000;
             word-break: break-all;
-            user-select: text; /* ইউজার চাইলে সিলেক্ট করতে পারবে */
+            user-select: text;
             padding-right: 10px;
         }
 
         .inline-copy-btn {
-            width: 28px; 
-            height: 28px; 
+            width: 26px; 
+            height: 26px; 
             border-radius: 50%; 
             border: 1px solid var(--border);
             background: #ffffff; 
@@ -90,7 +90,7 @@
             transition: all 0.15s ease; 
             flex-shrink: 0;
         }
-        .inline-copy-btn svg { width: 12px; height: 12px; fill: #b5b5b9; }
+        .inline-copy-btn svg { width: 11px; height: 11px; fill: #b5b5b9; }
         .inline-copy-btn:active { transform: scale(0.92); background: #f2f2f7; }
         .inline-copy-btn.copied { background: var(--success) !important; border-color: var(--success) !important; }
         .inline-copy-btn.copied svg { fill: #fff !important; }
@@ -109,10 +109,12 @@
         
         .btn-change { background: #e5e5ea; color: #48484a; }
         .btn-change:active { background: #d1d1d6; }
+        .btn-change svg { width: 15px; height: 15px; fill: none; stroke: #48484a; stroke-width: 2.5; }
         
         .btn-save { background: var(--primary); color: #fff; }
         .btn-save:active { opacity: 0.9; }
         .btn-save:disabled { background: #d1d1d6; color: #8e8e93; cursor: not-allowed; }
+        .btn-save svg { width: 15px; height: 15px; fill: none; stroke: #fff; stroke-width: 3; }
         
         .btn-spinner { display: none; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.5s linear infinite; }
         .btn-change .btn-spinner { border-top-color: #48484a; }
@@ -156,7 +158,7 @@
 
 <div class="wrapper">
     <div class="brand-header">
-        <h1 class="brand-title">Temp Mail Generator</h1>
+        <h1 class="brand-title">Gmail Account</h1>
     </div>
 
     <div class="section-label">Your Temporary Email</div>
@@ -168,13 +170,17 @@
     </div>
 
     <div class="btn-group">
+        <!-- 👑 Change Mail SVG এরো যুক্ত করা হলো -->
         <button id="changeBtn" class="action-btn btn-change" onclick="generateNewMail()">
             <div id="changeSpinner" class="btn-spinner"></div>
+            <svg id="changeIcon" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
             <span id="changeBtnText">Change Mail</span>
         </button>
         
+        <!-- 👑 Save Account SVG টিক মার্ক যুক্ত করা হলো -->
         <button id="saveBtn" class="action-btn btn-save" onclick="submitMailToBot()" disabled>
             <div id="saveSpinner" class="btn-spinner"></div>
+            <svg id="saveIcon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
             <span id="saveBtnText">Save Account</span>
         </button>
     </div>
@@ -195,14 +201,13 @@
     tg.ready(); tg.expand();
 
     let currentAccountData = {
-        action: "save_temp_mail", // যাতে বটে সনাক্ত করতে সুবিধা হয়
+        action: "save_temp_mail",
         email: "",
         password: "",
         token: "",
         createdAt: ""
     };
 
-    // পেজ লোড হলেই অটোমেটিক মেইল জেনারেট শুরু হবে
     window.addEventListener('DOMContentLoaded', () => {
         generateNewMail();
     });
@@ -212,29 +217,25 @@
         document.getElementById('mailAddressText').innerText = "Generating mail...";
         
         try {
-            // ১. mail.tm থেকে অ্যাভেইলেবল ডোমেন লিস্ট নেওয়া
             const domainRes = await fetch('https://api.mail.tm/domains');
-            const domainData = await domainRes.parseJson ? await domainRes.parseJson() : await domainRes.json();
+            const domainData = await domainRes.json();
             
             if(!domainData['hydra:member'] || domainData['hydra:member'].length === 0) {
                 throw new Error("No domains available");
             }
             const domain = domainData['hydra:member'][0].domain;
 
-            // ২. র্যান্ডম ইউজারনেম এবং পাসওয়ার্ড তৈরি করা
             const randomUser = 'temp_' + Math.random().toString(36).substring(2, 11);
             const randomPassword = Math.random().toString(36).substring(2, 15) + 'tM!';
             const emailAddress = `${randomUser}@${domain}`;
 
-            // ৩. mail.tm এ অ্যাকাউন্ট ক্রিয়েট করা
             const createAccountRes = await fetch('https://api.mail.tm/accounts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ address: emailAddress, password: randomPassword })
             });
-            const accountInfo = await createAccountRes.json();
+            await createAccountRes.json();
 
-            // ৪. অ্যাকাউন্ট এর লগইন টোকেন (JWT) জেনারেট করা
             const tokenRes = await fetch('https://api.mail.tm/token', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -243,13 +244,11 @@
             const tokenInfo = await tokenRes.json();
 
             if (tokenInfo.token) {
-                // সাকসেসফুলি ডাটা অ্যাসাইন করা
                 currentAccountData.email = emailAddress;
                 currentAccountData.password = randomPassword;
                 currentAccountData.token = tokenInfo.token;
                 currentAccountData.createdAt = new Date().toISOString();
 
-                // স্ক্রিনে মেইল শো করা
                 document.getElementById('mailAddressText').innerText = emailAddress;
                 setLoadingState(false);
             } else {
@@ -267,17 +266,23 @@
     function setLoadingState(isLoading) {
         const changeSpinner = document.getElementById('changeSpinner');
         const changeText = document.getElementById('changeBtnText');
+        const changeIcon = document.getElementById('changeIcon');
+        const saveIcon = document.getElementById('saveIcon');
         const saveBtn = document.getElementById('saveBtn');
         const changeBtn = document.getElementById('changeBtn');
 
         if(isLoading) {
             changeSpinner.style.display = 'block';
             changeText.style.display = 'none';
+            changeIcon.style.display = 'none';
+            saveIcon.style.display = 'none';
             saveBtn.setAttribute('disabled', 'true');
             changeBtn.setAttribute('disabled', 'true');
         } else {
             changeSpinner.style.display = 'none';
             changeText.style.display = 'block';
+            changeIcon.style.display = 'block';
+            saveIcon.style.display = 'block';
             saveBtn.removeAttribute('disabled');
             changeBtn.removeAttribute('disabled');
         }
@@ -307,12 +312,12 @@
     function submitMailToBot() {
         document.getElementById('saveSpinner').style.display = 'block';
         document.getElementById('saveBtnText').style.display = 'none';
+        document.getElementById('saveIcon').style.display = 'none';
         document.getElementById('saveBtn').setAttribute('disabled', 'true');
         document.getElementById('changeBtn').setAttribute('disabled', 'true');
         document.getElementById('successOverlay').style.display = 'flex';
 
         setTimeout(() => {
-            // টেম্প মেইলের সমস্ত সিক্রেট অবজেক্ট সহ ডেটা টেলিগ্রাম বটে পাঠানো হচ্ছে
             tg.sendData(JSON.stringify(currentAccountData));
             setTimeout(() => {
                 tg.close();
